@@ -11,7 +11,7 @@
   ],
   "require": {
     "palmtree/argparser": "~1.0.0",
-    "palmtree/nameconverter": "~1.0.0"
+    "palmtree/nameconverter": "~1.0.0",
     "palmtree/html": "~1.0.0"
   },
   "autoload": {
