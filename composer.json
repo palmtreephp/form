@@ -9,7 +9,9 @@
       "email": "palmer.andy@gmail.com"
     }
   ],
-  "require": {},
+  "require": {
+    "palmtree/argparser": "~1.0.0"
+  },
   "autoload": {
     "psr-4": {
       "Palmtree\\Form\\": ""
