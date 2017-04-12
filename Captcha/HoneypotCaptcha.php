@@ -4,19 +4,22 @@ namespace Palmtree\Form\Captcha;
 
 use Palmtree\Html\Element;
 
-class HoneypotCaptcha extends AbstractCaptcha implements CaptchaInterface {
-	public function verify( $response ) {
-		return empty( $response );
-	}
+class HoneypotCaptcha extends AbstractCaptcha implements CaptchaInterface
+{
+    public function verify($response)
+    {
+        return empty($response);
+    }
 
-	public function getElements() {
-		$elements = [];
-		$element  = new Element( 'input.hidden' );
+    public function getElements()
+    {
+        $elements = [];
+        $element  = new Element('input.hidden');
 
-		$element->addAttribute( 'name', $this->getName() );
+        $element->addAttribute('name', $this->getName());
 
-		$elements[] = $element;
+        $elements[] = $element;
 
-		return $elements;
-	}
+        return $elements;
+    }
 }

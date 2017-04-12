@@ -2,6 +2,7 @@
 
 namespace Palmtree\Form\Log;
 
-interface LogInterface {
-	public function log();
+interface LogInterface
+{
+    public function log();
 }

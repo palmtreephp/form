@@ -2,6 +2,7 @@
 
 namespace Palmtree\Form\Type;
 
-class TextareaType extends AbstractType {
-	protected $tag = 'textarea';
+class TextareaType extends AbstractType
+{
+    protected $tag = 'textarea';
 }
