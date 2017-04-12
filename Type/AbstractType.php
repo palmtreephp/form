@@ -16,7 +16,7 @@ abstract class AbstractType
     protected $label;
     protected $userInput = true;
     protected $global = false;
-    protected $required = false;
+    protected $required = true;
     protected $errorMessage = 'Please fill in this field';
     /** @var  Form $form */
     protected $form;
