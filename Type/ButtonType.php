@@ -8,6 +8,7 @@ class ButtonType extends AbstractType
 {
     protected $tag = 'button';
     protected $type = 'button';
+    protected $required = false;
     protected $userInput = false;
 
     public static $defaultArgs = [
