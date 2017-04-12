@@ -5,6 +5,7 @@ namespace Palmtree\Form\Type;
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
+use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 abstract class AbstractType
@@ -34,7 +35,7 @@ abstract class AbstractType
 
     protected function parseArgs($args)
     {
-        $parser = new ArgParser($args);
+        $parser = new ArgParser($args, '', new SnakeCaseToCamelCaseNameConverter());
 
         $parser->parseSetters($this);
 
