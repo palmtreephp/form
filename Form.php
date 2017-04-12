@@ -5,6 +5,7 @@ namespace Palmtree\Form;
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Type\AbstractType;
 use Palmtree\Html\Element;
+use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
 class Form
 {
@@ -21,7 +22,7 @@ class Form
     protected $fieldWrapper = 'div.form-group';
     protected $htmlValidation = true;
 
-    public function __construct(array $args = [])
+    public function __construct($args = [])
     {
         $this->parseArgs($args);
     }
@@ -135,7 +136,7 @@ class Form
 
     public function getRequest()
     {
-        switch ($this->getMethod()) {
+        switch (mb_strtoupper($this->getMethod())) {
             case 'POST':
                 $data = $_POST;
                 break;
@@ -394,7 +395,7 @@ class Form
 
     private function parseArgs($args)
     {
-        $parser = new ArgParser($args);
+        $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
 
         $parser->parseSetters($this);
     }
