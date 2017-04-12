@@ -5,14 +5,14 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "andyexeter",
-      "email": "palmer.andy@gmail.com"
+      "name": "Andy Palmer",
+      "email": "andy@andypalmer.me"
     }
   ],
   "require": {
-    "palmtree/argparser": "~1.0.0",
-    "palmtree/nameconverter": "~1.0.0",
-    "palmtree/html": "~1.0.0"
+    "palmtree/argparser": "~1.0",
+    "palmtree/nameconverter": "~1.0",
+    "palmtree/html": "~1.0"
   },
   "autoload": {
     "psr-4": {
