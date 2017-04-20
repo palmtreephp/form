@@ -49,10 +49,6 @@ class FormBuilder
             }
 
             $object = new $class($args);
-
-            if ($object instanceof TextType && $type !== 'text') {
-                $object->setType($type);
-            }
         }
 
         return $object;

@@ -191,8 +191,9 @@ class Form
 
     public static function isAjaxRequest()
     {
-        return isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-               && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        $key = 'HTTP_X_REQUESTED_WITH';
+
+        return isset($_SERVER[$key]) && strtolower($_SERVER[$key]) === 'xmlhttprequest';
     }
 
     /**

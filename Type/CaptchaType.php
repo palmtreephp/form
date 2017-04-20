@@ -18,7 +18,7 @@ class CaptchaType extends AbstractType
     {
         parent::__construct($args);
 
-        $this->captcha = $args['captcha'];
+        $this->captcha = new $args['captcha']($this);
     }
 
     public function isValid()
@@ -34,8 +34,8 @@ class CaptchaType extends AbstractType
 
     public function getElements()
     {
-        //$formId   = $this->form->getKey();
-        $elements = $this->captcha->getElements();
+        $element = $this->getElement();
+        $elements = $this->captcha->getElements($element);
 
         if (!$this->isValid()) {
             $error = new Element('div.form-control-feedback.small');

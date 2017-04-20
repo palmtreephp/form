@@ -206,7 +206,7 @@ abstract class AbstractType
         return $elements;
     }
 
-    protected function getNameAttribute()
+    public function getNameAttribute()
     {
         $formId = $this->form->getKey();
         $name   = $this->getName();
