@@ -69,6 +69,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
      */
     public function verify($response)
     {
+        $response = $_REQUEST['g-recaptcha-response'];
         $result = $this->getVerificationResult($response);
 
         if ($result['success']) {
@@ -87,7 +88,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
      *
      * @return string
      */
-    public function getElements()
+    public function getElements(Element $element)
     {
         $elements = [];
         $element  = new Element('div.g-recaptcha.form-control');
@@ -97,24 +98,17 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
 
         $elements[] = $element;
 
+        $script = new Element('script');
+        $script->addAttribute('src', static::SCRIPT_URL);
+
+        $elements[] = $script;
+
         return $elements;
     }
 
-    /**
-     * Returns the error message for the given code, or the code
-     * if no message exists.
-     *
-     * @param string $code Error code
-     *
-     * @return string Error message
-     */
-    public function getErrorMessage($code)
+    public function getErrorMessage()
     {
-        if (!isset(self::$errorCodes[$code])) {
-            return $code;
-        }
-
-        return self::$errorCodes[$code];
+        return $this->errors;
     }
 
     /**

@@ -13,6 +13,11 @@ interface CaptchaInterface
      */
     public function verify($answer);
 
+    /**
+     * @return string
+     */
+    public function getErrorMessage();
+
     public function getName();
 
     public function getSlug();

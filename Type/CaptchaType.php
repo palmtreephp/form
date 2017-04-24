@@ -18,7 +18,19 @@ class CaptchaType extends AbstractType
     {
         parent::__construct($args);
 
-        $this->captcha = new $args['captcha']($this);
+        $captcha = $args['captcha'];
+
+        if (!$captcha instanceof CaptchaInterface) {
+            $captcha = new $captcha();
+        }
+
+        $this->captcha = $captcha;
+
+        $errorMessage = $this->captcha->getErrorMessage();
+
+        if ($errorMessage) {
+            $this->setErrorMessage($errorMessage);
+        }
     }
 
     public function isValid()
@@ -34,7 +46,7 @@ class CaptchaType extends AbstractType
 
     public function getElements()
     {
-        $element = $this->getElement();
+        $element  = $this->getElement();
         $elements = $this->captcha->getElements($element);
 
         if (!$this->isValid()) {
