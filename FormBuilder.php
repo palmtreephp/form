@@ -13,7 +13,7 @@ class FormBuilder
 
     public function __construct($args = [])
     {
-        $this->getTypeClasses();
+        $this->findTypeClasses();
         $this->form = new Form($args);
     }
 
@@ -75,7 +75,7 @@ class FormBuilder
         return $this->form;
     }
 
-    private function getTypeClasses()
+    private function findTypeClasses()
     {
         if (self::$types === null) {
             self::$types = [];
