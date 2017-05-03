@@ -89,6 +89,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         $callbackName = sprintf('%s_callback', str_replace('-', '_', $controlId));
 
         $formControl->removeClass('form-control');
+        $formControl->addAttribute('hidden');
 
         // Element that actually displays the captcha
         $element = new Element('div.form-control.g-recaptcha');
@@ -120,11 +121,7 @@ JS
             $formControl,
         ];
 
-        $formGroup = new Element($form->getFieldWrapper());
-
-        $formGroup->addChildren($elements);
-
-        return [$formGroup];
+        return $elements;
     }
 
     public function getErrorMessage()
