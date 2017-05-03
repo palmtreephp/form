@@ -7,7 +7,8 @@ use Palmtree\Html\Element;
 
 class CaptchaType extends AbstractType
 {
-    protected $type = 'captcha';
+    protected $type = 'hidden';
+    protected $userInput = false;
     protected $errorMessage = 'Please confirm you\'re not a robot';
     /**
      * @var CaptchaInterface $captcha
@@ -47,7 +48,7 @@ class CaptchaType extends AbstractType
     public function getElements()
     {
         $element  = $this->getElement();
-        $elements = $this->captcha->getElements($element);
+        $elements = $this->captcha->getElements($element, $this->getForm());
 
         if (!$this->isValid()) {
             $error = new Element('div.form-control-feedback.small');

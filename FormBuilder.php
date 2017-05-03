@@ -17,26 +17,26 @@ class FormBuilder
         $this->form = new Form($args);
     }
 
-    public function add($name, $type = 'text', $args = [])
+    public function add($name, $type = TextType::class, $args = [])
     {
-        $control = $this->getObject($type, $args);
+        $formControl = $this->getObject($type, $args);
 
         if (!array_key_exists('name', $args)) {
-            $control->setName($name);
+            $formControl->setName($name);
         }
 
         $humanName = (new SnakeCaseToHumanNameConverter())->normalize($name);
 
-        if ($control->getLabel() === null) {
-            $control->setLabel($humanName);
+        if ($formControl->getLabel() === null) {
+            $formControl->setLabel($humanName);
         }
 
-        $this->form->addField($control);
+        $this->getForm()->addField($formControl);
 
         return $this;
     }
 
-    protected function getObject($type = 'text', $args)
+    protected function getObject($type, $args)
     {
         /** @var AbstractType $object */
         if ($type instanceof AbstractType) {
@@ -82,15 +82,13 @@ class FormBuilder
             $namespace   = __NAMESPACE__ . '\\Type';
             $files       = glob(__DIR__ . '/Type/*Type.php');
 
-            if (!$files) {
-                return false;
-            }
+            if ($files) {
+                foreach ($files as $file) {
+                    $class = basename($file, '.php');
+                    $type  = basename($file, 'Type.php');
 
-            foreach ($files as $file) {
-                $class = basename($file, '.php');
-                $type  = basename($file, 'Type.php');
-
-                self::$types[mb_strtolower($type)] = $namespace . '\\' . $class;
+                    self::$types[mb_strtolower($type)] = $namespace . '\\' . $class;
+                }
             }
         }
     }

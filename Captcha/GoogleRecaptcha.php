@@ -2,6 +2,7 @@
 
 namespace Palmtree\Form\Captcha;
 
+use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 
 /**
@@ -69,7 +70,6 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
      */
     public function verify($response)
     {
-        $response = $_REQUEST['g-recaptcha-response'];
         $result = $this->getVerificationResult($response);
 
         if ($result['success']) {
@@ -83,27 +83,48 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         return false;
     }
 
-    /**
-     * Returns the recaptcha div tag used to display the captcha form.
-     *
-     * @return string
-     */
-    public function getElements(Element $element)
+    public function getElements(Element $formControl, Form $form)
     {
-        $elements = [];
-        $element  = new Element('div.g-recaptcha.form-control');
+        $controlId    = $formControl->getAttribute('id');
+        $callbackName = sprintf('%s_callback', str_replace('-', '_', $controlId));
 
-        $element->addDataAttribute('sitekey', $this->siteKey);
-        $element->addDataAttribute('name', $this->getName());
+        $formControl->removeClass('form-control');
 
-        $elements[] = $element;
+        // Element that actually displays the captcha
+        $element = new Element('div.form-control.g-recaptcha');
 
+        $element->addDataAttribute('sitekey', $this->siteKey)
+                ->addDataAttribute('callback', $callbackName);
+
+        $element->addDataAttribute('name', $formControl->getAttribute('data-name'));
+        $formControl->removeAttribute('data-name');
+
+        // Callback function to add the response to our hidden input
+        $callbackFn = new Element('script');
+
+        $callbackFn->setInnerText(<<<JS
+            var $callbackName = function(response) {
+                $('#$controlId').val(response);
+            };
+JS
+        );
+
+        // Recaptcha API script
         $script = new Element('script');
         $script->addAttribute('src', static::SCRIPT_URL);
 
-        $elements[] = $script;
+        $elements = [
+            $element,
+            $callbackFn,
+            $script,
+            $formControl,
+        ];
 
-        return $elements;
+        $formGroup = new Element($form->getFieldWrapper());
+
+        $formGroup->addChildren($elements);
+
+        return [$formGroup];
     }
 
     public function getErrorMessage()

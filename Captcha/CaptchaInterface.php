@@ -2,6 +2,7 @@
 
 namespace Palmtree\Form\Captcha;
 
+use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 
 interface CaptchaInterface
@@ -22,5 +23,5 @@ interface CaptchaInterface
 
     public function getSlug();
 
-    public function getElements(Element $element);
+    public function getElements(Element $element, Form $form);
 }

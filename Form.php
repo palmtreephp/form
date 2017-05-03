@@ -400,4 +400,24 @@ class Form
 
         $parser->parseSetters($this);
     }
+
+    /**
+     * @param string $fieldWrapper
+     *
+     * @return Form
+     */
+    public function setFieldWrapper($fieldWrapper)
+    {
+        $this->fieldWrapper = $fieldWrapper;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFieldWrapper()
+    {
+        return $this->fieldWrapper;
+    }
 }
