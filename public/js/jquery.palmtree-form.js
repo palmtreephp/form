@@ -4,7 +4,7 @@
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
+        module.exports = factory(require('jquery'));
     } else {
         factory(window.jQuery);
     }
@@ -12,99 +12,157 @@
     'use strict';
 
     $(function () {
-        $('form.is-ajax').palmtreeForm();
+        $('.palmtree-form.is-ajax').palmtreeForm();
     });
 
     var pluginName = 'palmtreeForm';
 
     function Plugin(element, options) {
         this.$form = $(element);
-        this.$submitButton = this.$form.find('input[type=submit], button[type=submit]').last();
+        this.$submitButton = this.$form.find('[type=submit]').last();
         this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        this.init(this);
     }
 
-    Plugin.prototype = {
+    var publicAPI = {
+        setFormGroupState: function ($formGroups, state) {
+            var _this = this;
+            $formGroups.each(function () {
+                var $formControl = $(this).find('.form-control'),
+                    $feedback    = $(this).find('.form-control-feedback');
+
+                // Remove all states first.
+                for (var i = 0; i < _this.options.controlStates.length; i++) {
+                    $(this).removeClass('has-' + _this.options.controlStates[i]);
+                    $formControl.removeClass('form-control-' + _this.options.controlStates[i]);
+                }
+
+                if (!state) {
+                    $feedback.hide();
+                } else if ($.inArray(state, _this.options.controlStates) > -1) {
+                    $(this).addClass('has-' + state);
+                    $formControl.addClass('form-control-' + state);
+                    $feedback.show();
+                }
+
+                _this.$form.trigger(_this.getEvent('formGroupStateChange', {
+                    '$formGroup': $(this),
+                    state:        state
+                }));
+            });
+        }
+    };
+
+    var privateAPI = {
         /**
          * Initialises the plugin instance.
          */
         init: function () {
             var _this = this;
 
-            this.$form.on('submit.palmtreeForm', function (event) {
+            _this.$form.on('submit.palmtreeForm', function (event) {
                 event.preventDefault();
 
-                _this.onSubmit.call(_this);
+                _this.onSubmit();
             });
         },
+
+        /**
+         * Handler for the form element's submit event.
+         */
         onSubmit: function () {
-            var $form = this.$form,
+            var _this         = this,
+                $form         = this.$form,
                 $submitButton = this.$submitButton;
 
             $form.addClass('is-submitting');
             $submitButton.addClass('disabled').prop('disabled', true);
 
-            $.ajax({
-                url: $form.attr('action') || this.options.url,
-                type: this.getMethod(),
-                dataType: this.options.dataType,
-                data: $form.serialize(),
-                context: this,
-                success: this.handleResponse,
-                complete: function () {
-                    /*jshint validthis: true */
+            $form.trigger(this.getEvent('beforeSend'));
+
+            var promise = $.ajax({
+                url:      $form.attr('action') || _this.options.url,
+                type:     _this.$form.prop('method') || _this.options.method,
+                dataType: _this.options.dataType,
+                data:     $form.serialize(),
+                context:  _this
+            });
+
+            promise
+                .done(_this.handleResponse)
+                .always(function () {
                     $form.removeClass('is-submitting');
                     $submitButton.removeClass('disabled').prop('disabled', false);
-                   // $form.unblock();
+                });
 
-                    if ($.isFunction(this.options.onComplete)) {
-                        this.options.onComplete.call(this, this.options);
-                    }
-                }
-            });
+            $form.trigger(this.getEvent('promise', {
+                promise: promise
+            }));
         },
-        getMethod: function () {
-            return this.$form.prop('method') || this.options.method;
-        },
+
+        /**
+         *
+         * @param {object} response
+         *
+         * @param {boolean} response.success
+         *
+         * @param {object} response.data
+         * @param {string} response.data.message
+         * @param {object} response.data.errors
+         *
+         * @returns {boolean}
+         */
         handleResponse: function (response) {
+            var _this = this;
+
             if (!response || typeof response.data === 'undefined') {
-                // todo: error checking
+                $.error('Invalid response');
                 return false;
             }
 
-            var $formGroups = this.$form.find('.form-group'),
-                $formControls = this.$form.find('.form-control');
+            var $formControls = _this.$form.find('.form-control');
 
             // Clear all form group states
-            this.setFormGroupState($formGroups, '');
+            _this.setFormGroupState($formControls.closest('.form-group'), '');
 
             if (response.success) {
                 $formControls.filter(':visible').val('');
 
                 if (response.data.message) {
-                    this.$form.palmtreeAlert('destroy').palmtreeAlert({
-                        type: 'success',
-                        content: response.data.message
-                    });
+                    _this.showAlert(response.data.message, 'success');
                 }
 
-                this.$submitButton.remove();
+                if (_this.options.removeSubmitButton) {
+                    _this.$submitButton.remove();
+                }
 
                 return true;
             }
 
+            // If we got here then there are errors.
+            var errors = response.data.errors || null;
+
+            _this.setControlParentStates($formControls, errors);
+
+            $formControls.filter('.form-control-danger').first().focus();
+
+            if (response.data.message) {
+                _this.showAlert(response.data.message);
+            }
+
+            return false;
+        },
+
+        setControlParentStates: function ($formControls, errors) {
             var _this = this;
 
-            // If we got here then there are errors.
-            var errors = response.data.errors || {};
-
             $formControls.each(function () {
-                var errorKey = $(this).data('name') || '',
+                var errorKey   = $(this).data('name'),
                     $formGroup = $(this).closest('.form-group'),
-                    $feedback = $formGroup.find('.form-control-feedback');
+                    $feedback  = $formGroup.find('.form-control-feedback');
 
-                if (typeof errors[errorKey] !== 'undefined') {
+                if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
                         $feedback = $('<div />').addClass('form-control-feedback small');
                     }
@@ -124,59 +182,60 @@
                     _this.setFormGroupState($formGroup, '');
                 }
             });
-
-            $formControls.filter('.form-control-danger').first().focus();
-
-            if (response.data.message) {
-                this.$form.palmtreeAlert('destroy').palmtreeAlert({
-                    content: response.data.message
-                });
-            }
-
-            return false;
         },
-        setFormGroupState: function ($formGroups, state) {
+
+        /**
+         * Returns a new jQuery event object with the plugin's namespace.
+         *
+         * @param {string} eventType The type of event e.g 'click'.
+         * @param {...object} props Optional properties to add to the event object.
+         * @returns {jQuery.Event}
+         */
+        getEvent: function (eventType, props) {
+            var event = new $.Event(eventType, props);
+            event.namespace = pluginName;
+            event.form = this;
+
+            return event;
+        },
+
+        showAlert: function (content, type) {
             var _this = this;
-            $formGroups.each(function () {
-                var $formControl = $(this).find('.form-control'),
-                    $feedback = $(this).find('.form-control-feedback');
-
-                // Remove all states first.
-                for (var i = 0; i < _this.options.controlStates.length; i++) {
-                    $(this).removeClass('has-' + _this.options.controlStates[i]);
-                    $formControl.removeClass('form-control-' + _this.options.controlStates[i]);
-                }
-
-                if (!state.length) {
-                    $feedback.hide();
-                } else if ($.inArray(state, _this.options.controlStates) > -1) {
-                    $(this).addClass('has-' + state);
-                    $formControl.addClass('form-control-' + state);
-                    $feedback.show();
+            this.$form.bsAlert({
+                content:  content,
+                type:     type,
+                position: function ($alert) {
+                    _this.$submitButton.before($alert);
                 }
             });
         }
     };
 
+    Plugin.prototype = $.extend({}, publicAPI, privateAPI);
+
     $.fn[pluginName] = function () {
         var args = arguments;
 
         return this.each(function () {
-            var plugin = $(this).data(pluginName + '.plugin');
-            if (!plugin) {
-                plugin = new Plugin(this, args[0]);
-                $(this).data(pluginName + '.plugin', plugin);
+                var plugin = $(this).data(pluginName);
+                if (!plugin) {
+                    plugin = new Plugin(this, args[0]);
+                    $(this).data(pluginName, plugin);
+                }
+
+                if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
+                    plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
+                }
             }
-        });
+        );
     };
 
     $.fn[pluginName].defaults = {
-        url: '',
-        method: 'GET',
-        dataType: 'json',
-        onSuccess: null,
-        onComplete: null,
-        controlStates: ['danger', 'success', 'warning']
+        url:                '',
+        method:             'GET',
+        dataType:           'json',
+        removeSubmitButton: true,
+        controlStates:      ['danger', 'success', 'warning']
     };
 
     return $.fn[pluginName];
