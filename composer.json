@@ -6,7 +6,8 @@
   "authors": [
     {
       "name": "Andy Palmer",
-      "email": "andy@andypalmer.me"
+      "email": "andy@andypalmer.me",
+      "homepage": "https://andypalmer.me"
     }
   ],
   "require": {
