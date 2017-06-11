@@ -44,15 +44,6 @@ class OptionType extends AbstractType
         return $elements;
     }
 
-    public function isValid()
-    {
-        if (!$this->getForm()->isSubmitted()) {
-            return true;
-        }
-
-        return $this->getData();
-    }
-
     /**
      * @param mixed $value
      *
