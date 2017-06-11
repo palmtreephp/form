@@ -47,4 +47,9 @@ class CheckboxType extends AbstractType
 
         return $elements;
     }
+
+    public function isValid()
+    {
+        return filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN);
+    }
 }

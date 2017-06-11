@@ -14,7 +14,7 @@ class Form
     protected $fields = [];
     protected $ajax = false;
     protected $submitted = false;
-    protected $method = 'post';
+    protected $method = 'POST';
     protected $action = '';
     protected $encType = '';
     protected $errors = [];
@@ -136,7 +136,7 @@ class Form
 
     public function getRequest()
     {
-        switch (mb_strtoupper($this->getMethod())) {
+        switch ($this->getMethod()) {
             case 'POST':
                 $data = $_POST;
                 break;
@@ -350,7 +350,7 @@ class Form
     /**
      * @return boolean
      */
-    public function isHtmlValidation()
+    public function hasHtmlValidation()
     {
         return $this->htmlValidation;
     }

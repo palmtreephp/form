@@ -155,7 +155,7 @@ abstract class AbstractType
             }
         }
 
-        if ($this->isRequired() && $this->form->isHtmlValidation()) {
+        if ($this->isRequired() && $this->form->hasHtmlValidation()) {
             $attributes['required'] = true;
         }
 
@@ -163,7 +163,7 @@ abstract class AbstractType
 
         $element->addDataAttribute('name', $this->getName());
 
-        if ($this->form->isHtmlValidation() && $this->isRequired()) {
+        if ($this->form->hasHtmlValidation() && $this->isRequired()) {
             $element->addAttribute('required');
         }
 
@@ -174,7 +174,6 @@ abstract class AbstractType
 
     public function getElements()
     {
-        $formId   = $this->form->getKey();
         $elements = [];
 
         $label = $this->getLabelElement();
@@ -184,8 +183,6 @@ abstract class AbstractType
         }
 
         $element = $this->getElement();
-
-        $name = $this->getName();
 
         if (!$element->getAttribute('id')) {
             $element->addAttribute('id', $this->getIdAttribute());
