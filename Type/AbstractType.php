@@ -167,12 +167,14 @@ abstract class AbstractType
             $element->addAttribute('required');
         }
 
-        $element->addClass('form-control');
+        $element
+            ->addClass('palmtree-form-control')
+            ->addClass('form-control');
 
         return $element;
     }
 
-    public function getElements()
+    public function getElements(Element $wrapper = null)
     {
         $elements = [];
 

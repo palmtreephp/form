@@ -29,7 +29,7 @@
         setFormGroupState: function ($formGroups, state) {
             var _this = this;
             $formGroups.each(function () {
-                var $formControl = $(this).find('.form-control'),
+                var $formControl = $(this).find('.palmtree-form-control'),
                     $feedback    = $(this).find('.form-control-feedback');
 
                 // Remove all states first.
@@ -121,7 +121,7 @@
                 return false;
             }
 
-            var $formControls = _this.$form.find('.form-control');
+            var $formControls = _this.$form.find('.palmtree-form-control');
 
             // Clear all form group states
             _this.setFormGroupState($formControls.closest('.form-group'), '');

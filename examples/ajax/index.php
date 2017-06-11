@@ -9,6 +9,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $builder = new FormBuilder([
     'key'             => 'simple_example',
+    'action'          => 'index.php',
     'ajax'            => true,
     'html_validation' => false,
 ]);

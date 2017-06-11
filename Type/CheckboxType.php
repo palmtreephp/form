@@ -12,6 +12,10 @@ class CheckboxType extends AbstractType
     {
         $element = parent::getElement();
 
+        $element
+            ->removeClass('form-control')
+            ->addClass('form-check-input');
+
         if (filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN) !== false) {
             $element->addAttribute('checked');
         }
@@ -19,8 +23,10 @@ class CheckboxType extends AbstractType
         return $element;
     }
 
-    public function getElements()
+    public function getElements(Element $wrapper = null)
     {
+        $wrapper->addClass('form-check');
+
         $formId   = $this->form->getKey();
         $elements = [];
 
@@ -36,9 +42,14 @@ class CheckboxType extends AbstractType
 
         if ($label instanceof Element) {
             $innerText = $label->getInnerText();
-            $label->addChild($element)->removeAttribute('for')->setInnerText('');
 
-            $element->setInnerText($innerText);
+            $label
+                ->addChild($element)
+                ->removeAttribute('for')
+                ->addClass('form-check-label')
+                ->setInnerText('');
+
+            $element->setInnerText(' ' . $innerText);
 
             $elements[] = $label;
         } else {
@@ -50,6 +61,10 @@ class CheckboxType extends AbstractType
 
     public function isValid()
     {
-        return filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN);
+        if (!$this->getForm()->isSubmitted()) {
+            return true;
+        }
+
+        return $this->getData() && filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN);
     }
 }

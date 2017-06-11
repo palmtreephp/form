@@ -89,7 +89,7 @@ class Form
                 $parent = $fieldWrapper;
             }
 
-            foreach ($field->getElements() as $element) {
+            foreach ($field->getElements($parent) as $element) {
                 $parent->addChild($element);
             }
 
@@ -128,7 +128,7 @@ class Form
 
             if ($field->isGlobal() && array_key_exists($key, $request)) {
                 $field->setData($request[$key]);
-            } else if (array_key_exists($key, $this->requestData)) {
+            } elseif (array_key_exists($key, $this->requestData)) {
                 $field->setData($this->requestData[$key]);
             }
         }
