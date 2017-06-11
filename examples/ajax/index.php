@@ -10,7 +10,7 @@ require __DIR__ . '/../bootstrap.php';
 $builder = new FormBuilder([
     'key'             => 'simple_example',
     'action'          => 'index.php',
-    'ajax'            => true,
+    'ajax'            => false,
     'html_validation' => false,
 ]);
 
@@ -25,11 +25,35 @@ $builder
         'label'         => 'I agree to the terms and conditions',
         'error_message' => 'You must agree to our terms and conditions to continue',
     ])
-    ->add('status', 'radio', [
+    ->add('status', 'choice', [
+        'expanded'      => true,
+        'multiple'      => false,
         'error_message' => 'Please select one',
         'choices'       => [
             '1' => 'Yes',
             '2' => 'No',
+        ],
+    ])
+    ->add('age', 'choice', [
+        'expanded'      => false,
+        'multiple'      => false,
+        'error_message' => 'Please select your age group',
+        'choices'       => [
+            '18_to_24' => '18 to 24',
+            '25_to_30' => '25 to 30',
+            '30_to_25' => '30 to 35',
+        ],
+    ])
+    ->add('interests', 'choice', [
+        'required'      => false,
+        'expanded'      => false,
+        'multiple'      => true,
+        'error_message' => 'Please select your age group',
+        'choices'       => [
+            'Football',
+            'Rugby',
+            'Golf',
+            'Cricket',
         ],
     ]);
 

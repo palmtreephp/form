@@ -214,7 +214,7 @@ abstract class AbstractType
             return $name;
         }
 
-        return "{$formId}[{$name}]";
+        return sprintf('%s[%s]', $formId, $name);
     }
 
     protected function getIdAttribute()

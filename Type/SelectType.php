@@ -7,7 +7,8 @@ use Palmtree\Html\Element;
 class SelectType extends AbstractType
 {
     protected $tag = 'select';
-    protected $choices = [];
+    /** @var bool */
+    protected $multiple = false;
 
     public function getElement()
     {
@@ -15,26 +16,19 @@ class SelectType extends AbstractType
 
         $element->removeAttribute('type');
 
+        if ($this->isMultiple()) {
+            $element->addAttribute('multiple');
+        }
+
         $placeholder = $element->getAttribute('placeholder');
 
         if ($placeholder) {
             $element->removeAttribute('placeholder');
 
             $option = new Element('option');
-            $option->setInnerText($placeholder);
-
-            $element->addChild($option);
-        }
-
-        $selected = $this->getData();
-
-        foreach ($this->choices as $value => $text) {
-            $option = new Element('option');
-            $option->addAttribute('value', $value)->setInnerText($text);
-
-            if (strcmp("$value", "$selected") === 0) {
-                $option->addAttribute('selected');
-            }
+            $option
+                ->setInnerText($placeholder)
+                ->addAttribute('value', '');
 
             $element->addChild($option);
         }
@@ -42,10 +36,41 @@ class SelectType extends AbstractType
         return $element;
     }
 
-    public function setChoices(array $choices)
+    public function getNameAttribute()
     {
-        $this->choices = $choices;
+        $formId = $this->getForm()->getKey();
+        $name   = $this->getName();
+
+        if ($this->isGlobal()) {
+            return $name;
+        }
+
+        $format = '%s[%s]';
+
+        if ($this->isMultiple()) {
+            $format .= '[]';
+        }
+
+        return sprintf($format, $formId, $name);
+    }
+
+    /**
+     * @param bool $multiple
+     *
+     * @return SelectType
+     */
+    public function setMultiple($multiple)
+    {
+        $this->multiple = $multiple;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMultiple()
+    {
+        return $this->multiple;
     }
 }

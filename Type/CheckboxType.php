@@ -7,6 +7,9 @@ use Palmtree\Html\Element;
 class CheckboxType extends AbstractType
 {
     protected $type = 'checkbox';
+    protected $value = '1';
+
+    protected $siblings = false;
 
     public function getElement()
     {
@@ -14,9 +17,23 @@ class CheckboxType extends AbstractType
 
         $element
             ->removeClass('form-control')
-            ->addClass('form-check-input');
+            ->addClass('form-check-input')
+            ->addAttribute('value', $this->getValue());
 
-        if (filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN) !== false) {
+        $data    = $this->getData();
+        $compare = true;
+
+        if (is_array($data)) {
+            $key = array_search($this->getValue(), $data);
+
+            if ($key !== false) {
+                $data = $data[$key];
+            } else {
+                $compare = false;
+            }
+        }
+
+        if ($compare && strcmp($data, $this->getValue()) === 0) {
             $element->addAttribute('checked');
         }
 
@@ -25,7 +42,9 @@ class CheckboxType extends AbstractType
 
     public function getElements(Element $wrapper = null)
     {
-        $wrapper->addClass('form-check');
+        if ($wrapper instanceof Element) {
+            $wrapper->addClass('form-check');
+        }
 
         $formId   = $this->form->getKey();
         $elements = [];
@@ -56,7 +75,31 @@ class CheckboxType extends AbstractType
             $elements[] = $element;
         }
 
+        if (!$this->isValid()) {
+            $error = new Element('div.form-control-feedback.small');
+            $error->setInnerText($this->getErrorMessage());
+            $elements[] = $error;
+        }
+
         return $elements;
+    }
+
+    public function getNameAttribute()
+    {
+        $formId = $this->getForm()->getKey();
+        $name   = $this->getName();
+
+        if ($this->isGlobal()) {
+            return $name;
+        }
+
+        $format = '%s[%s]';
+
+        if ($this->hasSiblings()) {
+            $format .= '[]';
+        }
+
+        return sprintf($format, $formId, $name);
     }
 
     public function isValid()
@@ -66,5 +109,45 @@ class CheckboxType extends AbstractType
         }
 
         return $this->getData() && filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return CheckboxType
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param bool $siblings
+     *
+     * @return CheckboxType
+     */
+    public function setSiblings($siblings)
+    {
+        $this->siblings = $siblings;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSiblings()
+    {
+        return (bool)$this->siblings;
     }
 }
