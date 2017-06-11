@@ -2,17 +2,16 @@
 
 namespace Palmtree\Form\Type;
 
+use Palmtree\Form\Constraint\Email;
+
 class EmailType extends TextType
 {
     protected $type = 'email';
-    protected $errorMessage = 'Please enter a valid email address';
 
-    public function isValid()
+    public function __construct(array $args = [])
     {
-        if (!$this->getForm()->isSubmitted() || $this->required === false) {
-            return true;
-        }
+        parent::__construct($args);
 
-        return (filter_var($this->getData(), FILTER_VALIDATE_EMAIL) !== false);
+        $this->addConstraint(new Email());
     }
 }

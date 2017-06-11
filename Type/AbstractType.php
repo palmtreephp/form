@@ -3,6 +3,8 @@
 namespace Palmtree\Form\Type;
 
 use Palmtree\ArgParser\ArgParser;
+use Palmtree\Form\Constraint\ConstraintInterface;
+use Palmtree\Form\Constraint\NotBlank;
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
@@ -22,6 +24,8 @@ abstract class AbstractType
     /** @var  Form $form */
     protected $form;
     protected $args = [];
+    /** @var ConstraintInterface[] */
+    protected $constraints = [];
 
     public static $defaultArgs = [
         'placeholder' => true,
@@ -31,6 +35,10 @@ abstract class AbstractType
     public function __construct(array $args = [])
     {
         $this->args = $this->parseArgs($args);
+
+        if ($this->isRequired()) {
+            $this->addConstraint(new NotBlank());
+        }
     }
 
     protected function parseArgs($args)
@@ -96,18 +104,16 @@ abstract class AbstractType
 
     public function isValid()
     {
-        if (!$this->getForm()->isSubmitted() || $this->required === false) {
+        if (!$this->getForm()->isSubmitted() || !$this->isRequired()) {
             return true;
         }
 
-        $value = $this->getData();
+        foreach ($this->getConstraints() as $constraint) {
+            if (!$constraint->validate($this->getData())) {
+                $this->setErrorMessage($constraint->getErrorMessage());
 
-        if ($this->required === true) {
-            return !empty($value);
-        }
-
-        if (is_string($this->required)) {
-            return (bool)preg_match($this->required, $value);
+                return false;
+            }
         }
 
         return true;
@@ -397,5 +403,32 @@ abstract class AbstractType
         }
 
         return true;
+    }
+
+    public function addConstraint(ConstraintInterface $constraint)
+    {
+        $this->constraints[] = $constraint;
+    }
+
+    /**
+     * @param ConstraintInterface[] $constraints
+     *
+     * @return AbstractType
+     */
+    public function setConstraints($constraints)
+    {
+        foreach ($constraints as $constraint) {
+            $this->addConstraint($constraint);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ConstraintInterface[]
+     */
+    public function getConstraints()
+    {
+        return $this->constraints;
     }
 }

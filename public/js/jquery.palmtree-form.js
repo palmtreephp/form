@@ -145,7 +145,9 @@
 
             _this.setControlParentStates($formControls, errors);
 
-            $formControls.filter('.form-control-danger').first().focus();
+            var $first = $formControls.filter('.form-control-danger').first();
+
+            $first.focus().closest('.form-group').find('.form-control-feedback').hide().fadeIn();
 
             if (response.data.message) {
                 _this.showAlert(response.data.message);

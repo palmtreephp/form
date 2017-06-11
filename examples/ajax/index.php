@@ -8,9 +8,9 @@ require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../bootstrap.php';
 
 $builder = new FormBuilder([
-    'key'             => 'simple_example',
+    'key'             => 'ajax_example',
     'action'          => 'index.php',
-    'ajax'            => false,
+    'ajax'            => true,
     'html_validation' => false,
 ]);
 
@@ -35,8 +35,6 @@ $builder
         ],
     ])
     ->add('age', 'choice', [
-        'expanded'      => false,
-        'multiple'      => false,
         'error_message' => 'Please select your age group',
         'choices'       => [
             '18_to_24' => '18 to 24',
@@ -46,7 +44,6 @@ $builder
     ])
     ->add('interests', 'choice', [
         'required'      => false,
-        'expanded'      => false,
         'multiple'      => true,
         'error_message' => 'Please select your age group',
         'choices'       => [

@@ -6,11 +6,10 @@ use Palmtree\Html\Element;
 
 class ChoiceType extends AbstractType
 {
-    protected $tag;
     /** @var bool */
-    protected $multiple;
+    protected $multiple = false;
     /** @var bool If true, use radio buttons/checkboxes. Otherwise use a select box */
-    protected $expanded;
+    protected $expanded = false;
     protected $choices = [];
     protected $choiceClass;
 
