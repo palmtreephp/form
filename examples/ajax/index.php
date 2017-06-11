@@ -1,5 +1,6 @@
 <?php
 
+use Palmtree\Form\Constraint\Number;
 use Palmtree\Form\Form;
 use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Type\TextType;
@@ -20,6 +21,14 @@ $builder
     ])
     ->add('email_address', 'email')
     ->add('phone_number', 'tel', ['required' => false])
+    ->add('number', 'number', [
+        'constraints' => [
+            new Number([
+                'min' => 5,
+                'max' => 20,
+            ]),
+        ],
+    ])
     ->add('message', 'textarea', ['required' => false])
     ->add('agree', 'checkbox', [
         'label'         => 'I agree to the terms and conditions',

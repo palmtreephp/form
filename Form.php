@@ -36,6 +36,10 @@ class Form
             'id'     => $this->getKey(),
         ]);
 
+        if (!$this->hasHtmlValidation()) {
+            $form->addAttribute('novalidate', 'novalidate');
+        }
+
         if (!empty($this->encType)) {
             $form->addAttribute('enctype', $this->encType);
         }

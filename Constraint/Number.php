@@ -28,7 +28,7 @@ class Number extends AbstractContstraint implements ConstraintInterface
         }
 
         if (!is_null($max) && $input > $max) {
-            $this->setErrorMessage(sprintf('This value must be less than %d', $min));
+            $this->setErrorMessage(sprintf('This value must be less than %d', $max));
 
             return false;
         }
