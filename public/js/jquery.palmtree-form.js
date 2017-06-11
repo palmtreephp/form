@@ -30,7 +30,7 @@
             var _this = this;
             $formGroups.each(function () {
                 var $formControl = $(this).find('.palmtree-form-control'),
-                    $feedback    = $(this).find('.form-control-feedback');
+                    $feedback = $(this).find('.form-control-feedback');
 
                 // Remove all states first.
                 for (var i = 0; i < _this.options.controlStates.length; i++) {
@@ -48,7 +48,7 @@
 
                 _this.$form.trigger(_this.getEvent('formGroupStateChange', {
                     '$formGroup': $(this),
-                    state:        state
+                    state: state
                 }));
             });
         }
@@ -72,8 +72,8 @@
          * Handler for the form element's submit event.
          */
         onSubmit: function () {
-            var _this         = this,
-                $form         = this.$form,
+            var _this = this,
+                $form = this.$form,
                 $submitButton = this.$submitButton;
 
             $form.addClass('is-submitting');
@@ -82,11 +82,11 @@
             $form.trigger(this.getEvent('beforeSend'));
 
             var promise = $.ajax({
-                url:      $form.attr('action') || _this.options.url,
-                type:     _this.$form.prop('method') || _this.options.method,
+                url: $form.attr('action') || _this.options.url,
+                type: _this.$form.prop('method') || _this.options.method,
                 dataType: _this.options.dataType,
-                data:     $form.serialize(),
-                context:  _this
+                data: $form.serialize(),
+                context: _this
             });
 
             promise
@@ -158,9 +158,9 @@
             var _this = this;
 
             $formControls.each(function () {
-                var errorKey   = $(this).data('name'),
+                var errorKey = $(this).data('name'),
                     $formGroup = $(this).closest('.form-group'),
-                    $feedback  = $formGroup.find('.form-control-feedback');
+                    $feedback = $formGroup.find('.form-control-feedback');
 
                 if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
@@ -173,10 +173,12 @@
 
                     _this.setFormGroupState($formGroup, 'danger');
 
-                    $(this).off('input.palmtreeForm').on('input.palmtreeForm', function () {
-                        var state = ( $(this).val().length ) ? '' : 'danger';
-                        _this.setFormGroupState($formGroup, state);
-                    });
+                    $(this)
+                        .off('input.palmtreeForm change.palmtreeForm')
+                        .on('input.palmtreeForm change.palmtreeForm', function () {
+                            var state = ( $(this).val().length ) ? '' : 'danger';
+                            _this.setFormGroupState($formGroup, state);
+                        });
 
                 } else {
                     _this.setFormGroupState($formGroup, '');
@@ -202,8 +204,8 @@
         showAlert: function (content, type) {
             var _this = this;
             this.$form.bsAlert({
-                content:  content,
-                type:     type,
+                content: content,
+                type: type,
                 position: function ($alert) {
                     _this.$submitButton.before($alert);
                 }
@@ -231,11 +233,11 @@
     };
 
     $.fn[pluginName].defaults = {
-        url:                '',
-        method:             'GET',
-        dataType:           'json',
+        url: '',
+        method: 'GET',
+        dataType: 'json',
         removeSubmitButton: true,
-        controlStates:      ['danger', 'success', 'warning']
+        controlStates: ['danger', 'success', 'warning']
     };
 
     return $.fn[pluginName];
