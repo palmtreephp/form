@@ -12,9 +12,9 @@ class Extension extends AbstractContstraint implements ConstraintInterface
     /**
      * @inheritDoc
      */
-    public function validate($file)
+    public function validate($uploadedFile)
     {
-        $extension = pathinfo($file, PATHINFO_EXTENSION);
+        $extension = pathinfo($uploadedFile['name'], PATHINFO_EXTENSION);
 
         if (!in_array($extension, $this->getExtensions())) {
             $this->setErrorMessage(
@@ -34,7 +34,7 @@ class Extension extends AbstractContstraint implements ConstraintInterface
      */
     public function setExtensions($extensions)
     {
-        $this->extensions = $extensions;
+        $this->extensions = (array)$extensions;
 
         return $this;
     }

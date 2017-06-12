@@ -127,7 +127,9 @@ class Form
             $this->requestData[$key] = $value;
         }
 
-        foreach ($this->fields as $field) {
+        $this->addFilesToRequestData();
+
+        foreach ($this->getFields() as $field) {
             $key = $field->getName();
 
             if ($field->isGlobal() && array_key_exists($key, $request)) {
@@ -151,6 +153,19 @@ class Form
         }
 
         return $data;
+    }
+
+    protected function addFilesToRequestData()
+    {
+        if (!isset($_FILES[$this->getKey()])) {
+            return;
+        }
+
+        foreach ($_FILES[$this->getKey()] as $key => $parts) {
+            foreach ($parts as $name => $value) {
+                $this->requestData[$name][$key] = $value;
+            }
+        }
     }
 
     /**

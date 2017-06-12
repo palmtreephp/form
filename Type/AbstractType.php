@@ -143,11 +143,14 @@ abstract class AbstractType
         $element     = new Element($args);
 
         $attributes = [
-            'type'  => $this->getType(),
-            'id'    => $this->getIdAttribute(),
-            'name'  => $this->getNameAttribute(),
-            'value' => $this->getData(),
+            'type' => $this->getType(),
+            'id'   => $this->getIdAttribute(),
+            'name' => $this->getNameAttribute(),
         ];
+
+        if ($this->getType() !== 'file') {
+            $attributes['value'] = $this->getData();
+        }
 
         if ($attributes['type'] === 'hidden') {
             unset($attributes['placeholder']);
@@ -161,7 +164,7 @@ abstract class AbstractType
             }
         }
 
-        if ($this->isRequired() && $this->form->hasHtmlValidation()) {
+        if ($this->isRequired() && $this->getForm()->hasHtmlValidation()) {
             $attributes['required'] = true;
         }
 

@@ -12,11 +12,11 @@ class MimeType extends AbstractContstraint implements ConstraintInterface
     /**
      * @inheritDoc
      */
-    public function validate($file)
+    public function validate($uploadedFile)
     {
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
 
-        $mimeType = $finfo->file($file);
+        $mimeType = $finfo->file($uploadedFile['tmp_name']);
 
         if (!in_array($mimeType, $this->getMimeTypes())) {
             $this->setErrorMessage(

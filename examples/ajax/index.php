@@ -1,5 +1,7 @@
 <?php
 
+use Palmtree\Form\Constraint\File\Extension;
+use Palmtree\Form\Constraint\File\Size;
 use Palmtree\Form\Constraint\Number;
 use Palmtree\Form\Form;
 use Palmtree\Form\FormBuilder;
@@ -11,13 +13,24 @@ require __DIR__ . '/../bootstrap.php';
 $builder = new FormBuilder([
     'key'             => 'ajax_example',
     'action'          => 'index.php',
-    'ajax'            => true,
+    'ajax'            => false,
     'html_validation' => false,
+    'enc_type'        => 'multipart/form-data',
 ]);
 
 $builder
     ->add('name', TextType::class, [
         'label' => 'Please enter your name',
+    ])
+    ->add('file', 'file', [
+        'constraints' => [
+            new Size([
+                'max' => 1024 * 100,
+            ]),
+            new Extension([
+                'extensions' => 'jpg',
+            ]),
+        ],
     ])
     ->add('email_address', 'email')
     ->add('phone_number', 'tel', ['required' => false])

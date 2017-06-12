@@ -13,9 +13,9 @@ class Size extends AbstractContstraint implements ConstraintInterface
     /**
      * @inheritDoc
      */
-    public function validate($file)
+    public function validate($uploadedFile)
     {
-        $size = filesize($file);
+        $size = $uploadedFile['size'];
         $min  = $this->getMin();
         $max  = $this->getMax();
 
