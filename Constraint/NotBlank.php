@@ -13,7 +13,5 @@ class NotBlank extends AbstractContstraint implements ConstraintInterface
         }
 
         return strcmp($input, '') !== 0;
-
     }
-
 }
