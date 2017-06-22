@@ -2,7 +2,7 @@
   "name": "palmtree-form",
   "private": true,
   "dependencies": {
-    "jquery-bsalert": "^0.9.3"
+    "jquery-bsalert": "^0.9.4"
   },
   "devDependencies": {},
   "scripts": {
