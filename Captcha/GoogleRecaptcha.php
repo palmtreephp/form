@@ -105,7 +105,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
 
         $callbackFn->setInnerText(<<<JS
             var $callbackName = function(response) {
-                $('#$controlId').val(response);
+                jQuery('#$controlId').val(response);
             };
 JS
         );
