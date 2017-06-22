@@ -2,10 +2,12 @@
   "name": "palmtree-form",
   "private": true,
   "dependencies": {
+    "jquery": "*",
     "jquery-bsalert": "^0.9.4"
   },
-  "devDependencies": {},
-  "scripts": {
-    "copy": "cp node_modules/jquery-bsalert/dist/jquery.bsAlert.js public/js"
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^3.0.1"
   }
 }
