@@ -1,5 +1,5 @@
 /**
- * jquery-bsalert v0.9.3
+ * jquery-bsalert v0.9.4
  *
  * @author Andy Palmer <andy@andypalmer.me>
  * @license MIT
@@ -12,7 +12,7 @@
 		define(['jquery'], factory);
 	} else if (typeof module === 'object' && module.exports) {
 		// Node/CommonJS
-		module.exports = factory(require('jquery'));
+		module.exports = factory;
 	} else {
 		// Browser globals
 		factory(jQuery);

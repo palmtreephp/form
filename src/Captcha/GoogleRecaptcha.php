@@ -88,11 +88,11 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         $controlId    = $formControl->getAttribute('id');
         $callbackName = sprintf('%s_callback', str_replace('-', '_', $controlId));
 
-        $formControl->removeClass('form-control');
+        $formControl->removeClass('palmtree-form-control');
         $formControl->addAttribute('hidden');
 
         // Element that actually displays the captcha
-        $element = new Element('div.form-control.g-recaptcha');
+        $element = new Element('div.palmtree-form-control.g-recaptcha');
 
         $element->addDataAttribute('sitekey', $this->siteKey)
                 ->addDataAttribute('callback', $callbackName);
@@ -105,7 +105,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
 
         $callbackFn->setInnerText(<<<JS
             var $callbackName = function(response) {
-                $('#$controlId').val(response);
+                jQuery('#$controlId').val(response);
             };
 JS
         );
@@ -163,4 +163,3 @@ JS
         return json_decode($result, true);
     }
 }
-

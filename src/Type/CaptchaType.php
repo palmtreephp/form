@@ -45,7 +45,7 @@ class CaptchaType extends AbstractType
         return $this->captcha->verify($value);
     }
 
-    public function getElements()
+    public function getElements(Element $wrapper = null)
     {
         $element  = $this->getElement();
         $elements = $this->captcha->getElements($element, $this->getForm());
