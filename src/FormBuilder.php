@@ -87,7 +87,7 @@ class FormBuilder
                     $class = basename($file, '.php');
                     $type  = basename($file, 'Type.php');
 
-                    self::$types[mb_strtolower($type)] = $namespace . '\\' . $class;
+                    self::$types[strtolower($type)] = $namespace . '\\' . $class;
                 }
             }
         }
