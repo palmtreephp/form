@@ -158,7 +158,7 @@ abstract class AbstractType
             if ($this->args['placeholder'] === true) {
                 $humanName = (new SnakeCaseToHumanNameConverter())->normalize($this->getName());
 
-                $attributes['placeholder'] = 'Enter your ' . mb_strtolower($humanName);
+                $attributes['placeholder'] = 'Enter your ' . strtolower($humanName);
             } elseif (is_string($this->args['placeholder'])) {
                 $attributes['placeholder'] = $this->args['placeholder'];
             }
