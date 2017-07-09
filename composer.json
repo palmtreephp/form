@@ -11,9 +11,9 @@
     }
   ],
   "require": {
-    "palmtree/argparser": "~1.1",
+    "palmtree/argparser": "~1.2",
     "palmtree/nameconverter": "~1.0",
-    "palmtree/html": "^1.0.3"
+    "palmtree/html": "^1.0.4"
   },
   "autoload": {
     "psr-4": {
