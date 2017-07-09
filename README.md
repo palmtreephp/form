@@ -19,14 +19,14 @@ composer require palmtree/form
 use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Captcha\GoogleRecaptcha;
 
-$builder = new FormBuilder($this->args);
+$builder = new FormBuilder();
 
 $builder
     ->add('name', 'text', ['error_message' => 'Please tell me your name'])
     ->add('email_address', 'email')
     ->add('message', 'textarea', ['required' => false])
     ->add('recaptcha', 'captcha', [
-        'captcha' => new GoogleRecaptcha(getenv('RECAPTCHA_SITE_KEY'), getenv('RECAPTCHA_SECRET')),
+        'captcha' => new GoogleRecaptcha('<site_key>', '<secret>'),
     ]);
 
 $builder->add('send_message', 'submit', ['classes' => 'btn btn-primary']);
