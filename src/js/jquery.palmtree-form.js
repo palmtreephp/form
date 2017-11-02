@@ -30,19 +30,17 @@
             var _this = this;
             $formGroups.each(function () {
                 var $formControl = $(this).find('.palmtree-form-control'),
-                    $feedback = $(this).find('.form-control-feedback');
+                    $feedback = $(this).find('.invalid-feedback');
 
                 // Remove all states first.
                 for (var i = 0; i < _this.options.controlStates.length; i++) {
-                    $(this).removeClass('has-' + _this.options.controlStates[i]);
-                    $formControl.removeClass('form-control-' + _this.options.controlStates[i]);
+                    $formControl.removeClass('is-' + _this.options.controlStates[i]);
                 }
 
                 if (!state) {
                     $feedback.hide();
                 } else if ($.inArray(state, _this.options.controlStates) > -1) {
-                    $(this).addClass('has-' + state);
-                    $formControl.addClass('form-control-' + state);
+                    $formControl.addClass('is-' + state);
                     $feedback.show();
                 }
 
@@ -145,9 +143,9 @@
 
             _this.setControlParentStates($formControls, errors);
 
-            var $first = $formControls.filter('.form-control-danger').first();
+            var $first = $formControls.filter('.is-invalid').first();
 
-            $first.focus().closest('.form-group').find('.form-control-feedback').hide().fadeIn();
+            $first.focus().closest('.form-group').find('.invalid-feedback').hide().fadeIn();
 
             if (response.data.message) {
                 _this.showAlert(response.data.message);
@@ -162,23 +160,23 @@
             $formControls.each(function () {
                 var errorKey = $(this).data('name'),
                     $formGroup = $(this).closest('.form-group'),
-                    $feedback = $formGroup.find('.form-control-feedback');
+                    $feedback = $formGroup.find('.invalid-feedback');
 
                 if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
-                        $feedback = $('<div />').addClass('form-control-feedback small');
+                        $feedback = $('<div />').addClass('invalid-feedback small');
                     }
 
                     $feedback.html(errors[errorKey]);
 
                     $formGroup.append($feedback);
 
-                    _this.setFormGroupState($formGroup, 'danger');
+                    _this.setFormGroupState($formGroup, 'invalid');
 
                     $(this)
                         .off('input.palmtreeForm change.palmtreeForm')
                         .on('input.palmtreeForm change.palmtreeForm', function () {
-                            var state = ( $(this).val().length ) ? '' : 'danger';
+                            var state = ( $(this).val().length ) ? '' : 'invalid';
                             _this.setFormGroupState($formGroup, state);
                         });
 
@@ -239,7 +237,7 @@
         method: 'GET',
         dataType: 'json',
         removeSubmitButton: true,
-        controlStates: ['danger', 'success', 'warning']
+        controlStates: ['valid', 'invalid']
     };
 
     return $.fn[pluginName];

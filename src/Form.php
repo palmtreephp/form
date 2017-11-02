@@ -86,10 +86,6 @@ class Form
                     $fieldWrapper->addClass('is-required');
                 }
 
-                if (!$field->isValid()) {
-                    $fieldWrapper->addClass('has-danger');
-                }
-
                 $parent = $fieldWrapper;
             }
 

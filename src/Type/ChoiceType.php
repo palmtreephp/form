@@ -75,7 +75,7 @@ class ChoiceType extends AbstractType
             foreach ($choice->getElements() as $child) {
                 /** @var Element $child */
                 // Don't add child feedback as we already display our own.
-                if (!$child->hasClass('form-control-feedback')) {
+                if (!$child->hasClass('invalid-feedback')) {
                     $parent->addChild($child);
                 }
             }

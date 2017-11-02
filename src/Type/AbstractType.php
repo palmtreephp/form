@@ -200,13 +200,13 @@ abstract class AbstractType
         }
 
         if (!$this->isValid()) {
-            $element->addClass('form-control-danger');
+            $element->addClass('is-invalid');
         }
 
         $elements[] = $element;
 
         if (!$this->isValid()) {
-            $error = new Element('div.form-control-feedback.small');
+            $error = new Element('div.invalid-feedback.small');
             $error->setInnerText($this->getErrorMessage());
             $elements[] = $error;
         }
