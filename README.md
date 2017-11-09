@@ -4,6 +4,7 @@ PHP Form builder with [Bootstrap](https://getbootstrap.com/) v4 classes, validat
 
 ## Requirements
 * PHP >= 5.6
+* jQuery (Only if you want to use Recaptcha and/or AJAX)
 
 ## Installation
 
