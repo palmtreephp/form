@@ -4,7 +4,7 @@ PHP Form builder with [Bootstrap](https://getbootstrap.com/) v4 classes, validat
 
 ## Requirements
 * PHP >= 5.6
-* jQuery (Only if you want to use Recaptcha and/or AJAX)
+* jQuery (If you want to use Recaptcha and/or AJAX)
 
 ## Installation
 
@@ -34,13 +34,14 @@ $builder->add('send_message', 'submit', ['classes' => 'btn btn-primary']);
 
 $form = $builder->getForm();
 // Set $form to some variable accessible in a view
-?>
 
+```
+
+```html
+<script src="/path/to/palmtree-form-pkgd.min.js"></script> <!-- Optional -->
 <div class="container">
     <?php echo $form->render(); ?>
 </div>
-
-
 ```
 
 ```php
