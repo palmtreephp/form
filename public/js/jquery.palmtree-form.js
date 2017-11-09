@@ -12,7 +12,11 @@
     'use strict';
 
     $(function () {
-        $('.palmtree-form.is-ajax').palmtreeForm();
+        $('.palmtree-form').each(function () {
+            if ($(this).hasClass('is-ajax')) {
+                $(this).palmtreeForm();
+            }
+        });
     });
 
     var pluginName = 'palmtreeForm';
@@ -67,38 +71,6 @@
                 event.preventDefault();
                 _this.onSubmit();
             });
-
-            this.initRecaptcha(this.$form.find('.g-recaptcha'));
-        },
-
-        /**
-         * Sets up Google Recaptcha if this form has one.
-         *
-         * @param {jQuery} $element
-         */
-        initRecaptcha: function ($element) {
-            if (!$element.length) {
-                return;
-            }
-
-            var _this = this;
-
-            window[$element.data('onload')] = function () {
-                var widgetId = window.grecaptcha.render($element.attr('id'), {
-                    sitekey: $element.data('site_key'),
-                    callback: function (response) {
-                        var $formControl = $('#' + $element.data('form_control'));
-                        $formControl.val(response);
-                        _this.clearState($formControl);
-                    }
-                });
-
-                _this.$form.on('error.palmtreeForm success.palmtreeForm', function () {
-                    window.grecaptcha.reset(widgetId);
-                });
-            };
-
-            $.getScript($element.data('script_url'));
         },
 
         /**

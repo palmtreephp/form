@@ -15,6 +15,7 @@ module.exports = function (grunt) {
             pkgd: {
                 src: [
                     'node_modules/jquery-bsalert/dist/jquery.bsAlert.js',
+                    'src/js/jquery.palmtree-recaptcha.js',
                     'src/js/jquery.palmtree-form.js'
                 ],
                 dest: 'public/js/palmtree-form.pkgd.js'
