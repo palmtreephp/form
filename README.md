@@ -1,6 +1,6 @@
 # Palmtree Form
 
-PHP Form builder with bootstrap classes, validation, captchas and other goodies
+PHP Form builder with [Bootstrap](https://getbootstrap.com/) v4 classes, validation, [Google Recaptcha](https://www.google.com/recaptcha/intro/) support and other goodies
 
 ## Requirements
 * PHP >= 5.6
