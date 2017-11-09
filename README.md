@@ -64,9 +64,11 @@ if($form->isSubmitted() && $form->isValid()) {
 
 Constraints allow you to validate a field type. The current built in constraints are:
 
-| [NotBlank](src/Constraint/NotBlank.php) | Ensures the field is not empty. Allows values of '0'        |
-| [Email](src/Constraint/Email.php)       | Ensures the field is a valid email address                  |
-| [Number](src/Constraint/Number.php)     | Ensures the field is numeric and optionally between a range |
+| Constraint       | Description |
+| ------------- |-------------|
+| [NotBlank](src/Constraint/NotBlank.php)  | Ensures the field is not empty. Allows values of '0'  /
+| [Email](src/Constraint/Email.php)        | Ensures the field is a valid email address      |
+| [Number](src/Constraint/Number.php)      | Ensures the field is numeric and optionally between a range      |
 
 By default, all fields have a NotBlank constraint. 
 Email fields have an email constraint and number fields a Number constraint.
