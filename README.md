@@ -55,8 +55,6 @@ $form->handleRequest();
 if($form->isSubmitted() && $form->isValid()) {
     // Send an email/save to database etc
     $name = $form->getField('name')->getData();
-    
-    $name = $form->getField('email_address')->
 }
 ```
 
