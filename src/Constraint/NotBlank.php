@@ -11,10 +11,10 @@ class NotBlank extends AbstractConstraint implements ConstraintInterface
      */
     public function validate($input)
     {
-        if (is_array($input)) {
-            return !empty($input);
+        if ($input === false || (empty($input) && $input != '0')) {
+            return false;
         }
 
-        return strcmp($input, '') !== 0;
+        return true;
     }
 }
