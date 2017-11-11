@@ -11,7 +11,7 @@ abstract class AbstractConstraint
 
     public function __construct($args = [])
     {
-        $parser = new ArgParser($args);
+        $parser = new ArgParser($args, 'error_message');
         $parser->parseSetters($this);
     }
 
