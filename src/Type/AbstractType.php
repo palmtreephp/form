@@ -129,9 +129,15 @@ abstract class AbstractType
 
         $element = new Element('label');
 
-        $element
-            ->addAttribute('for', $this->getIdAttribute())
-            ->setInnerText($label);
+        $element->addAttribute('for', $this->getIdAttribute())->setInnerText($label);
+
+        if ($this->isRequired()) {
+            $abbr = new Element('abbr');
+
+            $abbr->setInnerText('*')->addAttribute('title', 'Required Field');
+
+            $element->addChild($abbr);
+        }
 
         return $element;
     }
@@ -157,7 +163,6 @@ abstract class AbstractType
         } else {
             if ($this->args['placeholder'] === true) {
                 $humanName = (new SnakeCaseToHumanNameConverter())->normalize($this->getName());
-
                 $attributes['placeholder'] = 'Enter your ' . strtolower($humanName);
             } elseif (is_string($this->args['placeholder'])) {
                 $attributes['placeholder'] = $this->args['placeholder'];
