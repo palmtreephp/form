@@ -4,8 +4,9 @@ namespace Palmtree\Form\Constraint;
 
 use Palmtree\ArgParser\ArgParser;
 
-abstract class AbstractContstraint
+abstract class AbstractConstraint
 {
+    /** @var string */
     protected $errorMessage = 'Invalid value';
 
     public function __construct($args = [])
@@ -14,13 +15,23 @@ abstract class AbstractContstraint
         $parser->parseSetters($this);
     }
 
+    /**
+     * @return string
+     */
     public function getErrorMessage()
     {
         return $this->errorMessage;
     }
 
+    /**
+     * @param $message
+     *
+     * @return AbstractConstraint
+     */
     public function setErrorMessage($message)
     {
         $this->errorMessage = $message;
+
+        return $this;
     }
 }

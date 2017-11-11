@@ -2,10 +2,10 @@
 
 namespace Palmtree\Form\Constraint\File;
 
-use Palmtree\Form\Constraint\AbstractContstraint;
+use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
 
-class MimeType extends AbstractContstraint implements ConstraintInterface
+class MimeType extends AbstractConstraint implements ConstraintInterface
 {
     protected $mimeTypes = [];
 
@@ -34,7 +34,7 @@ class MimeType extends AbstractContstraint implements ConstraintInterface
      *
      * @return MimeType
      */
-    public function setMimeTypes($mimeTypes)
+    public function setMimeTypes(array $mimeTypes)
     {
         $this->mimeTypes = $mimeTypes;
 

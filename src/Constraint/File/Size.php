@@ -2,75 +2,48 @@
 
 namespace Palmtree\Form\Constraint\File;
 
-use Palmtree\Form\Constraint\AbstractContstraint;
+use Palmtree\Form\Constraint;
+use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
 
-class Size extends AbstractContstraint implements ConstraintInterface
+class Size extends AbstractConstraint implements ConstraintInterface
 {
-    protected $min;
-    protected $max;
+    protected $constraint;
+
+    public function __construct(array $args = [])
+    {
+        parent::__construct($args);
+
+        $this->constraint = new Constraint\Number();
+
+        $minBytes = isset($args['min_bytes']) ? $args['min_bytes'] : 1;
+
+        $this->constraint->setMin($minBytes);
+
+        if (isset($args['max_bytes'])) {
+            $this->constraint->setMax($args['max_bytes']);
+        }
+    }
 
     /**
      * @inheritDoc
      */
     public function validate($uploadedFile)
     {
-        $size = $uploadedFile['size'];
-        $min  = $this->getMin();
-        $max  = $this->getMax();
+        $size = (int)$uploadedFile['size'];
 
-        if (!is_null($min) && $size < $min) {
-            $this->setErrorMessage(sprintf('File size must be greater than %d bytes', $max));
-
-            return false;
+        if ($this->constraint->validate($size)) {
+            return true;
         }
 
-        if (!is_null($max) && $size > $max) {
-            $this->setErrorMessage(sprintf('File size must be less than %d bytes', $max));
+        $errorNo = $this->constraint->getErrorNumber();
 
-            return false;
+        if ($errorNo === Constraint\Number::ERROR_TOO_SMALL) {
+            $this->setErrorMessage(sprintf('File size must be greater than %d bytes', $this->constraint->getMin()));
+        } elseif ($errorNo === Constraint\Number::ERROR_TO_LARGE) {
+            $this->setErrorMessage(sprintf('File size must be less than %d bytes', $this->constraint->getMax()));
         }
 
-        return true;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMax()
-    {
-        return $this->max;
-    }
-
-    /**
-     * @param mixed $max
-     *
-     * @return $this
-     */
-    public function setMax($max)
-    {
-        $this->max = $max;
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $min
-     *
-     * @return $this
-     */
-    public function setMin($min)
-    {
-        $this->min = $min;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMin()
-    {
-        return $this->min;
+        return false;
     }
 }
