@@ -76,7 +76,7 @@ $builder
         ],
     ]);
 
-$builder->add('send_message', 'submit', ['classes' => 'btn btn-primary']);
+$builder->add('send_message', 'submit');
 
 $form = $builder->getForm();
 

@@ -15,7 +15,7 @@ class Form
     protected $ajax = false;
     protected $submitted = false;
     protected $method = 'POST';
-    protected $action = '';
+    protected $action;
     protected $encType = '';
     protected $errors = [];
     protected $requestData = [];
@@ -31,24 +31,18 @@ class Form
     {
         $form = new Element('form');
 
-        $form->setAttributes([
-            'method' => $this->method,
-            'id'     => $this->getKey(),
-        ]);
+        $form
+            ->addClass('palmtree-form')
+            ->setAttributes([
+                'method'  => $this->getMethod(),
+                'id'      => $this->getKey(),
+                'action'  => $this->getAction(),
+                'enctype' => $this->getEncType(),
+            ]);
 
         if (!$this->hasHtmlValidation()) {
-            $form->addAttribute('novalidate', 'novalidate');
+            $form->addAttribute('novalidate', true);
         }
-
-        if (!empty($this->encType)) {
-            $form->addAttribute('enctype', $this->encType);
-        }
-
-        if (!empty($this->action)) {
-            $form->addAttribute('action', $this->action);
-        }
-
-        $form->addClass('palmtree-form');
 
         if ($this->isAjax()) {
             $form->addClass('is-ajax');
@@ -61,8 +55,7 @@ class Form
         $this->renderFields($form);
 
         if ($this->hasRequiredField()) {
-            $info = new Element('small');
-            $info->setInnerText('* required field');
+            $info = (new Element('small'))->setInnerText('* required field');
 
             $form->addChild($info);
         }
@@ -99,6 +92,9 @@ class Form
         }
     }
 
+    /**
+     * @return bool
+     */
     public function isValid()
     {
         foreach ($this->getFields() as $field) {
@@ -112,14 +108,14 @@ class Form
 
     public function handleRequest()
     {
-        $request = $this->getRequest();
-        if (!isset($request[$this->getKey()])) {
+        $requestData = $this->getRequest();
+        if (!isset($requestData[$this->getKey()])) {
             return;
         }
 
         $this->setSubmitted(true);
 
-        foreach ($request[$this->getKey()] as $key => $value) {
+        foreach ($requestData[$this->getKey()] as $key => $value) {
             $this->requestData[$key] = $value;
         }
 
@@ -128,14 +124,17 @@ class Form
         foreach ($this->getFields() as $field) {
             $key = $field->getName();
 
-            if ($field->isGlobal() && array_key_exists($key, $request)) {
-                $field->setData($request[$key]);
+            if ($field->isGlobal() && array_key_exists($key, $requestData)) {
+                $field->setData($requestData[$key]);
             } elseif (array_key_exists($key, $this->requestData)) {
                 $field->setData($this->requestData[$key]);
             }
         }
     }
 
+    /**
+     * @return array
+     */
     public function getRequest()
     {
         switch ($this->getMethod()) {
@@ -151,6 +150,9 @@ class Form
         return $data;
     }
 
+    /**
+     *
+     */
     protected function addFilesToRequestData()
     {
         if (!isset($_FILES[$this->getKey()])) {
@@ -220,7 +222,7 @@ class Form
     }
 
     /**
-     * @param boolean $submitted
+     * @param bool $submitted
      *
      * @return Form
      */
@@ -434,5 +436,13 @@ class Form
     public function getFieldWrapper()
     {
         return $this->fieldWrapper;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEncType()
+    {
+        return $this->encType;
     }
 }

@@ -31,7 +31,7 @@ $builder
         'captcha' => new GoogleRecaptcha('<site_key>', '<secret>'),
     ]);
 
-$builder->add('send_message', 'submit', ['classes' => 'btn btn-primary']);
+$builder->add('send_message', 'submit');
 
 $form = $builder->getForm();
 // Set $form to some variable accessible in a view

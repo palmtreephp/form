@@ -2,7 +2,7 @@
 
 namespace Palmtree\Form\Captcha;
 
-use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 
 class HoneypotCaptcha extends AbstractCaptcha implements CaptchaInterface
@@ -17,14 +17,15 @@ class HoneypotCaptcha extends AbstractCaptcha implements CaptchaInterface
         return 'This is a honeypot field and should be left blank.';
     }
 
-    public function getElements(Element $element)
+    public function getElements(Element $element, Form $form)
     {
         $elements = [];
 
-        $element->addAttribute('type', 'text')
-                ->addAttribute('style', 'display: none;')
-                ->addAttribute('autocomplete', 'off')
-                ->removeAttribute('placeholder');
+        $element
+            ->addAttribute('type', 'text')
+            ->addAttribute('style', 'display: none;')
+            ->addAttribute('autocomplete', 'off')
+            ->removeAttribute('placeholder');
 
         $elements[] = $element;
 
