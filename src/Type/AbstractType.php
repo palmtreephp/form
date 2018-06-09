@@ -21,8 +21,11 @@ abstract class AbstractType
     protected $global = false;
     protected $required = true;
     protected $errorMessage = 'Please fill in this field';
-    /** @var  Form $form */
+    /** @var Form  */
     protected $form;
+    /** @var AbstractType|null */
+    protected $parent;
+    /** @var array */
     protected $args = [];
     /** @var ConstraintInterface[] */
     protected $constraints = [];
@@ -131,7 +134,7 @@ abstract class AbstractType
 
         $element->addAttribute('for', $this->getIdAttribute())->setInnerText($label);
 
-        if ($this->isRequired()) {
+        if ($this->isRequired() && !$this->getParent()) {
             $abbr = new Element('abbr');
 
             $abbr->setInnerText('*')->addAttribute('title', 'Required Field');
@@ -188,6 +191,11 @@ abstract class AbstractType
         return $element;
     }
 
+    /**
+     * @param Element|null $wrapper
+     *
+     * @return Element[]
+     */
     public function getElements(Element $wrapper = null)
     {
         $elements = [];
@@ -356,6 +364,26 @@ abstract class AbstractType
     public function setForm(Form $form)
     {
         $this->form = $form;
+
+        return $this;
+    }
+
+    /**
+     * @return AbstractType|null
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param AbstractType $parent
+     *
+     * @return AbstractType
+     */
+    public function setParent(AbstractType $parent)
+    {
+        $this->parent = $parent;
 
         return $this;
     }

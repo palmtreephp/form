@@ -3,6 +3,7 @@
 namespace Palmtree\Form\Type;
 
 use Palmtree\Html\Element;
+use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 class CheckboxType extends AbstractType
 {
@@ -57,22 +58,14 @@ class CheckboxType extends AbstractType
             $element->addAttribute('id', "$formId-$name");
         }
 
+        $elements[] = $element;
+
         $label = $this->getLabelElement();
 
         if ($label instanceof Element) {
-            $innerText = $label->getInnerText();
-
-            $label
-                ->addChild($element)
-                ->removeAttribute('for')
-                ->addClass('form-check-label')
-                ->setInnerText('');
-
-            $element->setInnerText(' ' . $innerText);
+            $label->addClass('form-check-label');
 
             $elements[] = $label;
-        } else {
-            $elements[] = $element;
         }
 
         if (!$this->isValid()) {
@@ -149,5 +142,20 @@ class CheckboxType extends AbstractType
     public function hasSiblings()
     {
         return (bool)$this->siblings;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    protected function getIdAttribute()
+    {
+        $attribute = parent::getIdAttribute();
+
+        if ($this->getParent()) {
+            $converter = new SnakeCaseToHumanNameConverter();
+            $attribute .= '-' . $converter->denormalize($this->getValue());
+        }
+
+        return $attribute;
     }
 }
