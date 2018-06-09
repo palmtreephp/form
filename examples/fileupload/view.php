@@ -2,13 +2,13 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Palmtree Form - Simple Example</title>
+    <title>Palmtree Form - File Upload Example</title>
     <?php include '../shared/styles.php'; ?>
 </head>
 <body>
 <main>
     <div class="container mt-3">
-        <h1>Palmtree Form - Simple Example</h1>
+        <h1>Palmtree Form - File Upload Example</h1>
         <?php if ($success) { ?>
             <div class="alert alert-success">Form submitted successfully</div>
         <?php } ?>
@@ -16,5 +16,6 @@
     </div>
 </main>
 <?php include '../shared/scripts.php'; ?>
+<script src="../../public/js/palmtree-form.pkgd.js"></script>
 </body>
 </html>
