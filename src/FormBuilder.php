@@ -42,7 +42,7 @@ class FormBuilder
                 $formControl->setLabel($formControl->getHumanName());
             }
 
-            $this->getForm()->addField($formControl);
+            $this->getForm()->add($formControl);
 
             return $this;
         }
@@ -55,7 +55,7 @@ class FormBuilder
      */
     public function get($name)
     {
-        return $this->getForm()->getField($name);
+        return $this->getForm()->get($name);
     }
 
     protected function addRepeatedType($name, $type, $args)

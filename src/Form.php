@@ -322,14 +322,6 @@ class Form
     }
 
     /**
-     * @return AbstractType
-     */
-    public function getField($name)
-    {
-        return (isset($this->fields[$name])) ? $this->fields[$name] : null;
-    }
-
-    /**
      * @param AbstractType[] $fields
      */
     public function setFields($fields)
@@ -337,11 +329,61 @@ class Form
         $this->fields = [];
 
         foreach ($fields as $field) {
-            $this->addField($field);
+            $this->add($field);
         }
     }
 
+    /**
+     * @deprecated Use get() instead
+     *
+     * @param string $name
+     *
+     * @return AbstractType
+     */
+    public function getField($name)
+    {
+        trigger_error(
+            'The ' . __METHOD__ . ' method is deprecated since v0.12 and will be removed in 1.0.',
+            E_USER_DEPRECATED
+        );
+
+        return $this->get($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return AbstractType
+     */
+    public function get($name)
+    {
+        return (isset($this->fields[$name])) ? $this->fields[$name] : null;
+    }
+
+    /**
+     * @deprecated Use add() instead
+     * @param AbstractType $field
+     * @param int|null     $offset
+     *
+     * @return Form
+     */
     public function addField(AbstractType $field, $offset = null)
+    {
+        trigger_error(
+            'The ' . __METHOD__ . ' method is deprecated since v0.12 and will be removed in 1.0.',
+            E_USER_DEPRECATED
+        );
+
+        return $this->add($field, $offset);
+    }
+
+    /**
+     * @param AbstractType $field
+     * @param int|null     $offset
+     *
+     * @return Form
+     */
+    public function add(AbstractType $field, $offset = null)
     {
         $field->setForm($this);
 
