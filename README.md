@@ -67,6 +67,8 @@ Constraints allow you to validate a field type. The current built in constraints
 | [NotBlank](src/Constraint/NotBlank.php)  | Ensures the field is not empty. Allows values of '0'
 | [Email](src/Constraint/Email.php)        | Ensures the field is a valid email address
 | [Number](src/Constraint/Number.php)      | Ensures the field is numeric and optionally between a range
+| [Length](src/Constraint/Length.php)      | Ensures the field has a minimum and/or maximum length of characters
+| [Match](src/Constraint/Match.php)        | Ensures the field matches another fields value. Useful for password confirmations
 
 By default, all fields have a NotBlank constraint. 
 Email fields have an email constraint and number fields a Number constraint.
@@ -75,14 +77,22 @@ Email fields have an email constraint and number fields a Number constraint.
 ```php
 <?php
 use Palmtree\Form\FormBuilder;
-use Palmtree\Form\Constraint\Number;
+use Palmtree\Form\Constraint;
 
 $builder = new FormBuilder();
 
 // Add an age field where the value must be between 18 and 80
 $builder->add('age', 'number', [
     'constraints' => [
-        (new Number())->setMin(18)->setMax(80)
+        (new Constraint\Number())->setMin(18)->setMax(80)
+    ]    
+]);
+
+// Add a password and confirm password field with a minimum length of 8 characters
+$builder->add('password', 'repeated', [
+    'repeatable_type' => 'password',
+    'constraints' => [
+        (new Constraint\Length())->setMin(8)
     ]    
 ]);
 
