@@ -29,6 +29,8 @@ abstract class AbstractType
     protected $args = [];
     /** @var ConstraintInterface[] */
     protected $constraints = [];
+    /** @var SnakeCaseToHumanNameConverter */
+    protected $nameConverter;
 
     public static $defaultArgs = [
         'placeholder' => true,
@@ -37,6 +39,8 @@ abstract class AbstractType
 
     public function __construct(array $args = [])
     {
+        $this->nameConverter = new SnakeCaseToHumanNameConverter();
+
         $this->args = $this->parseArgs($args);
 
         if ($this->isRequired()) {
@@ -105,6 +109,9 @@ abstract class AbstractType
         return $this->name;
     }
 
+    /**
+     * @return bool
+     */
     public function isValid()
     {
         if (!$this->getForm()->isSubmitted() || !$this->isRequired()) {
@@ -122,6 +129,9 @@ abstract class AbstractType
         return true;
     }
 
+    /**
+     * @return bool|Element
+     */
     public function getLabelElement()
     {
         $label = $this->getLabel();
@@ -145,6 +155,9 @@ abstract class AbstractType
         return $element;
     }
 
+    /**
+     * @return Element
+     */
     public function getElement()
     {
         $args        = $this->args;
@@ -164,12 +177,7 @@ abstract class AbstractType
         if ($attributes['type'] === 'hidden') {
             unset($attributes['placeholder']);
         } else {
-            if ($this->args['placeholder'] === true) {
-                $humanName = (new SnakeCaseToHumanNameConverter())->normalize($this->getName());
-                $attributes['placeholder'] = 'Enter your ' . strtolower($humanName);
-            } elseif (is_string($this->args['placeholder'])) {
-                $attributes['placeholder'] = $this->args['placeholder'];
-            }
+            $attributes['placeholder'] = $this->getPlaceHolderAttribute();
         }
 
         if ($this->isRequired() && $this->getForm()->hasHtmlValidation()) {
@@ -227,6 +235,14 @@ abstract class AbstractType
         return $elements;
     }
 
+    /**
+     * @return string
+     */
+    public function getHumanName()
+    {
+        return $this->nameConverter->normalize($this->getName());
+    }
+
     public function getNameAttribute()
     {
         $formId = $this->form->getKey();
@@ -249,6 +265,20 @@ abstract class AbstractType
         }
 
         return "$formId-$name";
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlaceHolderAttribute()
+    {
+        if ($this->args['placeholder'] === true) {
+            $placeholder = 'Enter your ' . strtolower($this->getHumanName());
+        } elseif (is_string($this->args['placeholder'])) {
+            $placeholder = $this->args['placeholder'];
+        }
+
+        return $placeholder;
     }
 
     /**
@@ -441,9 +471,16 @@ abstract class AbstractType
         return true;
     }
 
+    /**
+     * @param ConstraintInterface $constraint
+     *
+     * @return AbstractType
+     */
     public function addConstraint(ConstraintInterface $constraint)
     {
         $this->constraints[] = $constraint;
+
+        return $this;
     }
 
     /**

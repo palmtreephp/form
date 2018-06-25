@@ -2,12 +2,12 @@
 
 namespace Palmtree\Form\Constraint;
 
-class LengthConstraint extends AbstractConstraint implements ConstraintInterface
+class Length extends AbstractConstraint implements ConstraintInterface
 {
     /** @var int|null */
-    private $minLength;
+    private $min;
     /** @var int|null */
-    private $maxLength;
+    private $max;
     /** @var int|null */
     private $errorCode;
 
@@ -16,13 +16,13 @@ class LengthConstraint extends AbstractConstraint implements ConstraintInterface
 
     public function validate($input)
     {
-        if (!is_null($this->getMinLength()) && strlen($input) < $this->getMinLength()) {
+        if (!is_null($this->getMin()) && strlen($input) < $this->getMin()) {
             $this->setErrorCode(static::ERROR_TOO_SMALL);
 
             return false;
         }
 
-        if (!is_null($this->getMaxLength()) && strlen($input) > $this->getMaxLength()) {
+        if (!is_null($this->getMax()) && strlen($input) > $this->getMax()) {
             $this->setErrorCode(static::ERROR_TOO_LARGE);
 
             return false;
@@ -42,7 +42,7 @@ class LengthConstraint extends AbstractConstraint implements ConstraintInterface
     /**
      * @param mixed $errorCode
      *
-     * @return LengthConstraint
+     * @return Length
      */
     public function setErrorCode($errorCode)
     {
@@ -51,14 +51,17 @@ class LengthConstraint extends AbstractConstraint implements ConstraintInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getErrorMessage()
     {
         switch ($this->getErrorCode()) {
             case static::ERROR_TOO_SMALL:
-                $errorMessage = 'This field must be at least ' . $this->getMinLength() . ' characters';
+                $errorMessage = 'This field must be at least ' . $this->getMin() . ' characters';
                 break;
             case static::ERROR_TOO_LARGE:
-                $errorMessage = 'This field must be less than ' . $this->getMaxLength() . ' characters';
+                $errorMessage = 'This field must be less than ' . $this->getMax() . ' characters';
                 break;
             default:
                 $errorMessage = 'Invalid string length';
@@ -71,19 +74,19 @@ class LengthConstraint extends AbstractConstraint implements ConstraintInterface
     /**
      * @return mixed
      */
-    public function getMinLength()
+    public function getMin()
     {
-        return $this->minLength;
+        return $this->min;
     }
 
     /**
-     * @param mixed $minLength
+     * @param mixed $min
      *
-     * @return LengthConstraint
+     * @return Length
      */
-    public function setMinLength($minLength)
+    public function setMin($min)
     {
-        $this->minLength = $minLength;
+        $this->min = $min;
 
         return $this;
     }
@@ -91,19 +94,19 @@ class LengthConstraint extends AbstractConstraint implements ConstraintInterface
     /**
      * @return mixed
      */
-    public function getMaxLength()
+    public function getMax()
     {
-        return $this->maxLength;
+        return $this->max;
     }
 
     /**
-     * @param mixed $maxLength
+     * @param mixed $max
      *
-     * @return LengthConstraint
+     * @return Length
      */
-    public function setMaxLength($maxLength)
+    public function setMax($max)
     {
-        $this->maxLength = $maxLength;
+        $this->max = $max;
 
         return $this;
     }

@@ -2,16 +2,19 @@
 
 namespace Palmtree\Form;
 
+use Palmtree\Form\Constraint\Match;
 use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
-use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 class FormBuilder
 {
+    /** @var Form */
     protected $form;
+    /** @var array */
     public static $types;
 
-    public function __construct($args = [])
+    public function __construct(array $args = [])
     {
         $this->findTypeClasses();
         $this->form = new Form($args);
@@ -26,18 +29,73 @@ class FormBuilder
      */
     public function add($name, $type = TextType::class, $args = [])
     {
-        $formControl = $this->getTypeObject($type, $args);
+        if ($this->getTypeClass($type) === RepeatedType::class || $type instanceof RepeatedType) {
+            return $this->addRepeatedType($name, $type, $args);
+        } else {
+            $formControl = $this->getTypeObject($type, $args);
 
-        if (!array_key_exists('name', $args)) {
-            $formControl->setName($name);
+            if (!array_key_exists('name', $args)) {
+                $formControl->setName($name);
+            }
+
+            if ($formControl->getLabel() === null) {
+                $formControl->setLabel($formControl->getHumanName());
+            }
+
+            $this->getForm()->addField($formControl);
+
+            return $this;
+        }
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return AbstractType
+     */
+    public function get($name)
+    {
+        return $this->getForm()->getField($name);
+    }
+
+    protected function addRepeatedType($name, $type, $args)
+    {
+        /** @var RepeatedType $typeObject */
+        $typeObject = $this->getTypeObject($type, $args);
+
+        $this->add($name, $typeObject->getRepeatableType(), $args);
+
+        $firstOfType = $this->get($name);
+
+        $secondArgs = $args;
+
+        if (!isset($secondArgs['name'])) {
+            $secondArgs['name'] = $firstOfType->getName() . '_2';
         }
 
-        if ($formControl->getLabel() === null) {
-            $humanName = (new SnakeCaseToHumanNameConverter())->normalize($name);
-            $formControl->setLabel($humanName);
+        if (!isset($secondArgs['label'])) {
+            $secondArgs['label'] = 'Confirm ' . $firstOfType->getLabel();
         }
 
-        $this->getForm()->addField($formControl);
+        if (!isset($secondArgs['placeholder'])) {
+            $secondArgs['placeholder'] = $firstOfType->getPlaceHolderAttribute() . ' again';
+        }
+
+        $this->add($secondArgs['name'], $typeObject->getRepeatableType(), $secondArgs);
+
+        $secondOfType = $this->get($secondArgs['name']);
+
+        $matchConstraint = new Match([
+            'match_field'   => $secondOfType,
+            'error_message' => $firstOfType->getHumanName() . 's do not match',
+        ]);
+
+        $firstOfType->addConstraint($matchConstraint);
+
+        $secondMatchConstraint = clone $matchConstraint;
+        $secondMatchConstraint->setMatchField($firstOfType);
+
+        $secondOfType->addConstraint($secondMatchConstraint);
 
         return $this;
     }
@@ -62,12 +120,17 @@ class FormBuilder
                 $class = TextType::class;
             }
 
-            $object = new $class($args);
+            $object = new $class($args, $this);
         }
 
         return $object;
     }
 
+    /**
+     * @param string $type
+     *
+     * @return string|null
+     */
     public function getTypeClass($type)
     {
         if (isset(self::$types[$type])) {
@@ -89,6 +152,9 @@ class FormBuilder
         return $this->form;
     }
 
+    /**
+     *
+     */
     private function findTypeClasses()
     {
         if (self::$types === null) {
