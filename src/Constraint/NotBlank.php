@@ -4,7 +4,7 @@ namespace Palmtree\Form\Constraint;
 
 class NotBlank extends AbstractConstraint implements ConstraintInterface
 {
-    protected $errorMessage = 'This value must not be blank';
+    protected $errorMessage = 'Please fill in this field';
 
     /**
      * @inheritDoc
