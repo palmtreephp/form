@@ -31,7 +31,7 @@ class Number extends AbstractConstraint implements ConstraintInterface
         $max = $this->getMax();
 
         if (!is_null($min) && $input < $min) {
-            $this->setErrorMessage(sprintf('This value must be greater than %d', $min));
+            $this->setErrorMessage(sprintf('This value must be greater than or equal to %d', $min));
             $this->errorNumber = static::ERROR_TOO_SMALL;
 
             return false;
