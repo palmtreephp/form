@@ -177,7 +177,9 @@ abstract class AbstractType
         if ($attributes['type'] === 'hidden') {
             unset($attributes['placeholder']);
         } else {
-            $attributes['placeholder'] = $this->getPlaceHolderAttribute();
+            if ($placeholder = $this->getPlaceHolderAttribute()) {
+                $attributes['placeholder'] = $placeholder;
+            }
         }
 
         if ($this->isRequired() && $this->getForm()->hasHtmlValidation()) {
