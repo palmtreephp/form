@@ -272,6 +272,8 @@ abstract class AbstractType
      */
     public function getPlaceHolderAttribute()
     {
+        $placeholder = '';
+
         if ($this->args['placeholder'] === true) {
             $placeholder = 'Enter your ' . strtolower($this->getHumanName());
         } elseif (is_string($this->args['placeholder'])) {
