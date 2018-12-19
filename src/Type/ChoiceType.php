@@ -10,6 +10,8 @@ class ChoiceType extends AbstractType
     protected $multiple = false;
     /** @var bool If true, use radio buttons/checkboxes. Otherwise use a select box */
     protected $expanded = false;
+    /** @var bool Whether expanded choices should display inline. Has no effect if expanded is false */
+    protected $inline = true;
     protected $choices = [];
     protected $choiceClass;
 
@@ -53,31 +55,42 @@ class ChoiceType extends AbstractType
                 $value = $text;
             }
 
-            /** @var AbstractType $choice */
             $args = [
-                'label' => $text,
-                'value' => $value,
-                'data'  => $this->getData(),
+                'label'  => $text,
+                'value'  => $value,
+                'data'   => $this->getData(),
+                'parent' => $this,
             ];
 
+            $choiceWrapper = null;
             if ($this->isExpanded()) {
                 $args['name'] = $this->getName();
+
+                $choiceWrapper = new Element($this->isInline() ? 'div.form-check-inline' : 'div.form-check');
             }
 
             if ($this->isMultiple()) {
                 $args['siblings'] = true;
             }
 
+            /** @var AbstractType $choice */
             $choice = new $choiceClass($args);
 
             $choice->setForm($this->getForm());
 
             foreach ($choice->getElements() as $child) {
-                /** @var Element $child */
                 // Don't add child feedback as we already display our own.
-                if (!$child->hasClass('form-control-feedback')) {
-                    $parent->addChild($child);
+                if (!$child->hasClass('invalid-feedback')) {
+                    if ($choiceWrapper) {
+                        $choiceWrapper->addChild($child);
+                    } else {
+                        $parent->addChild($child);
+                    }
                 }
+            }
+
+            if ($choiceWrapper) {
+                $parent->addChild($choiceWrapper);
             }
         }
 
@@ -93,6 +106,15 @@ class ChoiceType extends AbstractType
         $this->choices = $choices;
 
         return $this;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getChoices()
+    {
+        return $this->choices;
     }
 
     /**
@@ -128,6 +150,8 @@ class ChoiceType extends AbstractType
     }
 
     /**
+     * Returns whether this choice type is expanded i.e not a select box
+     *
      * @return bool
      */
     public function isExpanded()
@@ -136,10 +160,22 @@ class ChoiceType extends AbstractType
     }
 
     /**
-     * @return array
+     * @return bool
      */
-    public function getChoices()
+    public function isInline()
     {
-        return $this->choices;
+        return $this->inline;
+    }
+
+    /**
+     * @param bool $inline
+     *
+     * @return ChoiceType
+     */
+    public function setInline($inline)
+    {
+        $this->inline = $inline;
+
+        return $this;
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-use Palmtree\Form\Constraint\File\Extension;
-use Palmtree\Form\Constraint\File\Size;
 use Palmtree\Form\Constraint\Number;
 use Palmtree\Form\Form;
 use Palmtree\Form\FormBuilder;
@@ -13,7 +11,7 @@ require __DIR__ . '/../bootstrap.php';
 $builder = new FormBuilder([
     'key'             => 'ajax_example',
     'action'          => 'index.php',
-    'ajax'            => false,
+    'ajax'            => true,
     'html_validation' => false,
     'enc_type'        => 'multipart/form-data',
 ]);
@@ -21,16 +19,6 @@ $builder = new FormBuilder([
 $builder
     ->add('name', TextType::class, [
         'label' => 'Please enter your name',
-    ])
-    ->add('file', 'file', [
-        'constraints' => [
-            new Size([
-                'max' => 1024 * 100,
-            ]),
-            new Extension([
-                'extensions' => 'jpg',
-            ]),
-        ],
     ])
     ->add('email_address', 'email')
     ->add('phone_number', 'tel', ['required' => false])
@@ -76,7 +64,7 @@ $builder
         ],
     ]);
 
-$builder->add('send_message', 'submit', ['classes' => 'btn btn-primary']);
+$builder->add('send_message', 'submit');
 
 $form = $builder->getForm();
 
@@ -89,14 +77,15 @@ if ($form->isSubmitted() && Form::isAjaxRequest()) {
         ]);
     } else {
         send_json_error([
-            'errors' => $form->getErrors(),
+            'message' => 'Oops! Something went wrong there. Check the form for errors',
+            'errors'  => $form->getErrors(),
         ]);
     }
 }
 
 $view = template('view.php', [
     'form'    => $form,
-    'success' => (!empty($_GET['success'])),
+    'success' => (! empty($_GET['success'])),
 ]);
 
 echo $view;

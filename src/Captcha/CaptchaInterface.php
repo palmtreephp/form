@@ -19,9 +19,21 @@ interface CaptchaInterface
      */
     public function getErrorMessage();
 
+    /**
+     * @return string
+     */
     public function getName();
 
+    /**
+     * @return string
+     */
     public function getSlug();
 
+    /**
+     * @param Element $element
+     * @param Form    $form
+     *
+     * @return array
+     */
     public function getElements(Element $element, Form $form);
 }

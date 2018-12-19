@@ -21,11 +21,16 @@ abstract class AbstractType
     protected $global = false;
     protected $required = true;
     protected $errorMessage = 'Please fill in this field';
-    /** @var  Form $form */
+    /** @var Form  */
     protected $form;
+    /** @var AbstractType|null */
+    protected $parent;
+    /** @var array */
     protected $args = [];
     /** @var ConstraintInterface[] */
     protected $constraints = [];
+    /** @var SnakeCaseToHumanNameConverter */
+    protected $nameConverter;
 
     public static $defaultArgs = [
         'placeholder' => true,
@@ -34,6 +39,8 @@ abstract class AbstractType
 
     public function __construct(array $args = [])
     {
+        $this->nameConverter = new SnakeCaseToHumanNameConverter();
+
         $this->args = $this->parseArgs($args);
 
         if ($this->isRequired()) {
@@ -102,6 +109,9 @@ abstract class AbstractType
         return $this->name;
     }
 
+    /**
+     * @return bool
+     */
     public function isValid()
     {
         if (!$this->getForm()->isSubmitted() || !$this->isRequired()) {
@@ -119,6 +129,9 @@ abstract class AbstractType
         return true;
     }
 
+    /**
+     * @return bool|Element
+     */
     public function getLabelElement()
     {
         $label = $this->getLabel();
@@ -129,13 +142,22 @@ abstract class AbstractType
 
         $element = new Element('label');
 
-        $element
-            ->addAttribute('for', $this->getIdAttribute())
-            ->setInnerText($label);
+        $element->addAttribute('for', $this->getIdAttribute())->setInnerText($label);
+
+        if ($this->isRequired() && !$this->getParent()) {
+            $abbr = new Element('abbr');
+
+            $abbr->setInnerText('*')->addAttribute('title', 'Required Field');
+
+            $element->addChild($abbr);
+        }
 
         return $element;
     }
 
+    /**
+     * @return Element
+     */
     public function getElement()
     {
         $args        = $this->args;
@@ -155,12 +177,8 @@ abstract class AbstractType
         if ($attributes['type'] === 'hidden') {
             unset($attributes['placeholder']);
         } else {
-            if ($this->args['placeholder'] === true) {
-                $humanName = (new SnakeCaseToHumanNameConverter())->normalize($this->getName());
-
-                $attributes['placeholder'] = 'Enter your ' . mb_strtolower($humanName);
-            } elseif (is_string($this->args['placeholder'])) {
-                $attributes['placeholder'] = $this->args['placeholder'];
+            if ($placeholder = $this->getPlaceHolderAttribute()) {
+                $attributes['placeholder'] = $placeholder;
             }
         }
 
@@ -183,6 +201,11 @@ abstract class AbstractType
         return $element;
     }
 
+    /**
+     * @param Element|null $wrapper
+     *
+     * @return Element[]
+     */
     public function getElements(Element $wrapper = null)
     {
         $elements = [];
@@ -200,18 +223,26 @@ abstract class AbstractType
         }
 
         if (!$this->isValid()) {
-            $element->addClass('form-control-danger');
+            $element->addClass('is-invalid');
         }
 
         $elements[] = $element;
 
         if (!$this->isValid()) {
-            $error = new Element('div.form-control-feedback.small');
+            $error = new Element('div.invalid-feedback.small');
             $error->setInnerText($this->getErrorMessage());
             $elements[] = $error;
         }
 
         return $elements;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHumanName()
+    {
+        return $this->nameConverter->normalize($this->getName());
     }
 
     public function getNameAttribute()
@@ -236,6 +267,22 @@ abstract class AbstractType
         }
 
         return "$formId-$name";
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlaceHolderAttribute()
+    {
+        $placeholder = '';
+
+        if ($this->args['placeholder'] === true) {
+            $placeholder = 'Enter your ' . strtolower($this->getHumanName());
+        } elseif (is_string($this->args['placeholder'])) {
+            $placeholder = $this->args['placeholder'];
+        }
+
+        return $placeholder;
     }
 
     /**
@@ -356,6 +403,26 @@ abstract class AbstractType
     }
 
     /**
+     * @return AbstractType|null
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param AbstractType $parent
+     *
+     * @return AbstractType
+     */
+    public function setParent(AbstractType $parent)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
      * @param boolean $global
      *
      * @return AbstractType
@@ -408,9 +475,16 @@ abstract class AbstractType
         return true;
     }
 
+    /**
+     * @param ConstraintInterface $constraint
+     *
+     * @return AbstractType
+     */
     public function addConstraint(ConstraintInterface $constraint)
     {
         $this->constraints[] = $constraint;
+
+        return $this;
     }
 
     /**

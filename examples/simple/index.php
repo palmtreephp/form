@@ -18,9 +18,15 @@ $builder
     ])
     ->add('email_address', 'email')
     ->add('phone_number', 'tel', ['required' => false])
-    ->add('message', 'textarea', ['required' => false]);
+    ->add('message', 'textarea', ['required' => false])
+    ->add('password', 'repeated', [
+        'repeatable_type' => 'password',
+        'constraints'     => [
+            (new Palmtree\Form\Constraint\Length())->setMin(8),
+        ],
+    ]);
 
-$builder->add('send_message', 'submit', ['classes' => 'btn btn-primary']);
+$builder->add('send_message', 'submit');
 
 $form = $builder->getForm();
 

@@ -12,7 +12,11 @@
     'use strict';
 
     $(function () {
-        $('.palmtree-form.is-ajax').palmtreeForm();
+        $('.palmtree-form').each(function () {
+            if ($(this).hasClass('is-ajax')) {
+                $(this).palmtreeForm();
+            }
+        });
     });
 
     var pluginName = 'palmtreeForm';
@@ -22,32 +26,34 @@
         this.$submitButton = this.$form.find('[type=submit]').last();
         this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init(this);
+        this.init();
     }
 
     var publicAPI = {
-        setFormGroupState: function ($formGroups, state) {
+        clearState: function ($formControls) {
+            this.setState($formControls, '');
+        },
+        setState: function ($formControls, state) {
             var _this = this;
-            $formGroups.each(function () {
-                var $formControl = $(this).find('.palmtree-form-control'),
-                    $feedback = $(this).find('.form-control-feedback');
+            $formControls.each(function () {
+                var $formControl = $(this),
+                    $formGroup   = $(this).closest('.form-group'),
+                    $feedback    = $formGroup.find('.invalid-feedback');
 
                 // Remove all states first.
                 for (var i = 0; i < _this.options.controlStates.length; i++) {
-                    $(this).removeClass('has-' + _this.options.controlStates[i]);
-                    $formControl.removeClass('form-control-' + _this.options.controlStates[i]);
+                    $formControl.removeClass('is-' + _this.options.controlStates[i]);
                 }
 
                 if (!state) {
                     $feedback.hide();
                 } else if ($.inArray(state, _this.options.controlStates) > -1) {
-                    $(this).addClass('has-' + state);
-                    $formControl.addClass('form-control-' + state);
+                    $formControl.addClass('is-' + state);
                     $feedback.show();
                 }
 
-                _this.$form.trigger(_this.getEvent('formGroupStateChange', {
-                    '$formGroup': $(this),
+                _this.$form.trigger(_this.getEvent('statechange', {
+                    '$formControl': $formControl,
                     state: state
                 }));
             });
@@ -61,9 +67,8 @@
         init: function () {
             var _this = this;
 
-            _this.$form.on('submit.palmtreeForm', function (event) {
+            this.$form.on('submit.palmtreeForm', function (event) {
                 event.preventDefault();
-
                 _this.onSubmit();
             });
         },
@@ -72,8 +77,8 @@
          * Handler for the form element's submit event.
          */
         onSubmit: function () {
-            var _this = this,
-                $form = this.$form,
+            var _this         = this,
+                $form         = this.$form,
                 $submitButton = this.$submitButton;
 
             $form.addClass('is-submitting');
@@ -123,67 +128,73 @@
 
             var $formControls = _this.$form.find('.palmtree-form-control');
 
-            // Clear all form group states
-            _this.setFormGroupState($formControls.closest('.form-group'), '');
+            // Clear all form control states
+            _this.clearState($formControls);
 
-            if (response.success) {
-                $formControls.filter(':visible').val('');
+            if (!response.success) {
+                var errors = response.data.errors || null;
+
+                _this.setControlStates($formControls, errors);
+
+                var $first = $formControls.filter('.is-invalid').first();
+                $first.focus().closest('.form-group').find('.invalid-feedback').hide().fadeIn();
 
                 if (response.data.message) {
-                    _this.showAlert(response.data.message, 'success');
+                    _this.showAlert(response.data.message);
                 }
 
-                if (_this.options.removeSubmitButton) {
-                    _this.$submitButton.remove();
-                }
+                _this.$form.trigger(this.getEvent('error', {
+                    responseData: response.data
+                }));
 
-                return true;
+                return false;
             }
 
-            // If we got here then there are errors.
-            var errors = response.data.errors || null;
-
-            _this.setControlParentStates($formControls, errors);
-
-            var $first = $formControls.filter('.form-control-danger').first();
-
-            $first.focus().closest('.form-group').find('.form-control-feedback').hide().fadeIn();
+            $formControls.filter(':visible').val('');
 
             if (response.data.message) {
-                _this.showAlert(response.data.message);
+                _this.showAlert(response.data.message, 'success');
             }
 
-            return false;
+            if (_this.options.removeSubmitButton) {
+                _this.$submitButton.remove();
+            }
+
+            _this.$form.trigger(this.getEvent('success', {
+                responseData: response.data
+            }));
+
+            return true;
         },
 
-        setControlParentStates: function ($formControls, errors) {
+        setControlStates: function ($formControls, errors) {
             var _this = this;
 
             $formControls.each(function () {
-                var errorKey = $(this).data('name'),
-                    $formGroup = $(this).closest('.form-group'),
-                    $feedback = $formGroup.find('.form-control-feedback');
+                var $formControl = $(this),
+                    errorKey     = $formControl.data('name'),
+                    $formGroup   = $formControl.closest('.form-group'),
+                    $feedback    = $formGroup.find('.invalid-feedback');
 
                 if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
-                        $feedback = $('<div />').addClass('form-control-feedback small');
+                        $feedback = $('<div />').addClass('invalid-feedback small');
                     }
 
                     $feedback.html(errors[errorKey]);
-
                     $formGroup.append($feedback);
 
-                    _this.setFormGroupState($formGroup, 'danger');
+                    _this.setState($formControl, 'invalid');
 
                     $(this)
                         .off('input.palmtreeForm change.palmtreeForm')
                         .on('input.palmtreeForm change.palmtreeForm', function () {
-                            var state = ( $(this).val().length ) ? '' : 'danger';
-                            _this.setFormGroupState($formGroup, state);
+                            var state = ( $(this).val().length ) ? '' : 'invalid';
+                            _this.setState($formControl, state);
                         });
 
                 } else {
-                    _this.setFormGroupState($formGroup, '');
+                    _this.clearState($formControl);
                 }
             });
         },
@@ -239,9 +250,8 @@
         method: 'GET',
         dataType: 'json',
         removeSubmitButton: true,
-        controlStates: ['danger', 'success', 'warning']
+        controlStates: ['valid', 'invalid']
     };
 
     return $.fn[pluginName];
-
 }));

@@ -2,41 +2,113 @@
 
 namespace Palmtree\Form;
 
-use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
+use Palmtree\Form\Constraint\Match;
 use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
 
 class FormBuilder
 {
+    /** @var Form */
     protected $form;
+    /** @var array */
     public static $types;
 
-    public function __construct($args = [])
+    public function __construct(array $args = [])
     {
         $this->findTypeClasses();
         $this->form = new Form($args);
     }
 
+    /**
+     * @param string $name
+     * @param string $type
+     * @param array  $args
+     *
+     * @return FormBuilder
+     */
     public function add($name, $type = TextType::class, $args = [])
     {
-        $formControl = $this->getObject($type, $args);
+        if ($this->getTypeClass($type) === RepeatedType::class || $type instanceof RepeatedType) {
+            return $this->addRepeatedType($name, $type, $args);
+        } else {
+            $formControl = $this->getTypeObject($type, $args);
 
-        if (!array_key_exists('name', $args)) {
-            $formControl->setName($name);
+            if (!array_key_exists('name', $args)) {
+                $formControl->setName($name);
+            }
+
+            if ($formControl->getLabel() === null) {
+                $formControl->setLabel($formControl->getHumanName());
+            }
+
+            $this->getForm()->add($formControl);
+
+            return $this;
+        }
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return AbstractType
+     */
+    public function get($name)
+    {
+        return $this->getForm()->get($name);
+    }
+
+    protected function addRepeatedType($name, $type, $args)
+    {
+        /** @var RepeatedType $typeObject */
+        $typeObject = $this->getTypeObject($type, $args);
+
+        $this->add($name, $typeObject->getRepeatableType(), $args);
+
+        $firstOfType = $this->get($name);
+
+        $secondArgs = $args;
+
+        if (!isset($secondArgs['name'])) {
+            $secondArgs['name'] = $firstOfType->getName() . '_2';
         }
 
-        $humanName = (new SnakeCaseToHumanNameConverter())->normalize($name);
-
-        if ($formControl->getLabel() === null) {
-            $formControl->setLabel($humanName);
+        if (!isset($secondArgs['label'])) {
+            $secondArgs['label'] = 'Confirm ' . $firstOfType->getLabel();
         }
 
-        $this->getForm()->addField($formControl);
+        if (!isset($secondArgs['placeholder'])) {
+            $secondArgs['placeholder'] = $firstOfType->getPlaceHolderAttribute() . ' again';
+        }
+
+        $this->add($secondArgs['name'], $typeObject->getRepeatableType(), $secondArgs);
+
+        $secondOfType = $this->get($secondArgs['name']);
+
+        $matchConstraint = new Match([
+            'match_field'   => $secondOfType,
+            'error_message' => $firstOfType->getHumanName() . 's do not match',
+        ]);
+
+        $firstOfType->addConstraint($matchConstraint);
+
+        $secondMatchConstraint = clone $matchConstraint;
+        $secondMatchConstraint->setMatchField($firstOfType);
+
+        $secondOfType->addConstraint($secondMatchConstraint);
 
         return $this;
     }
 
-    protected function getObject($type, $args)
+    /**
+     * Returns a new instance of the given form type.
+     *
+     * @param string $type FQCN of the form type or short hand e.g 'text', 'email'.
+     * @param array  $args Arguments to pass to the type class constructor.
+     *
+     * @return AbstractType
+     */
+    protected function getTypeObject($type, $args)
     {
         /** @var AbstractType $object */
         if ($type instanceof AbstractType) {
@@ -48,15 +120,20 @@ class FormBuilder
                 $class = TextType::class;
             }
 
-            $object = new $class($args);
+            $object = new $class($args, $this);
         }
 
         return $object;
     }
 
+    /**
+     * @param string $type
+     *
+     * @return string|null
+     */
     public function getTypeClass($type)
     {
-        if (array_key_exists($type, self::$types)) {
+        if (isset(self::$types[$type])) {
             return self::$types[$type];
         }
 
@@ -75,20 +152,22 @@ class FormBuilder
         return $this->form;
     }
 
+    /**
+     *
+     */
     private function findTypeClasses()
     {
         if (self::$types === null) {
             self::$types = [];
             $namespace   = __NAMESPACE__ . '\\Type';
-            $files       = glob(__DIR__ . '/Type/*Type.php');
 
-            if ($files) {
-                foreach ($files as $file) {
-                    $class = basename($file, '.php');
-                    $type  = basename($file, 'Type.php');
+            $files = new \GlobIterator(__DIR__ . '/Type/*Type.php');
 
-                    self::$types[mb_strtolower($type)] = $namespace . '\\' . $class;
-                }
+            foreach ($files as $file) {
+                $class = basename($file, '.php');
+                $type  = basename($file, 'Type.php');
+
+                self::$types[strtolower($type)] = $namespace . '\\' . $class;
             }
         }
     }

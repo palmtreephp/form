@@ -2,11 +2,19 @@
 
 namespace Palmtree\Form\Constraint;
 
-class Number extends AbstractContstraint implements ConstraintInterface
+class Number extends AbstractConstraint implements ConstraintInterface
 {
-    protected $errorMessage = 'This value must be a number';
+    const ERROR_NOT_NUMERIC = 1;
+    const ERROR_TOO_SMALL = 2;
+    const ERROR_TO_LARGE = 4;
 
+    /** @var string */
+    protected $errorMessage = 'This value must be a number';
+    /** @var int */
+    protected $errorNumber;
+    /** @var int */
     protected $min;
+    /** @var int */
     protected $max;
 
     /**
@@ -15,6 +23,7 @@ class Number extends AbstractContstraint implements ConstraintInterface
     public function validate($input)
     {
         if (!is_numeric($input)) {
+            $this->errorNumber = static::ERROR_NOT_NUMERIC;
             return false;
         }
 
@@ -22,13 +31,15 @@ class Number extends AbstractContstraint implements ConstraintInterface
         $max = $this->getMax();
 
         if (!is_null($min) && $input < $min) {
-            $this->setErrorMessage(sprintf('This value must be greater than %d', $min));
+            $this->setErrorMessage(sprintf('This value must be greater than or equal to %d', $min));
+            $this->errorNumber = static::ERROR_TOO_SMALL;
 
             return false;
         }
 
         if (!is_null($max) && $input > $max) {
             $this->setErrorMessage(sprintf('This value must be less than %d', $max));
+            $this->errorNumber = static::ERROR_TO_LARGE;
 
             return false;
         }
@@ -74,5 +85,13 @@ class Number extends AbstractContstraint implements ConstraintInterface
         $this->max = $max;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getErrorNumber()
+    {
+        return $this->errorNumber;
     }
 }

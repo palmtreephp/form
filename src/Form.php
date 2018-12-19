@@ -15,7 +15,7 @@ class Form
     protected $ajax = false;
     protected $submitted = false;
     protected $method = 'POST';
-    protected $action = '';
+    protected $action;
     protected $encType = '';
     protected $errors = [];
     protected $requestData = [];
@@ -31,24 +31,18 @@ class Form
     {
         $form = new Element('form');
 
-        $form->setAttributes([
-            'method' => $this->method,
-            'id'     => $this->getKey(),
-        ]);
+        $form
+            ->addClass('palmtree-form')
+            ->setAttributes([
+                'method'  => $this->getMethod(),
+                'id'      => $this->getKey(),
+                'action'  => $this->getAction(),
+                'enctype' => $this->getEncType(),
+            ]);
 
         if (!$this->hasHtmlValidation()) {
-            $form->addAttribute('novalidate', 'novalidate');
+            $form->addAttribute('novalidate', true);
         }
-
-        if (!empty($this->encType)) {
-            $form->addAttribute('enctype', $this->encType);
-        }
-
-        if (!empty($this->action)) {
-            $form->addAttribute('action', $this->action);
-        }
-
-        $form->addClass('palmtree-form');
 
         if ($this->isAjax()) {
             $form->addClass('is-ajax');
@@ -61,8 +55,7 @@ class Form
         $this->renderFields($form);
 
         if ($this->hasRequiredField()) {
-            $info = new Element('small');
-            $info->setInnerText('* required field');
+            $info = (new Element('small'))->setInnerText('* required field');
 
             $form->addChild($info);
         }
@@ -86,10 +79,6 @@ class Form
                     $fieldWrapper->addClass('is-required');
                 }
 
-                if (!$field->isValid()) {
-                    $fieldWrapper->addClass('has-danger');
-                }
-
                 $parent = $fieldWrapper;
             }
 
@@ -103,6 +92,9 @@ class Form
         }
     }
 
+    /**
+     * @return bool
+     */
     public function isValid()
     {
         foreach ($this->getFields() as $field) {
@@ -116,14 +108,14 @@ class Form
 
     public function handleRequest()
     {
-        $request = $this->getRequest();
-        if (!isset($request[$this->getKey()])) {
+        $requestData = $this->getRequest();
+        if (!isset($requestData[$this->getKey()])) {
             return;
         }
 
         $this->setSubmitted(true);
 
-        foreach ($request[$this->getKey()] as $key => $value) {
+        foreach ($requestData[$this->getKey()] as $key => $value) {
             $this->requestData[$key] = $value;
         }
 
@@ -132,14 +124,17 @@ class Form
         foreach ($this->getFields() as $field) {
             $key = $field->getName();
 
-            if ($field->isGlobal() && array_key_exists($key, $request)) {
-                $field->setData($request[$key]);
+            if ($field->isGlobal() && array_key_exists($key, $requestData)) {
+                $field->setData($requestData[$key]);
             } elseif (array_key_exists($key, $this->requestData)) {
                 $field->setData($this->requestData[$key]);
             }
         }
     }
 
+    /**
+     * @return array
+     */
     public function getRequest()
     {
         switch ($this->getMethod()) {
@@ -155,6 +150,9 @@ class Form
         return $data;
     }
 
+    /**
+     *
+     */
     protected function addFilesToRequestData()
     {
         if (!isset($_FILES[$this->getKey()])) {
@@ -224,7 +222,7 @@ class Form
     }
 
     /**
-     * @param boolean $submitted
+     * @param bool $submitted
      *
      * @return Form
      */
@@ -324,14 +322,6 @@ class Form
     }
 
     /**
-     * @return AbstractType
-     */
-    public function getField($name)
-    {
-        return (isset($this->fields[$name])) ? $this->fields[$name] : null;
-    }
-
-    /**
      * @param AbstractType[] $fields
      */
     public function setFields($fields)
@@ -339,11 +329,61 @@ class Form
         $this->fields = [];
 
         foreach ($fields as $field) {
-            $this->addField($field);
+            $this->add($field);
         }
     }
 
+    /**
+     * @deprecated Use get() instead
+     *
+     * @param string $name
+     *
+     * @return AbstractType
+     */
+    public function getField($name)
+    {
+        trigger_error(
+            'The ' . __METHOD__ . ' method is deprecated since v0.12 and will be removed in 1.0.',
+            E_USER_DEPRECATED
+        );
+
+        return $this->get($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return AbstractType
+     */
+    public function get($name)
+    {
+        return (isset($this->fields[$name])) ? $this->fields[$name] : null;
+    }
+
+    /**
+     * @deprecated Use add() instead
+     * @param AbstractType $field
+     * @param int|null     $offset
+     *
+     * @return Form
+     */
     public function addField(AbstractType $field, $offset = null)
+    {
+        trigger_error(
+            'The ' . __METHOD__ . ' method is deprecated since v0.12 and will be removed in 1.0.',
+            E_USER_DEPRECATED
+        );
+
+        return $this->add($field, $offset);
+    }
+
+    /**
+     * @param AbstractType $field
+     * @param int|null     $offset
+     *
+     * @return Form
+     */
+    public function add(AbstractType $field, $offset = null)
     {
         $field->setForm($this);
 
@@ -438,5 +478,13 @@ class Form
     public function getFieldWrapper()
     {
         return $this->fieldWrapper;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEncType()
+    {
+        return $this->encType;
     }
 }

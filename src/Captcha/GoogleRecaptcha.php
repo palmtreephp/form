@@ -5,10 +5,6 @@ namespace Palmtree\Form\Captcha;
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 
-/**
- * Class GoogleRecaptcha
- * @author Andy Palmer
- */
 class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
 {
     const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
@@ -55,7 +51,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         $this->secretKey = $secretKey;
 
         if ($ip === true) {
-            $ip = $_SERVER['REMOTE_ADDR'];
+            $ip = @$_SERVER['REMOTE_ADDR'];
         }
 
         $this->ip = $ip;
@@ -85,43 +81,53 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
 
     public function getElements(Element $formControl, Form $form)
     {
-        $controlId    = $formControl->getAttribute('id');
-        $callbackName = sprintf('%s_callback', str_replace('-', '_', $controlId));
+        $controlId = $formControl->getAttribute('id');
 
         $formControl->removeClass('palmtree-form-control');
         $formControl->addAttribute('hidden');
 
-        // Element that actually displays the captcha
-        $element = new Element('div.palmtree-form-control.g-recaptcha');
+        // Placeholder Element that actually displays the captcha
+        $placeholderId = sprintf('%s_placeholder', $controlId);
 
-        $element->addDataAttribute('sitekey', $this->siteKey)
-                ->addDataAttribute('callback', $callbackName);
-
-        $element->addDataAttribute('name', $formControl->getAttribute('data-name'));
+        $placeholder = new Element('div.palmtree-form-control.g-recaptcha');
+        $placeholder->addAttribute('id', $placeholderId);
+        $placeholder->addDataAttribute('name', $formControl->getAttribute('data-name'));
         $formControl->removeAttribute('data-name');
 
-        // Callback function to add the response to our hidden input
-        $callbackFn = new Element('script');
+        $placeholder->addDataAttribute('site_key', $this->siteKey);
+        $placeholder->addDataAttribute('form_control', $controlId);
 
-        $callbackFn->setInnerText(<<<JS
-            var $callbackName = function(response) {
-                jQuery('#$controlId').val(response);
-            };
-JS
-        );
-
-        // Recaptcha API script
-        $script = new Element('script');
-        $script->addAttribute('src', static::SCRIPT_URL);
+        $onloadCallback = sprintf('%s_onload', str_replace('-', '_', $controlId));
+        $placeholder->addDataAttribute('script_url', $this->getScriptSrc($onloadCallback));
+        $placeholder->addDataAttribute('onload', $onloadCallback);
 
         $elements = [
-            $element,
-            $callbackFn,
-            $script,
+            $placeholder,
             $formControl,
         ];
 
         return $elements;
+    }
+
+    /**
+     * Returns the recaptcha API script source with an onload callback.
+     *
+     * @param string $onloadCallbackName
+     * @return string
+     */
+    protected function getScriptSrc($onloadCallbackName)
+    {
+        $url = static::SCRIPT_URL;
+
+        $queryArgs = [];
+        parse_str(parse_url($url, PHP_URL_QUERY), $queryArgs);
+
+        $queryArgs['onload'] = $onloadCallbackName;
+        $queryArgs['render'] = 'explicit';
+
+        $url = sprintf('%s?%s', strtok($url, '?'), http_build_query($queryArgs));
+
+        return $url;
     }
 
     public function getErrorMessage()

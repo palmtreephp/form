@@ -2,10 +2,10 @@
 
 namespace Palmtree\Form\Constraint\File;
 
-use Palmtree\Form\Constraint\AbstractContstraint;
+use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
 
-class Extension extends AbstractContstraint implements ConstraintInterface
+class Extension extends AbstractConstraint implements ConstraintInterface
 {
     protected $extensions = [];
 
