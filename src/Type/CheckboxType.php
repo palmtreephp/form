@@ -104,7 +104,7 @@ class CheckboxType extends AbstractType
 
     public function isValid()
     {
-        if (!$this->getForm()->isSubmitted()) {
+        if (!$this->getForm()->isSubmitted() || !$this->isRequired()) {
             return true;
         }
 
