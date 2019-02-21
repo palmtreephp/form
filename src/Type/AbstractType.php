@@ -254,7 +254,13 @@ abstract class AbstractType
             return $name;
         }
 
-        return sprintf('%s[%s]', $formId, $name);
+        $format = '%s[%s]';
+
+        if ($this->getParent()) {
+            $format .= '[]';
+        }
+
+        return sprintf($format, $formId, $name);
     }
 
     protected function getIdAttribute()
@@ -286,7 +292,7 @@ abstract class AbstractType
     }
 
     /**
-     * @return string
+     * @return string|array|mixed
      */
     public function getData($default = '')
     {
@@ -298,7 +304,7 @@ abstract class AbstractType
     }
 
     /**
-     * @param string $data
+     * @param string|array|mixed $data
      *
      * @return AbstractType
      */

@@ -16,10 +16,15 @@ module.exports = function (grunt) {
                 src: 'src/js/jquery.palmtree-recaptcha.js',
                 dest: 'public/js/jquery.palmtree-recaptcha.js'
             },
+            formCollection: {
+                src: 'src/js/jquery.palmtree-form-collection.js',
+                dest: 'public/js/jquery.palmtree-form-collection.js'
+            },
             pkgd: {
                 src: [
                     'node_modules/jquery-bsalert/dist/jquery.bsAlert.js',
                     'src/js/jquery.palmtree-recaptcha.js',
+                    'src/js/jquery.palmtree-form-collection.js',
                     'src/js/jquery.palmtree-form.js'
                 ],
                 dest: 'public/js/palmtree-form.pkgd.js'
