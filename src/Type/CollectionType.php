@@ -44,7 +44,9 @@ class CollectionType extends AbstractType
                 ->setName($this->getName());
 
             $entryWrapper = new Element('div.palmtree-form-collection-entry');
-            $entryWrapper->addChild($entry->getElement());
+            foreach ($entry->getElements() as $element) {
+                $entryWrapper->addChild($element);
+            }
 
             $entriesWrapper->addChild($entryWrapper);
         }
