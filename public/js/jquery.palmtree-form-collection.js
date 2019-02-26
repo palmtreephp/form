@@ -43,10 +43,7 @@
 
             this.$collection.data('index', this.$collection.find(this.options.entrySelector).length);
 
-            console.log(this.$collection);
-
             this.$collection.find(this.options.entrySelector).each(function () {
-                console.log($(this));
                 _this.addRemoveLink($(this));
             });
 
