@@ -51,7 +51,7 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                _this.removeEntry($(this).closest('.palmtree-form-collection-entry').parent());
+                _this.removeEntry($(this).closest('.palmtree-form-collection-entry'));
             });
 
             this.$addEntryLink = $('<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>');
@@ -113,18 +113,13 @@
 
             this.$collection.triggerHandler('removeEntry.palmtreeFormCollection', [$entry, this]);
 
-            var _this = this;
-            promise.then(function (proceed) {
-                if (proceed) {
-                    $entry.remove();
+            $entry.remove();
 
-                    _this.$collection.triggerHandler('removedEntry.palmtreeFormCollection', [_this]);
+            this.$collection.triggerHandler('removedEntry.palmtreeFormCollection', [this]);
 
-                    if (!_this.hasMaxEntries()) {
-                        _this.$addEntryLink.removeClass('disabled')
-                    }
-                }
-            });
+            if (!this.hasMaxEntries()) {
+                this.$addEntryLink.removeClass('disabled')
+            }
         },
 
         addRemoveLink: function ($entry) {
@@ -172,8 +167,6 @@
             remove: 'Remove'
         },
         minEntries: null,
-        maxEntries: null,
-        removalPromise: false,
-        confirmRemove: false
+        maxEntries: null
     };
 }));
