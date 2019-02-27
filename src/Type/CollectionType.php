@@ -19,39 +19,37 @@ class CollectionType extends AbstractType
 
         $collectionWrapper->addChild($entriesWrapper);
 
-        $entryType = $this->entryType;
         if ($this->getData()) {
             foreach ($this->getData() as $key => $value) {
-                /** @var AbstractType $entry */
-                $entry = new $entryType($this->getEntryOptions());
-                $entry
-                    ->setParent($this)
-                    ->setForm($this->getForm())
-                    ->setData($value)
-                    ->setName($this->getName());
-
-                $entryWrapper = new Element('div.palmtree-form-collection-entry');
-                $entryWrapper->addChild($entry->getElement());
-
-                $entriesWrapper->addChild($entryWrapper);
+                $entriesWrapper->addChild($this->buildEntry($value));
             }
         } else {
-            /** @var AbstractType $entry */
-            $entry = new $entryType($this->getEntryOptions());
-            $entry
-                ->setParent($this)
-                ->setForm($this->getForm())
-                ->setName($this->getName());
-
-            $entryWrapper = new Element('div.palmtree-form-collection-entry');
-            foreach ($entry->getElements() as $element) {
-                $entryWrapper->addChild($element);
-            }
-
-            $entriesWrapper->addChild($entryWrapper);
+            $entriesWrapper->addChild($this->buildEntry());
         }
 
         return $collectionWrapper;
+    }
+
+    private function buildEntry($data = null)
+    {
+        $entryType = $this->entryType;
+        /** @var AbstractType $entry */
+        $entry = new $entryType($this->getEntryOptions());
+        $entry
+            ->setParent($this)
+            ->setForm($this->getForm())
+            ->setName($this->getName());
+
+        if (\func_num_args() > 0) {
+            $entry->setData($data);
+        }
+
+        $entryWrapper = new Element('div.palmtree-form-collection-entry');
+        foreach ($entry->getElements() as $element) {
+            $entryWrapper->addChild($element);
+        }
+
+        return $entryWrapper;
     }
 
     /**
