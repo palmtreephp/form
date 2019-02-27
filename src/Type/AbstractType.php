@@ -44,7 +44,7 @@ abstract class AbstractType
         $this->args = $this->parseArgs($args);
 
         if ($this->isRequired()) {
-            $this->addConstraint(new NotBlank());
+            $this->addConstraint(new NotBlank($this->errorMessage));
         }
     }
 

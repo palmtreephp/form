@@ -11,7 +11,7 @@ class ChoiceType extends AbstractType
     /** @var bool If true, use radio buttons/checkboxes. Otherwise use a select box */
     protected $expanded = false;
     /** @var bool Whether expanded choices should display inline. Has no effect if expanded is false */
-    protected $inline = true;
+    protected $inline  = true;
     protected $choices = [];
     protected $choiceClass;
 
@@ -38,8 +38,9 @@ class ChoiceType extends AbstractType
             $parent = $wrapper;
         } else {
             $select = new SelectType([
-                'name'     => $this->getName(),
-                'multiple' => $this->isMultiple(),
+                'name'        => $this->getName(),
+                'multiple'    => $this->isMultiple(),
+                'placeholder' => $this->args['placeholder'],
             ]);
 
             $select->setForm($this->getForm());
@@ -107,7 +108,6 @@ class ChoiceType extends AbstractType
 
         return $this;
     }
-
 
     /**
      * @return array
