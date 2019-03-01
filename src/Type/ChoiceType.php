@@ -56,42 +56,67 @@ class ChoiceType extends AbstractType
                 $value = $text;
             }
 
-            $args = [
-                'label'  => $text,
-                'value'  => $value,
-                'data'   => $this->getData(),
-                'parent' => $this,
-            ];
+            $optGroup = null;
+            if (is_array($text)) {
+                $optGroup = new Element('optgroup');
+                $optGroup->addAttribute('label', $value);
 
-            $choiceWrapper = null;
-            if ($this->isExpanded()) {
-                $args['name'] = $this->getName();
+                foreach ($text as $subValue => $subChoice) {
+                    $args = [
+                        'label'  => $subChoice,
+                        'value'  => $subValue,
+                        'data'   => $this->getData(),
+                        'parent' => $this,
+                    ];
 
-                $choiceWrapper = new Element($this->isInline() ? 'div.form-check-inline' : 'div.form-check');
-            }
+                    $choice = new OptionType($args);
 
-            if ($this->isMultiple()) {
-                $args['siblings'] = true;
-            }
+                    $choice->setForm($this->getForm());
 
-            /** @var AbstractType $choice */
-            $choice = new $choiceClass($args);
-
-            $choice->setForm($this->getForm());
-
-            foreach ($choice->getElements() as $child) {
-                // Don't add child feedback as we already display our own.
-                if (!$child->hasClass('invalid-feedback')) {
-                    if ($choiceWrapper) {
-                        $choiceWrapper->addChild($child);
-                    } else {
-                        $parent->addChild($child);
+                    foreach ($choice->getElements() as $element) {
+                        $optGroup->addChild($element);
                     }
                 }
-            }
 
-            if ($choiceWrapper) {
-                $parent->addChild($choiceWrapper);
+                $parent->addChild($optGroup);
+            } else {
+                $args = [
+                    'label'  => $text,
+                    'value'  => $value,
+                    'data'   => $this->getData(),
+                    'parent' => $this,
+                ];
+
+                $choiceWrapper = null;
+                if ($this->isExpanded()) {
+                    $args['name'] = $this->getName();
+
+                    $choiceWrapper = new Element($this->isInline() ? 'div.form-check-inline' : 'div.form-check');
+                }
+
+                if ($this->isMultiple()) {
+                    $args['siblings'] = true;
+                }
+
+                /** @var AbstractType $choice */
+                $choice = new $choiceClass($args);
+
+                $choice->setForm($this->getForm());
+
+                foreach ($choice->getElements() as $child) {
+                    // Don't add child feedback as we already display our own.
+                    if (!$child->hasClass('invalid-feedback')) {
+                        if ($choiceWrapper) {
+                            $choiceWrapper->addChild($child);
+                        } else {
+                            $parent->addChild($child);
+                        }
+                    }
+                }
+
+                if ($choiceWrapper) {
+                    $parent->addChild($choiceWrapper);
+                }
             }
         }
 
