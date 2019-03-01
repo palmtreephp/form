@@ -69,7 +69,8 @@ class CheckboxType extends AbstractType
         }
 
         if (!$this->isValid()) {
-            $error = new Element('div.invalid-feedback.small');
+            $error = new Element($this->getForm()->getInvalidElement());
+            $error->addClass('palmtree-invalid-feedback');
             $error->setInnerText($this->getErrorMessage());
             $elements[] = $error;
         }

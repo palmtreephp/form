@@ -105,7 +105,7 @@ class ChoiceType extends AbstractType
 
                 foreach ($choice->getElements() as $child) {
                     // Don't add child feedback as we already display our own.
-                    if (!$child->hasClass('invalid-feedback')) {
+                    if (!$child->hasClass('palmtree-invalid-feedback')) {
                         if ($choiceWrapper) {
                             $choiceWrapper->addChild($child);
                         } else {

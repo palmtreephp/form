@@ -20,6 +20,7 @@ class Form
     protected $errors = [];
     protected $requestData = [];
     protected $fieldWrapper = 'div.form-group';
+    protected $invalidElement = 'div.invalid-feedback.small';
     protected $htmlValidation = true;
 
     public function __construct($args = [])
@@ -486,5 +487,21 @@ class Form
     public function getEncType()
     {
         return $this->encType;
+    }
+
+    /**
+     * @param string $invalidElement
+     */
+    public function setInvalidElement($invalidElement)
+    {
+        $this->invalidElement = $invalidElement;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInvalidElement()
+    {
+        return $this->invalidElement;
     }
 }

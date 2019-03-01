@@ -38,7 +38,7 @@
             $formControls.each(function () {
                 var $formControl = $(this),
                     $formGroup   = $(this).closest('.form-group'),
-                    $feedback    = $formGroup.find('.invalid-feedback');
+                    $feedback    = $formGroup.find('.palmtree-invalid-feedback');
 
                 // Remove all states first.
                 for (var i = 0; i < _this.options.controlStates.length; i++) {
@@ -137,7 +137,7 @@
                 _this.setControlStates($formControls, errors);
 
                 var $first = $formControls.filter('.is-invalid').first();
-                $first.focus().closest('.form-group').find('.invalid-feedback').hide().fadeIn();
+                $first.focus().closest('.form-group').find('.palmtree-invalid-feedback').hide().fadeIn();
 
                 if (response.data.message) {
                     _this.showAlert(response.data.message);
@@ -174,7 +174,7 @@
                 var $formControl = $(this),
                     errorKey     = $formControl.data('name'),
                     $formGroup   = $formControl.closest('.form-group'),
-                    $feedback    = $formGroup.find('.invalid-feedback');
+                    $feedback    = $formGroup.find('.palmtree-invalid-feedback');
 
                 if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
