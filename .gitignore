@@ -1,4 +1,4 @@
 /vendor/
 /composer.lock
-/package-lock.json
 /node_modules
+/.php_cs.cache

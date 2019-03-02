@@ -1,0 +1,28 @@
+<?php
+
+$config = PhpCsFixer\Config::create();
+$config
+    ->setRules([
+        '@Symfony'                           => true,
+        '@Symfony:risky'                     => true,
+        'array_syntax'                       => ['syntax' => 'short'],
+        'concat_space'                       => ['spacing' => 'one'],
+        'fopen_flags'                        => false,
+        'ordered_imports'                    => true,
+        'protected_to_private'               => false,
+        'binary_operator_spaces'             => ['align_double_arrow' => true, 'align_equals' => true],
+        'yoda_style'                         => false,
+        'phpdoc_inline_tag'                  => false,
+        'phpdoc_annotation_without_dot'      => false,
+        'cast_spaces'                        => ['space' => 'none'],
+        'native_function_invocation'         => true,
+    ])
+    ->setCacheFile('.php_cs.cache')
+    ->setRiskyAllowed(true)
+    ->setFinder(
+        PhpCsFixer\Finder::create()
+                         ->in(__DIR__ . '/src')
+                         ->append([__FILE__])
+    );
+
+return $config;
