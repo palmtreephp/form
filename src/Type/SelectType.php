@@ -18,19 +18,17 @@ class SelectType extends AbstractType
 
         if ($this->isMultiple()) {
             $element->addAttribute('multiple');
-        }
+        } else {
+            if ($placeholder = $element->getAttribute('placeholder')) {
+                $element->removeAttribute('placeholder');
 
-        $placeholder = $element->getAttribute('placeholder');
+                $option = new Element('option');
+                $option
+                    ->setInnerText($placeholder)
+                    ->addAttribute('value', '');
 
-        if ($placeholder) {
-            $element->removeAttribute('placeholder');
-
-            $option = new Element('option');
-            $option
-                ->setInnerText($placeholder)
-                ->addAttribute('value', '');
-
-            $element->addChild($option);
+                $element->addChild($option);
+            }
         }
 
         return $element;

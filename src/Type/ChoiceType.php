@@ -11,7 +11,7 @@ class ChoiceType extends AbstractType
     /** @var bool If true, use radio buttons/checkboxes. Otherwise use a select box */
     protected $expanded = false;
     /** @var bool Whether expanded choices should display inline. Has no effect if expanded is false */
-    protected $inline  = true;
+    protected $inline = true;
     protected $choices = [];
     protected $choiceClass;
 
@@ -50,24 +50,23 @@ class ChoiceType extends AbstractType
 
         $choiceClass = $this->choiceClass;
 
-        foreach ($this->getChoices() as $value => $text) {
-            if (\is_int($value)) {
-                // Assume it's an array without keys if $value is an int
-                $value = $text;
+        foreach ($this->getChoices() as $value => $label) {
+            $args = [
+                'data'   => $this->getData(),
+                'parent' => $this,
+            ];
+
+            if ($this->isMultiple()) {
+                $args['siblings'] = true;
             }
 
-            $optGroup = null;
-            if (\is_array($text)) {
+            if (\is_array($label)) {
                 $optGroup = new Element('optgroup');
                 $optGroup->addAttribute('label', $value);
 
-                foreach ($text as $subValue => $subChoice) {
-                    $args = [
-                        'label'  => $subChoice,
-                        'value'  => $subValue,
-                        'data'   => $this->getData(),
-                        'parent' => $this,
-                    ];
+                foreach ($label as $subValue => $subLabel) {
+                    $args['label'] = $subLabel;
+                    $args['value'] = $subValue;
 
                     $choice = new OptionType($args);
 
@@ -80,22 +79,14 @@ class ChoiceType extends AbstractType
 
                 $parent->addChild($optGroup);
             } else {
-                $args = [
-                    'label'  => $text,
-                    'value'  => $value,
-                    'data'   => $this->getData(),
-                    'parent' => $this,
-                ];
+                $args['label'] = $label;
+                $args['value'] = $value;
 
                 $choiceWrapper = null;
                 if ($this->isExpanded()) {
                     $args['name'] = $this->getName();
 
                     $choiceWrapper = new Element($this->isInline() ? 'div.form-check-inline' : 'div.form-check');
-                }
-
-                if ($this->isMultiple()) {
-                    $args['siblings'] = true;
                 }
 
                 /** @var AbstractType $choice */
