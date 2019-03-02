@@ -311,12 +311,9 @@ class Form
             return $this->fields;
         }
 
-        $fields = \array_filter($this->fields, function ($field) use ($args) {
-            /* @var AbstractType $field */
+        return \array_filter($this->fields, function (AbstractType $field) use ($args) {
             return $field->filter($args);
         });
-
-        return $fields;
     }
 
     /**
@@ -338,7 +335,7 @@ class Form
      */
     public function get($name)
     {
-        return (isset($this->fields[$name])) ? $this->fields[$name] : null;
+        return isset($this->fields[$name]) ? $this->fields[$name] : null;
     }
 
     /**
