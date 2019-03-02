@@ -51,13 +51,13 @@ class ChoiceType extends AbstractType
         $choiceClass = $this->choiceClass;
 
         foreach ($this->getChoices() as $value => $text) {
-            if (is_int($value)) {
+            if (\is_int($value)) {
                 // Assume it's an array without keys if $value is an int
                 $value = $text;
             }
 
             $optGroup = null;
-            if (is_array($text)) {
+            if (\is_array($text)) {
                 $optGroup = new Element('optgroup');
                 $optGroup->addAttribute('label', $value);
 
@@ -175,7 +175,7 @@ class ChoiceType extends AbstractType
     }
 
     /**
-     * Returns whether this choice type is expanded i.e not a select box
+     * Returns whether this choice type is expanded i.e not a select box.
      *
      * @return bool
      */

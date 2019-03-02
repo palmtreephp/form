@@ -2,13 +2,11 @@
 
 namespace Palmtree\Form\Type;
 
-use Palmtree\Html\Element;
-
 class ButtonType extends AbstractType
 {
-    protected $tag = 'button';
-    protected $type = 'button';
-    protected $required = false;
+    protected $tag       = 'button';
+    protected $type      = 'button';
+    protected $required  = false;
     protected $userInput = false;
 
     public static $defaultArgs = [

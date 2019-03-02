@@ -5,8 +5,8 @@ namespace Palmtree\Form\Constraint;
 class Number extends AbstractConstraint implements ConstraintInterface
 {
     const ERROR_NOT_NUMERIC = 1;
-    const ERROR_TOO_SMALL = 2;
-    const ERROR_TO_LARGE = 4;
+    const ERROR_TOO_SMALL   = 2;
+    const ERROR_TO_LARGE    = 4;
 
     /** @var string */
     protected $errorMessage = 'This value must be a number';
@@ -22,23 +22,24 @@ class Number extends AbstractConstraint implements ConstraintInterface
      */
     public function validate($input)
     {
-        if (!is_numeric($input)) {
+        if (!\is_numeric($input)) {
             $this->errorNumber = static::ERROR_NOT_NUMERIC;
+
             return false;
         }
 
         $min = $this->getMin();
         $max = $this->getMax();
 
-        if (!is_null($min) && $input < $min) {
-            $this->setErrorMessage(sprintf('This value must be greater than or equal to %d', $min));
+        if (null !== $min && $input < $min) {
+            $this->setErrorMessage(\sprintf('This value must be greater than or equal to %d', $min));
             $this->errorNumber = static::ERROR_TOO_SMALL;
 
             return false;
         }
 
-        if (!is_null($max) && $input > $max) {
-            $this->setErrorMessage(sprintf('This value must be less than %d', $max));
+        if (null !== $max && $input > $max) {
+            $this->setErrorMessage(\sprintf('This value must be less than %d', $max));
             $this->errorNumber = static::ERROR_TO_LARGE;
 
             return false;

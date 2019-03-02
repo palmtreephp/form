@@ -16,13 +16,13 @@ class Length extends AbstractConstraint implements ConstraintInterface
 
     public function validate($input)
     {
-        if (!is_null($this->getMin()) && strlen($input) < $this->getMin()) {
+        if (null !== $this->getMin() && \strlen($input) < $this->getMin()) {
             $this->setErrorCode(static::ERROR_TOO_SMALL);
 
             return false;
         }
 
-        if (!is_null($this->getMax()) && strlen($input) > $this->getMax()) {
+        if (null !== $this->getMax() && \strlen($input) > $this->getMax()) {
             $this->setErrorCode(static::ERROR_TOO_LARGE);
 
             return false;

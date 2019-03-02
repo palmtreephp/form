@@ -17,11 +17,11 @@ abstract class AbstractType
     protected $name;
     protected $data;
     protected $label;
-    protected $userInput = true;
-    protected $global = false;
-    protected $required = true;
+    protected $userInput    = true;
+    protected $global       = false;
+    protected $required     = true;
     protected $errorMessage = 'Please fill in this field';
-    /** @var Form  */
+    /** @var Form */
     protected $form;
     /** @var AbstractType|null */
     protected $parent;
@@ -60,7 +60,7 @@ abstract class AbstractType
     /**
      * @param string $type
      *
-     * @return AbstractType
+     * @return self
      */
     public function setType($type)
     {
@@ -72,7 +72,7 @@ abstract class AbstractType
     /**
      * @param mixed $name
      *
-     * @return AbstractType
+     * @return self
      */
     public function setName($name)
     {
@@ -84,7 +84,7 @@ abstract class AbstractType
     /**
      * @param mixed $label
      *
-     * @return AbstractType
+     * @return self
      */
     public function setLabel($label)
     {
@@ -261,7 +261,7 @@ abstract class AbstractType
             $format .= '[]';
         }
 
-        return sprintf($format, $formId, $name);
+        return \sprintf($format, $formId, $name);
     }
 
     protected function getIdAttribute()
@@ -284,8 +284,8 @@ abstract class AbstractType
         $placeholder = '';
 
         if ($this->args['placeholder'] === true) {
-            $placeholder = 'Enter your ' . strtolower($this->getHumanName());
-        } elseif (is_string($this->args['placeholder'])) {
+            $placeholder = 'Enter your ' . \strtolower($this->getHumanName());
+        } elseif (\is_string($this->args['placeholder'])) {
             $placeholder = $this->args['placeholder'];
         }
 
@@ -307,7 +307,7 @@ abstract class AbstractType
     /**
      * @param string|array|mixed $data
      *
-     * @return AbstractType
+     * @return self
      */
     public function setData($data)
     {
@@ -327,7 +327,7 @@ abstract class AbstractType
     /**
      * @param mixed $errorMessage
      *
-     * @return AbstractType
+     * @return self
      */
     public function setErrorMessage($errorMessage)
     {
@@ -339,7 +339,7 @@ abstract class AbstractType
     /**
      * @param string $tag
      *
-     * @return AbstractType
+     * @return self
      */
     public function setTag($tag)
     {
@@ -370,9 +370,9 @@ abstract class AbstractType
     }
 
     /**
-     * @param boolean $required
+     * @param bool $required
      *
-     * @return AbstractType
+     * @return self
      */
     public function setRequired($required)
     {
@@ -382,7 +382,7 @@ abstract class AbstractType
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isRequired()
     {
@@ -400,7 +400,7 @@ abstract class AbstractType
     /**
      * @param Form $form
      *
-     * @return AbstractType
+     * @return self
      */
     public function setForm(Form $form)
     {
@@ -410,7 +410,7 @@ abstract class AbstractType
     }
 
     /**
-     * @return AbstractType|null
+     * @return self|null
      */
     public function getParent()
     {
@@ -418,11 +418,11 @@ abstract class AbstractType
     }
 
     /**
-     * @param AbstractType $parent
+     * @param self $parent
      *
-     * @return AbstractType
+     * @return self
      */
-    public function setParent(AbstractType $parent)
+    public function setParent(self $parent)
     {
         $this->parent = $parent;
 
@@ -430,9 +430,9 @@ abstract class AbstractType
     }
 
     /**
-     * @param boolean $global
+     * @param bool $global
      *
-     * @return AbstractType
+     * @return self
      */
     public function setGlobal($global)
     {
@@ -442,7 +442,7 @@ abstract class AbstractType
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isGlobal()
     {
@@ -450,7 +450,7 @@ abstract class AbstractType
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isUserInput()
     {
@@ -458,9 +458,9 @@ abstract class AbstractType
     }
 
     /**
-     * @param boolean $userInput
+     * @param bool $userInput
      *
-     * @return AbstractType
+     * @return self
      */
     public function setUserInput($userInput)
     {
@@ -472,7 +472,7 @@ abstract class AbstractType
     public function filter(array $args = [])
     {
         foreach ($args as $key => $value) {
-            if (property_exists($this, $key)) {
+            if (\property_exists($this, $key)) {
                 if ($this->$key !== $value) {
                     return false;
                 }
@@ -485,7 +485,7 @@ abstract class AbstractType
     /**
      * @param ConstraintInterface $constraint
      *
-     * @return AbstractType
+     * @return self
      */
     public function addConstraint(ConstraintInterface $constraint)
     {
@@ -497,7 +497,7 @@ abstract class AbstractType
     /**
      * @param ConstraintInterface[] $constraints
      *
-     * @return AbstractType
+     * @return self
      */
     public function setConstraints($constraints)
     {

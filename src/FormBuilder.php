@@ -34,7 +34,7 @@ class FormBuilder
         } else {
             $formControl = $this->getTypeObject($type, $args);
 
-            if (!array_key_exists('name', $args)) {
+            if (!\array_key_exists('name', $args)) {
                 $formControl->setName($name);
             }
 
@@ -110,13 +110,13 @@ class FormBuilder
      */
     protected function getTypeObject($type, $args)
     {
-        /** @var AbstractType $object */
+        /* @var AbstractType $object */
         if ($type instanceof AbstractType) {
             $object = $type;
         } else {
             $class = $this->getTypeClass($type);
 
-            if (!class_exists($class)) {
+            if (!\class_exists($class)) {
                 $class = TextType::class;
             }
 
@@ -137,7 +137,7 @@ class FormBuilder
             return self::$types[$type];
         }
 
-        if (class_exists($type)) {
+        if (\class_exists($type)) {
             return $type;
         }
 
@@ -152,9 +152,6 @@ class FormBuilder
         return $this->form;
     }
 
-    /**
-     *
-     */
     private function findTypeClasses()
     {
         if (self::$types === null) {
@@ -164,12 +161,11 @@ class FormBuilder
             $files = new \GlobIterator(__DIR__ . '/Type/*Type.php');
 
             foreach ($files as $file) {
-                $class = basename($file, '.php');
-                $type  = basename($file, 'Type.php');
+                $class = \basename($file, '.php');
+                $type  = \basename($file, 'Type.php');
 
-                self::$types[strtolower($type)] = $namespace . '\\' . $class;
+                self::$types[\strtolower($type)] = $namespace . '\\' . $class;
             }
         }
     }
-
 }

@@ -11,7 +11,7 @@ abstract class AbstractCaptcha
 
     public function getSlug()
     {
-        return strtolower(str_replace(' ', '_', $this->getName()));
+        return \strtolower(\str_replace(' ', '_', $this->getName()));
     }
 
     public function getErrorMessage()

@@ -11,15 +11,15 @@ class Form
 {
     protected $key;
     /** @var AbstractType[] */
-    protected $fields = [];
-    protected $ajax = false;
+    protected $fields    = [];
+    protected $ajax      = false;
     protected $submitted = false;
-    protected $method = 'POST';
+    protected $method    = 'POST';
     protected $action;
-    protected $encType = '';
-    protected $errors = [];
-    protected $requestData = [];
-    protected $fieldWrapper = 'div.form-group';
+    protected $encType        = '';
+    protected $errors         = [];
+    protected $requestData    = [];
+    protected $fieldWrapper   = 'div.form-group';
     protected $invalidElement = 'div.invalid-feedback.small';
     protected $htmlValidation = true;
 
@@ -125,9 +125,9 @@ class Form
         foreach ($this->getFields() as $field) {
             $key = $field->getName();
 
-            if ($field->isGlobal() && array_key_exists($key, $requestData)) {
+            if ($field->isGlobal() && \array_key_exists($key, $requestData)) {
                 $field->setData($requestData[$key]);
-            } elseif (array_key_exists($key, $this->requestData)) {
+            } elseif (\array_key_exists($key, $this->requestData)) {
                 $field->setData($this->requestData[$key]);
             }
         }
@@ -151,9 +151,6 @@ class Form
         return $data;
     }
 
-    /**
-     *
-     */
     protected function addFilesToRequestData()
     {
         if (!isset($_FILES[$this->getKey()])) {
@@ -188,7 +185,7 @@ class Form
     }
 
     /**
-     * @param boolean $ajax
+     * @param bool $ajax
      *
      * @return Form
      */
@@ -200,7 +197,7 @@ class Form
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isAjax()
     {
@@ -211,7 +208,7 @@ class Form
     {
         $key = 'HTTP_X_REQUESTED_WITH';
 
-        return isset($_SERVER[$key]) && strtolower($_SERVER[$key]) === 'xmlhttprequest';
+        return isset($_SERVER[$key]) && \strtolower($_SERVER[$key]) === 'xmlhttprequest';
     }
 
     /**
@@ -241,7 +238,7 @@ class Form
      */
     public function setMethod($method)
     {
-        $this->method = strtoupper($method);
+        $this->method = \strtoupper($method);
 
         return $this;
     }
@@ -314,8 +311,8 @@ class Form
             return $this->fields;
         }
 
-        $fields = array_filter($this->fields, function ($field) use ($args) {
-            /** @var AbstractType $field */
+        $fields = \array_filter($this->fields, function ($field) use ($args) {
+            /* @var AbstractType $field */
             return $field->filter($args);
         });
 
@@ -343,7 +340,7 @@ class Form
      */
     public function getField($name)
     {
-        trigger_error(
+        @\trigger_error(
             'The ' . __METHOD__ . ' method is deprecated since v0.12 and will be removed in 1.0.',
             E_USER_DEPRECATED
         );
@@ -363,6 +360,7 @@ class Form
 
     /**
      * @deprecated Use add() instead
+     *
      * @param AbstractType $field
      * @param int|null     $offset
      *
@@ -370,7 +368,7 @@ class Form
      */
     public function addField(AbstractType $field, $offset = null)
     {
-        trigger_error(
+        @\trigger_error(
             'The ' . __METHOD__ . ' method is deprecated since v0.12 and will be removed in 1.0.',
             E_USER_DEPRECATED
         );
@@ -392,15 +390,15 @@ class Form
             $this->fields[$field->getName()] = $field;
         } else {
             if ($offset < 0) {
-                $totalFields = count($this->fields);
+                $totalFields = \count($this->fields);
                 $offset      = $totalFields - $offset + 1;
             }
 
             // Add the field at the specified offset
-            $this->fields = array_merge(
-                array_slice($this->fields, 0, $offset, true),
+            $this->fields = \array_merge(
+                \array_slice($this->fields, 0, $offset, true),
                 [$field->getName() => $field],
-                array_slice($this->fields, $offset, null, true)
+                \array_slice($this->fields, $offset, null, true)
             );
         }
 
@@ -408,7 +406,7 @@ class Form
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function hasHtmlValidation()
     {
@@ -416,7 +414,7 @@ class Form
     }
 
     /**
-     * @param boolean $htmlValidation
+     * @param bool $htmlValidation
      *
      * @return Form
      */
