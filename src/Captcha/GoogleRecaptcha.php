@@ -87,7 +87,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         $formControl->addAttribute('hidden');
 
         // Placeholder Element that actually displays the captcha
-        $placeholderId = sprintf('%s_placeholder', $controlId);
+        $placeholderId = \sprintf('%s_placeholder', $controlId);
 
         $placeholder = new Element('div.palmtree-form-control.g-recaptcha');
         $placeholder->addAttribute('id', $placeholderId);
@@ -97,7 +97,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         $placeholder->addDataAttribute('site_key', $this->siteKey);
         $placeholder->addDataAttribute('form_control', $controlId);
 
-        $onloadCallback = sprintf('%s_onload', str_replace('-', '_', $controlId));
+        $onloadCallback = \sprintf('%s_onload', \str_replace('-', '_', $controlId));
         $placeholder->addDataAttribute('script_url', $this->getScriptSrc($onloadCallback));
         $placeholder->addDataAttribute('onload', $onloadCallback);
 
@@ -113,6 +113,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
      * Returns the recaptcha API script source with an onload callback.
      *
      * @param string $onloadCallbackName
+     *
      * @return string
      */
     protected function getScriptSrc($onloadCallbackName)
@@ -120,12 +121,12 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         $url = static::SCRIPT_URL;
 
         $queryArgs = [];
-        parse_str(parse_url($url, PHP_URL_QUERY), $queryArgs);
+        \parse_str(\parse_url($url, PHP_URL_QUERY), $queryArgs);
 
         $queryArgs['onload'] = $onloadCallbackName;
         $queryArgs['render'] = 'explicit';
 
-        $url = sprintf('%s?%s', strtok($url, '?'), http_build_query($queryArgs));
+        $url = \sprintf('%s?%s', \strtok($url, '?'), \http_build_query($queryArgs));
 
         return $url;
     }
@@ -151,21 +152,21 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
             $postFields['remoteip'] = $this->ip;
         }
 
-        $handle = curl_init(self::VERIFY_URL);
+        $handle = \curl_init(self::VERIFY_URL);
 
-        curl_setopt($handle, CURLOPT_POST, count($postFields));
-        curl_setopt($handle, CURLOPT_POSTFIELDS, http_build_query($postFields));
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        \curl_setopt($handle, CURLOPT_POST, \count($postFields));
+        \curl_setopt($handle, CURLOPT_POSTFIELDS, \http_build_query($postFields));
+        \curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
-        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, 0);
+        \curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, 0);
+        \curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, 0);
 
-        $result = curl_exec($handle);
+        $result = \curl_exec($handle);
 
-        if (!$result || !is_string($result)) {
+        if (!$result || !\is_string($result)) {
             return [];
         }
 
-        return json_decode($result, true);
+        return \json_decode($result, true);
     }
 }

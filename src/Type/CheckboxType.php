@@ -7,7 +7,7 @@ use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 class CheckboxType extends AbstractType
 {
-    protected $type = 'checkbox';
+    protected $type  = 'checkbox';
     protected $value = '1';
 
     protected $siblings = false;
@@ -24,8 +24,8 @@ class CheckboxType extends AbstractType
         $data    = $this->getData();
         $compare = true;
 
-        if (is_array($data)) {
-            $key = array_search($this->getValue(), $data);
+        if (\is_array($data)) {
+            $key = \array_search($this->getValue(), $data);
 
             if ($key !== false) {
                 $data = $data[$key];
@@ -34,7 +34,7 @@ class CheckboxType extends AbstractType
             }
         }
 
-        if ($compare && strcmp($data, $this->getValue()) === 0) {
+        if ($compare && \strcmp($data, $this->getValue()) === 0) {
             $element->addAttribute('checked');
         }
 
@@ -93,7 +93,7 @@ class CheckboxType extends AbstractType
             $format .= '[]';
         }
 
-        return sprintf($format, $formId, $name);
+        return \sprintf($format, $formId, $name);
     }
 
     public function isValid()
@@ -102,7 +102,7 @@ class CheckboxType extends AbstractType
             return true;
         }
 
-        return $this->getData() && filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN);
+        return $this->getData() && \filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

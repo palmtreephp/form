@@ -17,11 +17,11 @@ class NumberType extends AbstractType
                 $min = $constraint->getMin();
                 $max = $constraint->getMax();
 
-                if (!is_null($min)) {
+                if (null !== $min) {
                     $element->addAttribute('min', $min);
                 }
 
-                if (!is_null($max)) {
+                if (null !== $max) {
                     $element->addAttribute('max', $max);
                 }
             }

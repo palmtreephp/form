@@ -57,10 +57,12 @@ $builder
         'multiple'      => true,
         'error_message' => 'Please select your age group',
         'choices'       => [
-            'Football',
-            'Rugby',
-            'Golf',
-            'Cricket',
+            'Sport' => [
+                'football' => 'Football',
+                'rugby'    => 'Rugby',
+                'golf'     => 'Golf',
+                'cricket'  => 'Cricket',
+            ],
         ],
     ]);
 
@@ -85,7 +87,7 @@ if ($form->isSubmitted() && Form::isAjaxRequest()) {
 
 $view = template('view.php', [
     'form'    => $form,
-    'success' => (! empty($_GET['success'])),
+    'success' => (!empty($_GET['success'])),
 ]);
 
 echo $view;

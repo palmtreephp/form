@@ -1,24 +1,32 @@
 {
-  "name": "palmtree/form",
-  "description": "Form component for Palmtree PHP",
-  "type": "library",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Andy Palmer",
-      "email": "andy@andypalmer.me",
-      "homepage": "https://andypalmer.me"
+    "name": "palmtree/form",
+    "description": "Form component for Palmtree PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andy Palmer",
+            "email": "andy@andypalmer.me",
+            "homepage": "https://andypalmer.me"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "palmtree/argparser": "~1.2",
+        "palmtree/nameconverter": "~1.0",
+        "palmtree/html": "^1.0.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Palmtree\\Form\\": "src"
+        }
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14"
+    },
+    "scripts": {
+        "sniff": "vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff --diff-format=udiff",
+        "fix": "vendor/bin/php-cs-fixer fix --diff",
+        "lint": "find -L .  -path ./vendor -prune -o -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l"
     }
-  ],
-  "require": {
-    "php": ">=5.6",
-    "palmtree/argparser": "~1.2",
-    "palmtree/nameconverter": "~1.0",
-    "palmtree/html": "^1.0.4"
-  },
-  "autoload": {
-    "psr-4": {
-      "Palmtree\\Form\\": "src"
-    }
-  }
 }

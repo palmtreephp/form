@@ -10,9 +10,9 @@ use Palmtree\Form\Type\TextType;
 class FormBuilder
 {
     /** @var Form */
-    protected $form;
+    private $form;
     /** @var array */
-    public static $types;
+    private $types;
 
     public function __construct(array $args = [])
     {
@@ -31,21 +31,21 @@ class FormBuilder
     {
         if ($this->getTypeClass($type) === RepeatedType::class || $type instanceof RepeatedType) {
             return $this->addRepeatedType($name, $type, $args);
-        } else {
-            $formControl = $this->getTypeObject($type, $args);
-
-            if (!array_key_exists('name', $args)) {
-                $formControl->setName($name);
-            }
-
-            if ($formControl->getLabel() === null) {
-                $formControl->setLabel($formControl->getHumanName());
-            }
-
-            $this->getForm()->add($formControl);
-
-            return $this;
         }
+
+        $formControl = $this->getTypeObject($type, $args);
+
+        if (!isset($args['name'])) {
+            $formControl->setName($name);
+        }
+
+        if ($formControl->getLabel() === null) {
+            $formControl->setLabel($formControl->getHumanName());
+        }
+
+        $this->getForm()->add($formControl);
+
+        return $this;
     }
 
     /**
@@ -58,7 +58,33 @@ class FormBuilder
         return $this->getForm()->get($name);
     }
 
-    protected function addRepeatedType($name, $type, $args)
+    /**
+     * @param string $type
+     *
+     * @return string|null
+     */
+    public function getTypeClass($type)
+    {
+        if (isset($this->types[$type])) {
+            return $this->types[$type];
+        }
+
+        if (\class_exists($type)) {
+            return $type;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Form
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    private function addRepeatedType($name, $type, $args)
     {
         /** @var RepeatedType $typeObject */
         $typeObject = $this->getTypeObject($type, $args);
@@ -108,15 +134,15 @@ class FormBuilder
      *
      * @return AbstractType
      */
-    protected function getTypeObject($type, $args)
+    private function getTypeObject($type, $args)
     {
-        /** @var AbstractType $object */
+        /* @var AbstractType $object */
         if ($type instanceof AbstractType) {
             $object = $type;
         } else {
             $class = $this->getTypeClass($type);
 
-            if (!class_exists($class)) {
+            if (!\class_exists($class)) {
                 $class = TextType::class;
             }
 
@@ -126,50 +152,20 @@ class FormBuilder
         return $object;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string|null
-     */
-    public function getTypeClass($type)
-    {
-        if (isset(self::$types[$type])) {
-            return self::$types[$type];
-        }
-
-        if (class_exists($type)) {
-            return $type;
-        }
-
-        return null;
-    }
-
-    /**
-     * @return Form
-     */
-    public function getForm()
-    {
-        return $this->form;
-    }
-
-    /**
-     *
-     */
     private function findTypeClasses()
     {
-        if (self::$types === null) {
-            self::$types = [];
+        if ($this->types === null) {
+            $this->types = [];
             $namespace   = __NAMESPACE__ . '\\Type';
 
             $files = new \GlobIterator(__DIR__ . '/Type/*Type.php');
 
             foreach ($files as $file) {
-                $class = basename($file, '.php');
-                $type  = basename($file, 'Type.php');
+                $class = \basename($file, '.php');
+                $type  = \basename($file, 'Type.php');
 
-                self::$types[strtolower($type)] = $namespace . '\\' . $class;
+                $this->types[\strtolower($type)] = $namespace . '\\' . $class;
             }
         }
     }
-
 }

@@ -103,9 +103,9 @@ class CollectionType extends AbstractType
     private static function normalizeFilesArray($data)
     {
         $normalized = [];
-        $keys       = array_keys($data);
+        $keys       = \array_keys($data);
 
-        for ($i = 0, $total = count($data['name']); $i < $total; $i++) {
+        for ($i = 0, $total = \count($data['name']); $i < $total; ++$i) {
             foreach ($keys as $key) {
                 $normalized[$i][$key] = $data[$key][$i];
             }

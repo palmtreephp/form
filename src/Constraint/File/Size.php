@@ -39,9 +39,9 @@ class Size extends AbstractConstraint implements ConstraintInterface
         $errorNo = $this->constraint->getErrorNumber();
 
         if ($errorNo === Constraint\Number::ERROR_TOO_SMALL) {
-            $this->setErrorMessage(sprintf('File size must be greater than %d bytes', $this->constraint->getMin()));
+            $this->setErrorMessage(\sprintf('File size must be greater than %d bytes', $this->constraint->getMin()));
         } elseif ($errorNo === Constraint\Number::ERROR_TO_LARGE) {
-            $this->setErrorMessage(sprintf('File size must be less than %d bytes', $this->constraint->getMax()));
+            $this->setErrorMessage(\sprintf('File size must be less than %d bytes', $this->constraint->getMax()));
         }
 
         return false;

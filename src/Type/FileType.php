@@ -6,7 +6,7 @@ use Palmtree\Html\Element;
 
 class FileType extends AbstractType
 {
-    private $custom = true;
+    private $custom     = true;
     private $browseText = 'Browse';
 
     protected $type = 'file';
