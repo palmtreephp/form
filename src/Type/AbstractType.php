@@ -165,14 +165,11 @@ abstract class AbstractType
         $element     = new Element($args);
 
         $attributes = [
-            'type' => $this->getType(),
-            'id'   => $this->getIdAttribute(),
-            'name' => $this->getNameAttribute(),
+            'type'  => $this->getType(),
+            'id'    => $this->getIdAttribute(),
+            'name'  => $this->getNameAttribute(),
+            'value' => $this->getData(),
         ];
-
-        if ($this->getType() !== 'file') {
-            $attributes['value'] = $this->getData();
-        }
 
         if ($attributes['type'] === 'hidden') {
             unset($attributes['placeholder']);

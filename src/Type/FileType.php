@@ -24,6 +24,8 @@ class FileType extends AbstractType
     {
         $element = parent::getElement();
 
+        $element->removeAttribute('value');
+
         if ($this->isCustom()) {
             $element->addClass('custom-file-input');
         }
