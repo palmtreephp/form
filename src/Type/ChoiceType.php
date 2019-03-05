@@ -11,7 +11,7 @@ class ChoiceType extends AbstractType
     /** @var bool If true, use radio buttons/checkboxes. Otherwise use a select box */
     protected $expanded = false;
     /** @var bool Whether expanded choices should display inline. Has no effect if expanded is false */
-    protected $inline = true;
+    protected $inline  = true;
     protected $choices = [];
     protected $choiceClass;
 
