@@ -20,7 +20,7 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
 
         if (!\in_array($mimeType, $this->getMimeTypes())) {
             $this->setErrorMessage(
-                \sprintf('File must have one of the following mime types: %s', \implode(',', $this->getMimeTypes()))
+                'Only the following mime types are allowed: ' . \implode(', ', $this->getMimeTypes())
             );
 
             return false;

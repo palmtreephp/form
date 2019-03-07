@@ -114,7 +114,7 @@ abstract class AbstractType
      */
     public function isValid()
     {
-        if (!$this->getForm()->isSubmitted() || !$this->isRequired()) {
+        if (!$this->getForm()->isSubmitted()) {
             return true;
         }
 

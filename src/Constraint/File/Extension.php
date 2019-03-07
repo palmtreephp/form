@@ -18,7 +18,7 @@ class Extension extends AbstractConstraint implements ConstraintInterface
 
         if (!\in_array($extension, $this->getExtensions())) {
             $this->setErrorMessage(
-                \sprintf('File must have one of the following extensions: %s', \implode(',', $this->getExtensions()))
+                'Only the following file extensions are allowed: ' . \implode(', ', $this->getExtensions())
             );
 
             return false;
