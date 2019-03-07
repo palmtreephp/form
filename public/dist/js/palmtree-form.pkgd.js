@@ -186,7 +186,6 @@
 
     $(function () {
         $('.palmtree-form').on('change', '.custom-file-input', function () {
-            console.log(this.files[0]);
             $(this)
                 .next('.custom-file-label')
                 .html(this.files[0].name);
@@ -629,7 +628,7 @@
 
                 if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
-                        $feedback = $('<div />').addClass('invalid-feedback small');
+                        $feedback = $('<div />').addClass('palmtree-invalid-feedback invalid-feedback small');
                     }
 
                     $feedback.html(errors[errorKey]);

@@ -178,7 +178,7 @@
 
                 if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
-                        $feedback = $('<div />').addClass('invalid-feedback small');
+                        $feedback = $('<div />').addClass('palmtree-invalid-feedback invalid-feedback small');
                     }
 
                     $feedback.html(errors[errorKey]);
