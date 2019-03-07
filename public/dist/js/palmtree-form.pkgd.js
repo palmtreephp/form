@@ -185,6 +185,29 @@
     'use strict';
 
     $(function () {
+        $('.palmtree-form').on('change', '.custom-file-input', function () {
+            console.log(this.files[0]);
+            $(this)
+                .next('.custom-file-label')
+                .html(this.files[0].name);
+        });
+    });
+}));
+
+(function (factory) {
+    'use strict';
+    /* global define:false */
+    if (typeof define !== 'undefined' && define.amd) {
+        define(['jquery'], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(window.jQuery);
+    }
+}(function ($) {
+    'use strict';
+
+    $(function () {
         $('.palmtree-form').each(function () {
             var $recaptcha = $(this).find('.g-recaptcha');
 

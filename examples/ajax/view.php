@@ -16,6 +16,6 @@
     </div>
 </main>
 <?php include '../shared/scripts.php'; ?>
-<script src="../../public/js/palmtree-form.pkgd.js"></script>
+<script src="../../public/dist/js/palmtree-form.pkgd.js"></script>
 </body>
 </html>
