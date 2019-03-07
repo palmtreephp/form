@@ -238,7 +238,9 @@
                     callback: function (response) {
                         var $formControl = $('#' + _this.$el.data('form_control'));
                         $formControl.val(response);
-                        _this.$form.palmtreeForm('clearState', $formControl);
+                        if (_this.$form.palmtreeForm('isInitialized')) {
+                            _this.$form.palmtreeForm('clearState', $formControl);
+                        }
                     }
                 });
 
@@ -680,6 +682,10 @@
 
     $.fn[pluginName] = function () {
         var args = arguments;
+
+        if (args[0] === 'isInitialized') {
+            return !!$(this).data(pluginName);
+        }
 
         return this.each(function () {
                 var plugin = $(this).data(pluginName);

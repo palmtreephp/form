@@ -43,7 +43,9 @@
                     callback: function (response) {
                         var $formControl = $('#' + _this.$el.data('form_control'));
                         $formControl.val(response);
-                        _this.$form.palmtreeForm('clearState', $formControl);
+                        if (_this.$form.palmtreeForm('isInitialized')) {
+                            _this.$form.palmtreeForm('clearState', $formControl);
+                        }
                     }
                 });
 

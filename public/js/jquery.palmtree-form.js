@@ -231,6 +231,10 @@
     $.fn[pluginName] = function () {
         var args = arguments;
 
+        if (args[0] === 'isInitialized') {
+            return !!$(this).data(pluginName);
+        }
+
         return this.each(function () {
                 var plugin = $(this).data(pluginName);
                 if (!plugin) {

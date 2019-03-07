@@ -10,33 +10,24 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
     const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
     const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
 
-    /**
-     * @var array
-     */
-    protected static $errorCodes = [
+    /** @var array */
+    private static $errorCodes = [
         'missing-input-secret'   => 'The secret parameter is missing.',
         'invalid-input-secret'   => 'The secret parameter is invalid or malformed.',
         'missing-input-response' => 'The response parameter is missing.',
         'invalid-input-response' => 'The response parameter is invalid or malformed.',
     ];
 
-    /**
-     * @var string
-     */
-    protected $secretKey;
-    /**
-     * @var string
-     */
-    protected $siteKey;
-    /**
-     * @var mixed
-     */
-    protected $ip;
-
-    /**
-     * @var array
-     */
-    protected $errors = [];
+    /** @var string */
+    private $secretKey;
+    /** @var string */
+    private $siteKey;
+    /** @var string */
+    private $ip;
+    /** @var array */
+    private $errors = [];
+    /** @var mixed */
+    private $verificationResult = [];
 
     /**
      * GoogleRecaptcha constructor.
@@ -143,30 +134,34 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
      */
     protected function getVerificationResult($response)
     {
-        $postFields = [
-            'secret'   => $this->secretKey,
-            'response' => $response,
-        ];
+        if (!isset($this->verificationResult[$response])) {
+            $postFields = [
+                'secret'   => $this->secretKey,
+                'response' => $response,
+            ];
 
-        if ($this->ip) {
-            $postFields['remoteip'] = $this->ip;
+            if ($this->ip) {
+                $postFields['remoteip'] = $this->ip;
+            }
+
+            $handle = \curl_init(self::VERIFY_URL);
+
+            \curl_setopt($handle, CURLOPT_POST, \count($postFields));
+            \curl_setopt($handle, CURLOPT_POSTFIELDS, \http_build_query($postFields));
+            \curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+
+            \curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, 0);
+            \curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, 0);
+
+            $result = \curl_exec($handle);
+
+            if (!$result || !\is_string($result)) {
+                return [];
+            }
+
+            $this->verificationResult[$response] = \json_decode($result, true);
         }
 
-        $handle = \curl_init(self::VERIFY_URL);
-
-        \curl_setopt($handle, CURLOPT_POST, \count($postFields));
-        \curl_setopt($handle, CURLOPT_POSTFIELDS, \http_build_query($postFields));
-        \curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-
-        \curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, 0);
-        \curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, 0);
-
-        $result = \curl_exec($handle);
-
-        if (!$result || !\is_string($result)) {
-            return [];
-        }
-
-        return \json_decode($result, true);
+        return $this->verificationResult[$response];
     }
 }

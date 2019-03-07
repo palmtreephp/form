@@ -7,13 +7,11 @@ use Palmtree\Html\Element;
 
 class CaptchaType extends AbstractType
 {
-    protected $type         = 'text';
-    protected $userInput    = false;
+    protected $type = 'text';
+    protected $userInput = false;
     protected $errorMessage = 'Please confirm you\'re not a robot';
-    /**
-     * @var CaptchaInterface
-     */
-    protected $captcha;
+    /** @var CaptchaInterface */
+    private $captcha;
 
     public function __construct(array $args = [])
     {
@@ -27,9 +25,7 @@ class CaptchaType extends AbstractType
 
         $this->captcha = $captcha;
 
-        $errorMessage = $this->captcha->getErrorMessage();
-
-        if ($errorMessage) {
+        if ($errorMessage = $this->captcha->getErrorMessage()) {
             $this->setErrorMessage($errorMessage);
         }
     }
@@ -40,9 +36,7 @@ class CaptchaType extends AbstractType
             return true;
         }
 
-        $value = $this->getData();
-
-        return $this->captcha->verify($value);
+        return $this->captcha->verify($this->getData());
     }
 
     public function getElements(Element $wrapper = null)
@@ -51,6 +45,7 @@ class CaptchaType extends AbstractType
         $elements = $this->captcha->getElements($element, $this->getForm());
 
         if (!$this->isValid()) {
+            $element->addClass('is-invalid');
             $error = $this->getForm()->createInvalidElement();
             $error->setInnerText($this->getErrorMessage());
             $elements[] = $error;
