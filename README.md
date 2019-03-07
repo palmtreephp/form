@@ -42,7 +42,7 @@ $form = $builder->getForm();
 ```html
 <script src="/path/to/palmtree-form-pkgd.min.js"></script> <!-- Optional -->
 <div class="container">
-    <?php echo $form->render(); ?>
+    <?= $form->render(); ?>
 </div>
 ```
 
@@ -84,7 +84,7 @@ $builder = new FormBuilder();
 // Add an age field where the value must be between 18 and 80
 $builder->add('age', 'number', [
     'constraints' => [
-        (new Constraint\Number())->setMin(18)->setMax(80)
+        new Constraint\Number(['min' => 18, 'max' => 80])
     ]    
 ]);
 
@@ -92,7 +92,7 @@ $builder->add('age', 'number', [
 $builder->add('password', 'repeated', [
     'repeatable_type' => 'password',
     'constraints' => [
-        (new Constraint\Length())->setMin(8)
+        new Constraint\Length(['min' => 8])
     ]    
 ]);
 

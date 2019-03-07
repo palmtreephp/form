@@ -22,7 +22,7 @@ $builder
     ->add('password', 'repeated', [
         'repeatable_type' => 'password',
         'constraints'     => [
-            (new Palmtree\Form\Constraint\Length())->setMin(8),
+            new Palmtree\Form\Constraint\Length(['min' => 8])
         ],
     ]);
 
