@@ -53,6 +53,8 @@ class Form
             $form->addClass('is-submitted');
         }
 
+        $form->addDataAttribute('invalid_element', \htmlentities($this->createInvalidElement()->render()));
+
         $this->renderFields($form);
 
         if ($this->hasRequiredField()) {
@@ -463,5 +465,13 @@ class Form
     public function getInvalidElement()
     {
         return $this->invalidElement;
+    }
+
+    public function createInvalidElement()
+    {
+        $element = new Element($this->getInvalidElement());
+        $element->addClass('palmtree-invalid-feedback');
+
+        return $element;
     }
 }

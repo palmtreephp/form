@@ -51,8 +51,7 @@ class CaptchaType extends AbstractType
         $elements = $this->captcha->getElements($element, $this->getForm());
 
         if (!$this->isValid()) {
-            $error = new Element($this->getForm()->getInvalidElement());
-            $error->addClass('palmtree-invalid-feedback');
+            $error = $this->getForm()->createInvalidElement();
             $error->setInnerText($this->getErrorMessage());
             $elements[] = $error;
         }
