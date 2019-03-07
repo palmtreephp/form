@@ -1,6 +1,7 @@
 <?php
 
 use Palmtree\Form\Constraint\File\Extension;
+use Palmtree\Form\Constraint\File\MimeType;
 use Palmtree\Form\Constraint\File\Size;
 use Palmtree\Form\Form;
 use Palmtree\Form\FormBuilder;
@@ -22,7 +23,10 @@ $builder->add('file', 'file', [
             'max' => 1024 * 100,
         ]),
         new Extension([
-            'extensions' => 'jpg',
+            'extensions' => ['jpg', 'gif'],
+        ]),
+        new MimeType([
+            'mime_types' => ['image/jpeg', 'image/gif'],
         ]),
     ],
 ]);

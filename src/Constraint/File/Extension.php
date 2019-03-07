@@ -7,7 +7,7 @@ use Palmtree\Form\Constraint\ConstraintInterface;
 
 class Extension extends AbstractConstraint implements ConstraintInterface
 {
-    protected $extensions = [];
+    private $extensions = [];
 
     /**
      * @inheritDoc
@@ -28,19 +28,19 @@ class Extension extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @param mixed $extensions
+     * @param array $extensions
      *
      * @return Extension
      */
-    public function setExtensions($extensions)
+    public function setExtensions(array $extensions)
     {
-        $this->extensions = (array)$extensions;
+        $this->extensions = $extensions;
 
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getExtensions()
     {

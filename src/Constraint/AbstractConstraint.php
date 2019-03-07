@@ -24,7 +24,7 @@ abstract class AbstractConstraint
     }
 
     /**
-     * @param $message
+     * @param string $message
      *
      * @return AbstractConstraint
      */

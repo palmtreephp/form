@@ -4,7 +4,11 @@ namespace Palmtree\Form\Constraint;
 
 interface ConstraintInterface
 {
-    /** @return bool */
+    /**
+     * @param mixed $input
+     *
+     * @return bool
+     */
     public function validate($input);
 
     /** @return string */

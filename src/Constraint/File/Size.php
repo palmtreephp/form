@@ -8,7 +8,7 @@ use Palmtree\Form\Constraint\ConstraintInterface;
 
 class Size extends AbstractConstraint implements ConstraintInterface
 {
-    protected $constraint;
+    private $constraint;
 
     public function __construct(array $args = [])
     {
@@ -36,11 +36,11 @@ class Size extends AbstractConstraint implements ConstraintInterface
             return true;
         }
 
-        $errorNo = $this->constraint->getErrorNumber();
+        $errorNo = $this->constraint->getErrorCode();
 
         if ($errorNo === Constraint\Number::ERROR_TOO_SMALL) {
             $this->setErrorMessage(\sprintf('File size must be greater than %d bytes', $this->constraint->getMin()));
-        } elseif ($errorNo === Constraint\Number::ERROR_TO_LARGE) {
+        } elseif ($errorNo === Constraint\Number::ERROR_TOO_LARGE) {
             $this->setErrorMessage(\sprintf('File size must be less than %d bytes', $this->constraint->getMax()));
         }
 
