@@ -22,7 +22,7 @@
         }
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14"
+        "palmtree/php-cs-fixer-config": "^1.0"
     },
     "scripts": {
         "sniff": "vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff --diff-format=udiff",
