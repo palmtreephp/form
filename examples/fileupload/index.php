@@ -3,7 +3,6 @@
 use Palmtree\Form\Constraint\File\Extension;
 use Palmtree\Form\Constraint\File\MimeType;
 use Palmtree\Form\Constraint\File\Size;
-use Palmtree\Form\Form;
 use Palmtree\Form\FormBuilder;
 
 require __DIR__ . '/../../vendor/autoload.php';
@@ -43,7 +42,7 @@ if ($form->isSubmitted() && $form->isValid()) {
 
 $view = template('view.php', [
     'form'    => $form,
-    'success' => (! empty($_GET['success'])),
+    'success' => (!empty($_GET['success'])),
 ]);
 
 echo $view;

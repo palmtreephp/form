@@ -22,7 +22,7 @@ $builder
     ->add('password', 'repeated', [
         'repeatable_type' => 'password',
         'constraints'     => [
-            new Palmtree\Form\Constraint\Length(['min' => 8])
+            new Palmtree\Form\Constraint\Length(['min' => 8]),
         ],
     ]);
 
@@ -38,7 +38,7 @@ if ($form->isSubmitted() && $form->isValid()) {
 
 $view = template('view.php', [
     'form'    => $form,
-    'success' => (!empty($_GET['success'])),
+    'success' => !empty($_GET['success']),
 ]);
 
 echo $view;

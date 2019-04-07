@@ -7,8 +7,8 @@ use Palmtree\Html\Element;
 
 class CaptchaType extends AbstractType
 {
-    protected $type = 'text';
-    protected $userInput = false;
+    protected $type         = 'text';
+    protected $userInput    = false;
     protected $errorMessage = 'Please confirm you\'re not a robot';
     /** @var CaptchaInterface */
     private $captcha;

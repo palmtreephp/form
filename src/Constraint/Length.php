@@ -32,7 +32,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getErrorCode()
     {
@@ -40,7 +40,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @param mixed $errorCode
+     * @param int $errorCode
      *
      * @return Length
      */
@@ -72,7 +72,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
     public function getMin()
     {
@@ -80,7 +80,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @param mixed $min
+     * @param int|null $min
      *
      * @return Length
      */
@@ -92,7 +92,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
     public function getMax()
     {
@@ -100,7 +100,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @param mixed $max
+     * @param int|null $max
      *
      * @return Length
      */

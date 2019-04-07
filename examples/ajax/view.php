@@ -9,9 +9,9 @@
 <main>
     <div class="container mt-3">
         <h1>Palmtree Form - AJAX Example</h1>
-        <?php if ($success) { ?>
+        <?php if ($success): ?>
             <div class="alert alert-success">Form submitted successfully</div>
-        <?php } ?>
+        <?php endif; ?>
         <?php echo $form->render(); ?>
     </div>
 </main>
