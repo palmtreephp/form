@@ -49,7 +49,7 @@ class SelectType extends AbstractType
             $format .= '[]';
         }
 
-        return \sprintf($format, $formId, $name);
+        return sprintf($format, $formId, $name);
     }
 
     /**

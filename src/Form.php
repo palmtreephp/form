@@ -52,7 +52,7 @@ class Form
             $form->addClass('is-submitted');
         }
 
-        $form->addDataAttribute('invalid_element', \htmlentities($this->createInvalidElement()->render()));
+        $form->addDataAttribute('invalid_element', htmlentities($this->createInvalidElement()->render()));
 
         $this->renderFields($form);
 
@@ -221,7 +221,7 @@ class Form
     {
         $key = 'HTTP_X_REQUESTED_WITH';
 
-        return isset($_SERVER[$key]) && \strtolower($_SERVER[$key]) === 'xmlhttprequest';
+        return isset($_SERVER[$key]) && strtolower($_SERVER[$key]) === 'xmlhttprequest';
     }
 
     /**
@@ -249,7 +249,7 @@ class Form
      */
     public function setMethod($method)
     {
-        $this->method = \strtoupper($method);
+        $this->method = strtoupper($method);
 
         return $this;
     }
@@ -322,7 +322,7 @@ class Form
             return $this->fields;
         }
 
-        return \array_filter($this->fields, function (AbstractType $field) use ($args) {
+        return array_filter($this->fields, function (AbstractType $field) use ($args) {
             return $field->filter($args);
         });
     }
@@ -368,7 +368,7 @@ class Form
             }
 
             // Add the field at the specified offset
-            $this->fields = \array_merge(
+            $this->fields = array_merge(
                 \array_slice($this->fields, 0, $offset, true),
                 [$field->getName() => $field],
                 \array_slice($this->fields, $offset, null, true)

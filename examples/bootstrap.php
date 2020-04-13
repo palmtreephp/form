@@ -2,23 +2,23 @@
 
 function template($file, $data = [])
 {
-    \ob_start();
+    ob_start();
 
-    \extract($data);
+    extract($data);
 
     include $file;
 
-    return \ob_get_clean();
+    return ob_get_clean();
 }
 
 function redirect($location, $statusCode = 302)
 {
-    \header(\sprintf('Location: %s', $location), true, $statusCode);
+    header(sprintf('Location: %s', $location), true, $statusCode);
 }
 
 function send_json($data = [], $success = true)
 {
-    $response = \json_encode([
+    $response = json_encode([
         'success' => $success,
         'data'    => $data,
     ]);

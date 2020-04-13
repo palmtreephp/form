@@ -14,11 +14,11 @@ class Extension extends AbstractConstraint implements ConstraintInterface
      */
     public function validate($uploadedFile)
     {
-        $extension = \pathinfo($uploadedFile['name'], PATHINFO_EXTENSION);
+        $extension = pathinfo($uploadedFile['name'], PATHINFO_EXTENSION);
 
         if (!\in_array($extension, $this->getExtensions())) {
             $this->setErrorMessage(
-                'Only the following file extensions are allowed: ' . \implode(', ', $this->getExtensions())
+                'Only the following file extensions are allowed: ' . implode(', ', $this->getExtensions())
             );
 
             return false;

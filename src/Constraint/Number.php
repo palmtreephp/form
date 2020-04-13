@@ -20,7 +20,7 @@ class Number extends AbstractConstraint implements ConstraintInterface
      */
     public function validate($input)
     {
-        if (!\is_numeric($input)) {
+        if (!is_numeric($input)) {
             $this->errorCode = self::ERROR_NOT_NUMERIC;
 
             return false;

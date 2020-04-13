@@ -21,8 +21,8 @@ abstract class AbstractGroupType extends AbstractType
 
     public function getGroupName()
     {
-        $shortClass = \substr(\strrchr(static::class, '\\'), 1);
-        $name       = \strtolower(\basename($shortClass, 'Type'));
+        $shortClass = substr(strrchr(static::class, '\\'), 1);
+        $name       = strtolower(basename($shortClass, 'Type'));
 
         return $name;
     }

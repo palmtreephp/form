@@ -26,7 +26,7 @@ class OptionType extends AbstractType
         $compare = true;
 
         if (\is_array($data)) {
-            $key = \array_search($this->getValue(), $data);
+            $key = array_search($this->getValue(), $data);
 
             if ($key !== false) {
                 $data = $data[$key];
@@ -35,7 +35,7 @@ class OptionType extends AbstractType
             }
         }
 
-        if ($compare && \strcmp($data, $this->getValue()) === 0) {
+        if ($compare && strcmp($data, $this->getValue()) === 0) {
             $element->addAttribute('selected');
         }
 

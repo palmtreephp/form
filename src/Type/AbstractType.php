@@ -268,7 +268,7 @@ abstract class AbstractType
         }
 
         if ($this->getParent()) {
-            return \sprintf(
+            return sprintf(
                 '%s[%s][%s][%s]',
                 $formId, $this->getParent()->getName(),
                 $this->getParent()->getPosition(),
@@ -276,7 +276,7 @@ abstract class AbstractType
             );
         }
 
-        return \sprintf('%s[%s]', $formId, $name);
+        return sprintf('%s[%s]', $formId, $name);
     }
 
     protected function getIdAttribute()
@@ -299,7 +299,7 @@ abstract class AbstractType
         $placeholder = '';
 
         if ($this->args['placeholder'] === true) {
-            $placeholder = 'Enter your ' . \strtolower($this->getHumanName());
+            $placeholder = 'Enter your ' . strtolower($this->getHumanName());
         } elseif (\is_string($this->args['placeholder'])) {
             $placeholder = $this->args['placeholder'];
         }
@@ -552,7 +552,7 @@ abstract class AbstractType
     public function filter(array $args = [])
     {
         foreach ($args as $key => $value) {
-            if (\property_exists($this, $key)) {
+            if (property_exists($this, $key)) {
                 if ($this->$key !== $value) {
                     return false;
                 }

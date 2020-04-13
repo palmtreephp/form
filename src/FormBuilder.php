@@ -69,7 +69,7 @@ class FormBuilder
             return $this->types[$type];
         }
 
-        if (\class_exists($type)) {
+        if (class_exists($type)) {
             return $type;
         }
 
@@ -142,7 +142,7 @@ class FormBuilder
         } else {
             $class = $this->getTypeClass($type);
 
-            if (!\class_exists($class)) {
+            if (!class_exists($class)) {
                 $class = TextType::class;
             }
 
@@ -161,10 +161,10 @@ class FormBuilder
             $files = new \GlobIterator(__DIR__ . '/Type/*Type.php');
 
             foreach ($files as $file) {
-                $class = \basename($file, '.php');
-                $type  = \basename($file, 'Type.php');
+                $class = basename($file, '.php');
+                $type  = basename($file, 'Type.php');
 
-                $this->types[\strtolower($type)] = $namespace . '\\' . $class;
+                $this->types[strtolower($type)] = $namespace . '\\' . $class;
             }
         }
     }
