@@ -1,10 +1,10 @@
 /**
- * jquery-bsalert v1.0.1
+ * jquery-bsalert v1.0.2
  *
  * @author Andy Palmer <andy@andypalmer.me>
  * @license MIT
  */
-(function(factory) {
+(function (factory) {
     // Universal Module Definition
     /* jshint strict: false */
     if (typeof define === "function" && define.amd) {
@@ -17,20 +17,20 @@
         // Browser globals
         factory(jQuery);
     }
-})(function($) {
+})(function ($) {
     /* jshint unused: vars */
     "use strict";
+
+    var instances = [];
 
     var pluginName = "bsAlert";
 
     var publicAPI = {
-        destroy: function() {
+        destroy: function () {
             this.clear();
-
-            this.$el.removeData(pluginName);
         },
 
-        show: function() {
+        show: function () {
             if ($.isFunction(this.options.position)) {
                 this.options.position.call(this, this.getAlert());
             } else {
@@ -45,7 +45,7 @@
             }
         },
 
-        clear: function() {
+        clear: function () {
             var instances = this.$el.data(pluginName) || [];
 
             for (var i = 0; i < instances.length; i++) {
@@ -55,7 +55,7 @@
     };
 
     var privateAPI = {
-        init: function() {
+        init: function () {
             if (this.options.clear) {
                 this.clear();
             }
@@ -63,13 +63,15 @@
             this.show();
         },
 
-        getAlert: function() {
+        getAlert: function () {
             var $alert = $("<div />");
 
             $alert
                 .attr("role", "alert")
                 .addClass("alert alert-" + this.options.type)
-                .append(document.createTextNode(this.getContent(this.options.content)));
+                .append(
+                    document.createTextNode(this.getContent(this.options.content))
+                );
 
             if (this.options.icons && this.options.icons[this.options.type]) {
                 var $icon = $("<span />").addClass(
@@ -99,7 +101,7 @@
             return $alert;
         },
 
-        getContent: function(arg) {
+        getContent: function (arg) {
             var _this = this,
                 content = "";
 
@@ -108,7 +110,7 @@
                     content = arg.call(_this);
                     break;
                 case "object":
-                    $.each(arg, function(i, part) {
+                    $.each(arg, function (i, part) {
                         content += this.getContent(part);
                     });
                     break;
@@ -131,10 +133,10 @@
 
     Plugin.prototype = $.extend({}, publicAPI, privateAPI);
 
-    $.fn[pluginName] = function() {
+    $.fn[pluginName] = function () {
         var args = arguments;
 
-        return this.each(function() {
+        return this.each(function (i) {
             if (
                 args.length === 2 &&
                 typeof args[0] === "string" &&
@@ -146,17 +148,17 @@
                 };
             }
 
-            var instances = $(this).data(pluginName) || [];
-
-            instances.push(new Plugin(this, args[0]));
-
-            $(this).data(pluginName, instances);
-
-            if (typeof args[0] === "string" && $.isFunction(publicAPI[args[0]])) {
+            if (
+                instances[i] &&
+                typeof args[0] === "string" &&
+                $.isFunction(publicAPI[args[0]])
+            ) {
                 publicAPI[args[0]].apply(
-                    instances[0],
+                    instances[i],
                     Array.prototype.slice.call(args, 1)
                 );
+            } else {
+                instances[i] = new Plugin(this, args[0]);
             }
         });
     };
