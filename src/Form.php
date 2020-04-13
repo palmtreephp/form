@@ -18,7 +18,6 @@ class Form
     protected $action;
     protected $encType        = '';
     protected $errors         = [];
-    protected $requestData    = [];
     protected $fieldWrapper   = 'div.form-group';
     protected $invalidElement = 'div.invalid-feedback.small';
     protected $htmlValidation = true;
@@ -109,6 +108,24 @@ class Form
         return empty($this->errors);
     }
 
+    public function submit($data)
+    {
+        $this->submitted = true;
+
+        foreach ($this->getFields() as $field) {
+            $key = $field->getName();
+
+            if ($field->isGlobal() && \array_key_exists($key, $data)) {
+                $field->setData($data[$key]);
+            } elseif (\array_key_exists($key, $data)) {
+                $field->setData($data[$key]);
+            }
+
+            $field->build();
+            $field->mapData();
+        }
+    }
+
     public function handleRequest()
     {
         $requestData = $this->getRequest();
@@ -116,23 +133,15 @@ class Form
             return;
         }
 
-        $this->setSubmitted(true);
+        $data = [];
 
         foreach ($requestData[$this->getKey()] as $key => $value) {
-            $this->requestData[$key] = $value;
+            $data[$key] = $value;
         }
 
-        $this->addFilesToRequestData();
+        $data = $this->addFilesToData($data);
 
-        foreach ($this->getFields() as $field) {
-            $key = $field->getName();
-
-            if ($field->isGlobal() && \array_key_exists($key, $requestData)) {
-                $field->setData($requestData[$key]);
-            } elseif (\array_key_exists($key, $this->requestData)) {
-                $field->setData($this->requestData[$key]);
-            }
-        }
+        $this->submit($data);
     }
 
     /**
@@ -153,17 +162,19 @@ class Form
         return $data;
     }
 
-    protected function addFilesToRequestData()
+    protected function addFilesToData($data)
     {
         if (!isset($_FILES[$this->getKey()])) {
-            return;
+            return $data;
         }
 
         foreach ($_FILES[$this->getKey()] as $key => $parts) {
             foreach ($parts as $name => $value) {
-                $this->requestData[$name][$key] = $value;
+                $data[$name][$key] = $value;
             }
         }
+
+        return $data;
     }
 
     /**
@@ -222,13 +233,11 @@ class Form
     }
 
     /**
-     * @param bool $submitted
-     *
      * @return Form
      */
-    public function setSubmitted($submitted)
+    public function setSubmitted()
     {
-        $this->submitted = $submitted;
+        $this->submitted = true;
 
         return $this;
     }

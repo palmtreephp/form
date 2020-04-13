@@ -19,37 +19,84 @@ class CollectionType extends AbstractType
 
         $collectionWrapper->addChild($entriesWrapper);
 
-        if ($this->getData()) {
-            foreach ($this->getData() as $key => $value) {
-                $entriesWrapper->addChild($this->buildEntry($value));
+        if ($entries = $this->getChildren()) {
+            foreach ($entries as $entry) {
+                $entriesWrapper->addChild($this->buildEntryElement($entry));
             }
         } else {
-            $entriesWrapper->addChild($this->buildEntry());
+            $entriesWrapper->addChild($this->buildEntryElement($this->buildEntry()));
         }
+
+        $prototypeEntry = $this->buildEntry('__name__');
+
+        $this->clearPrototypeEntryConstraints($prototypeEntry);
+
+        $prototype = $this->buildEntryElement($prototypeEntry);
+
+        $collectionWrapper->addDataAttribute('prototype', \htmlentities($prototype->render()));
 
         return $collectionWrapper;
     }
 
-    private function buildEntry($data = null)
+    public function build()
+    {
+        if ($data = $this->getData()) {
+            foreach ($data as $key => $value) {
+                $this->addChild($this->buildEntry($key, $value));
+            }
+        }
+    }
+
+    private function buildEntry($position = 0, $data = null)
     {
         $entryType = $this->entryType;
         /** @var AbstractType $entry */
         $entry = new $entryType($this->getEntryOptions());
         $entry
             ->setParent($this)
-            ->setForm($this->getForm())
-            ->setName($this->getName());
+            ->setName($this->getName())
+            ->setPosition($position);
+
+        $entry->build();
 
         if (\func_num_args() > 0) {
             $entry->setData($data);
         }
 
+        return $entry;
+    }
+
+    private function buildEntryElement(AbstractType $entry)
+    {
         $entryWrapper = new Element('div.palmtree-form-collection-entry');
         foreach ($entry->getElements() as $element) {
             $entryWrapper->addChild($element);
         }
 
         return $entryWrapper;
+    }
+
+    private function clearPrototypeEntryConstraints(AbstractType $entry)
+    {
+        $entry->setConstraints([]);
+
+        foreach ($entry->getChildren() as $child) {
+            $this->clearPrototypeEntryConstraints($child);
+        }
+    }
+
+    /**
+     * @return self
+     */
+    public function addChild(AbstractType $child)
+    {
+        if ($child->getParent() !== $this) {
+            $child->setParent($this);
+        }
+
+        $this->children[$child->getPosition()] = $child;
+
+        return $this;
     }
 
     /**

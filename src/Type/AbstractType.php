@@ -25,6 +25,9 @@ abstract class AbstractType
     protected $form;
     /** @var AbstractType|null */
     protected $parent;
+    /** @var AbstractType[] */
+    protected $children = [];
+    protected $position = 0;
     /** @var array */
     protected $args = [];
     /** @var ConstraintInterface[] */
@@ -55,6 +58,13 @@ abstract class AbstractType
         $parser->parseSetters($this);
 
         return $parser->resolveOptions(static::$defaultArgs);
+    }
+
+    public function build()
+    {
+        foreach ($this->getChildren() as $child) {
+            $child->build();
+        }
     }
 
     /**
@@ -122,6 +132,12 @@ abstract class AbstractType
             if (!$constraint->validate($this->getData())) {
                 $this->setErrorMessage($constraint->getErrorMessage());
 
+                return false;
+            }
+        }
+
+        foreach ($this->getChildren() as $child) {
+            if (!$child->isValid()) {
                 return false;
             }
         }
@@ -251,13 +267,16 @@ abstract class AbstractType
             return $name;
         }
 
-        $format = '%s[%s]';
-
         if ($this->getParent()) {
-            $format .= '[]';
+            return \sprintf(
+                '%s[%s][%s][%s]',
+                $formId, $this->getParent()->getName(),
+                $this->getParent()->getPosition(),
+                $name
+            );
         }
 
-        return \sprintf($format, $formId, $name);
+        return \sprintf('%s[%s]', $formId, $name);
     }
 
     protected function getIdAttribute()
@@ -291,12 +310,8 @@ abstract class AbstractType
     /**
      * @return string|array|mixed
      */
-    public function getData($default = '')
+    public function getData()
     {
-        /*if ( $this->value === null ) {
-            return $default;
-        }*/
-
         return $this->data;
     }
 
@@ -310,6 +325,18 @@ abstract class AbstractType
         $this->data = $data;
 
         return $this;
+    }
+
+    public function mapData()
+    {
+        if (\is_array($this->data)) {
+            foreach ($this->data as $key => $value) {
+                if ($child = $this->getChild($key)) {
+                    $child->setData($value);
+                    $child->mapData();
+                }
+            }
+        }
     }
 
     /**
@@ -421,8 +448,65 @@ abstract class AbstractType
     public function setParent(self $parent)
     {
         $this->parent = $parent;
+        $this->setForm($parent->getForm());
 
         return $this;
+    }
+
+    /**
+     * @param self $child
+     *
+     * @return self
+     */
+    public function addChild(self $child)
+    {
+        if ($child->getParent() !== $this) {
+            $child->setParent($this);
+        }
+
+        $this->children[$child->getName()] = $child;
+
+        return $this;
+    }
+
+    public function add($name, $fqcn, array $options = [])
+    {
+        /** @var self $type */
+        $type = new $fqcn($options);
+        $type->setName($name);
+
+        $this->addChild($type);
+
+        return $this;
+    }
+
+    /**
+     * @return AbstractType[]
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    public function getChild($name)
+    {
+        return isset($this->children[$name]) ? $this->children[$name] : null;
+    }
+
+    /**
+     * @param mixed $position
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 
     /**
@@ -497,6 +581,8 @@ abstract class AbstractType
      */
     public function setConstraints($constraints)
     {
+        $this->constraints = [];
+
         foreach ($constraints as $constraint) {
             $this->addConstraint($constraint);
         }

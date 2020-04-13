@@ -15,6 +15,11 @@ abstract class AbstractConstraint
         $parser->parseSetters($this);
     }
 
+    public static function create($args = [])
+    {
+        return new static($args);
+    }
+
     /**
      * @return string
      */
