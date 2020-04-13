@@ -3,11 +3,11 @@
   "private": true,
   "dependencies": {
     "jquery": "*",
-    "jquery-bsalert": "^0.9.4"
+    "jquery-bsalert": "^1.0.1"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "grunt": "^1.1.0",
     "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-uglify": "^3.0.1"
+    "grunt-contrib-uglify": "^4.0.1"
   }
 }

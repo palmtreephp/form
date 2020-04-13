@@ -4,9 +4,9 @@
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
+        module.exports = factory(require('jquery'));
     } else {
-        factory(window.jQuery);
+        factory(jQuery);
     }
 }(function ($) {
     'use strict';
@@ -52,10 +52,10 @@
                     $feedback.show();
                 }
 
-                _this.$form.trigger(_this.getEvent('statechange', {
+                _this.$form.trigger(_this.getEvent('statechange'), {
                     '$formControl': $formControl,
                     state: state
-                }));
+                });
             });
         }
     };
@@ -101,9 +101,9 @@
                     $submitButton.removeClass('disabled').prop('disabled', false);
                 });
 
-            $form.trigger(this.getEvent('promise', {
+            $form.trigger(this.getEvent('promise'), {
                 promise: promise
-            }));
+            });
         },
 
         /**
@@ -122,8 +122,7 @@
             var _this = this;
 
             if (!response || typeof response.data === 'undefined') {
-                $.error('Invalid response');
-                return false;
+                throw new Error('Invalid response');
             }
 
             var $formControls = _this.$form.find('.palmtree-form-control');
@@ -137,15 +136,15 @@
                 _this.setControlStates($formControls, errors);
 
                 var $first = $formControls.filter('.is-invalid').first();
-                $first.focus().closest('.form-group').find('.palmtree-invalid-feedback').hide().fadeIn();
+                $first.trigger('focus');
 
                 if (response.data.message) {
-                    _this.showAlert(response.data.message);
+                    _this.showAlert(response.data.message, 'danger');
                 }
 
-                _this.$form.trigger(this.getEvent('error', {
+                _this.$form.trigger(this.getEvent('error'), {
                     responseData: response.data
-                }));
+                });
 
                 return false;
             }
@@ -160,9 +159,9 @@
                 _this.$submitButton.remove();
             }
 
-            _this.$form.trigger(this.getEvent('success', {
+            _this.$form.trigger(this.getEvent('success'), {
                 responseData: response.data
-            }));
+            });
 
             return true;
         },
