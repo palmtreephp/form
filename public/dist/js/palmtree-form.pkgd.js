@@ -1,5 +1,5 @@
 /**
- * jquery-bsalert v1.0.2
+ * jquery-bsalert v1.0.3
  *
  * @author Andy Palmer <andy@andypalmer.me>
  * @license MIT
@@ -46,8 +46,6 @@
         },
 
         clear: function () {
-            var instances = this.$el.data(pluginName) || [];
-
             for (var i = 0; i < instances.length; i++) {
                 instances[i].$alert.remove();
             }

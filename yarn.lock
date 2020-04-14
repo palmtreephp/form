@@ -412,10 +412,10 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
-jquery-bsalert@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/jquery-bsalert/-/jquery-bsalert-1.0.2.tgz#e1471e4f918874c2aaf5d9bef4bf97568a5e4048"
-  integrity sha512-8tjbiF45mlh2V/BI69pfU7dWjKFMJ0f/4HqpqxuHHdhP7Gk1QUguBAJ6mhm1BNqmQxL1Mn/kFU5SmQXvI5C0xQ==
+jquery-bsalert@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/jquery-bsalert/-/jquery-bsalert-1.0.3.tgz#98641aff6dcbfc56fd04e432ed47f6055c6d5f99"
+  integrity sha512-nH/G0casBpDuiG+zux9VfXBTTqdLaXyLUE240UP7syi4kuuE5172nTwoWy4jlmaft05+LnSFFHAyCWUWRm+Vmw==
   dependencies:
     jquery ">=1.9"
 
