@@ -29,30 +29,28 @@ class Form
 
     public function render()
     {
-        $form = new Element('form');
+        $form = new Element('form.palmtree-form');
 
-        $form
-            ->addClass('palmtree-form')
-            ->setAttributes([
-                'method'  => $this->getMethod(),
-                'id'      => $this->getKey(),
-                'action'  => $this->getAction(),
-                'enctype' => $this->getEncType(),
-            ]);
+        $form->attributes->add([
+            'method'  => $this->getMethod(),
+            'id'      => $this->getKey(),
+            'action'  => $this->getAction(),
+            'enctype' => $this->getEncType(),
+        ]);
 
         if (!$this->hasHtmlValidation()) {
-            $form->addAttribute('novalidate', true);
+            $form->attributes['novalidate'] = true;
         }
 
         if ($this->isAjax()) {
-            $form->addClass('is-ajax');
+            $form->classes[] = 'is-ajax';
         }
 
         if ($this->isSubmitted()) {
-            $form->addClass('is-submitted');
+            $form->classes[] = 'is-submitted';
         }
 
-        $form->addDataAttribute('invalid_element', htmlentities($this->createInvalidElement()->render()));
+        $form->attributes->setData('invalid_element', htmlentities($this->createInvalidElement()->render()));
 
         $this->renderFields($form);
 
@@ -78,7 +76,7 @@ class Form
                 $fieldWrapper = new Element($this->fieldWrapper);
 
                 if ($field->isRequired()) {
-                    $fieldWrapper->addClass('is-required');
+                    $fieldWrapper->classes[] = 'is-required';
                 }
 
                 $parent = $fieldWrapper;
@@ -478,8 +476,8 @@ class Form
 
     public function createInvalidElement()
     {
-        $element = new Element($this->getInvalidElement());
-        $element->addClass('palmtree-invalid-feedback');
+        $element            = new Element($this->getInvalidElement());
+        $element->classes[] = 'palmtree-invalid-feedback';
 
         return $element;
     }

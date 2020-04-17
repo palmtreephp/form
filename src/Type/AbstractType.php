@@ -156,14 +156,12 @@ abstract class AbstractType
             return false;
         }
 
-        $element = new Element('label');
-
-        $element->addAttribute('for', $this->getIdAttribute())->setInnerText($label);
+        $element                    = Element::create('label')->setInnerText($label);
+        $element->attributes['for'] = $this->getIdAttribute();
 
         if ($this->isRequired() && !$this->getParent()) {
-            $abbr = new Element('abbr');
-
-            $abbr->setInnerText('*')->addAttribute('title', 'Required Field');
+            $abbr                      = Element::create('abbr')->setInnerText('*');
+            $abbr->attributes['title'] = 'Required Field';
 
             $element->addChild($abbr);
         }
@@ -177,8 +175,8 @@ abstract class AbstractType
     public function getElement()
     {
         $args        = $this->args;
-        $args['tag'] = $this->getTag();
-        $element     = new Element($args);
+        $element     = new Element($this->getTag());
+        $element->classes->add(...$args['classes'] ?? []);
 
         $attributes = [
             'type'  => $this->getType(),
@@ -199,17 +197,17 @@ abstract class AbstractType
             $attributes['required'] = true;
         }
 
-        $element->setAttributes($attributes);
+        $element->attributes->add($attributes);
 
-        $element->addDataAttribute('name', $this->getName());
-
-        if ($this->form->hasHtmlValidation() && $this->isRequired()) {
-            $element->addAttribute('required');
+        if ($this->getName()) {
+            $element->attributes->setData('name', $this->getName());
         }
 
-        $element
-            ->addClass('palmtree-form-control')
-            ->addClass('form-control');
+        if ($this->form->hasHtmlValidation() && $this->isRequired()) {
+            $element->attributes->set('required');
+        }
+
+        $element->classes->add('palmtree-form-control', 'form-control');
 
         return $element;
     }
@@ -231,12 +229,12 @@ abstract class AbstractType
 
         $element = $this->getElement();
 
-        if (!$element->getAttribute('id')) {
-            $element->addAttribute('id', $this->getIdAttribute());
+        if (!$element->attributes['id']) {
+            $element->attributes['id'] = $this->getIdAttribute();
         }
 
         if (!$this->isValid()) {
-            $element->addClass('is-invalid');
+            $element->classes[] = 'is-invalid';
         }
 
         $elements[] = $element;

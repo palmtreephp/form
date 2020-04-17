@@ -24,10 +24,10 @@ class FileType extends AbstractType
     {
         $element = parent::getElement();
 
-        $element->removeAttribute('value');
+        unset($element->attributes['value']);
 
         if ($this->isCustom()) {
-            $element->addClass('custom-file-input');
+            $element->classes[] = 'custom-file-input';
         }
 
         return $element;
@@ -38,8 +38,8 @@ class FileType extends AbstractType
         $element = parent::getLabelElement();
 
         if ($element && $this->isCustom()) {
-            $element->addClass('custom-file-label');
-            $element->addDataAttribute('browse', $this->getBrowseText());
+            $element->classes[] = 'custom-file-label';
+            $element->attributes->setData('browse', $this->getBrowseText());
         }
 
         return $element;
@@ -59,9 +59,7 @@ class FileType extends AbstractType
         $customFileWrapper->addChild($elements[1]);
         unset($elements[1]);
 
-        foreach ($elements as $element) {
-            $customFileWrapper->addChild($element);
-        }
+        $customFileWrapper->addChild(...$elements);
 
         return [$customFileWrapper];
     }

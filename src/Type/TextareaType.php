@@ -10,8 +10,11 @@ class TextareaType extends AbstractType
     {
         $element = parent::getElement();
 
-        $element->removeAttribute('value');
-        $element->setInnerText($this->getData());
+        unset($element->attributes['value']);
+
+        if ($data = $this->getData()) {
+            $element->setInnerText($data);
+        }
 
         return $element;
     }

@@ -33,7 +33,7 @@ class CollectionType extends AbstractType
 
         $prototype = $this->buildEntryElement($prototypeEntry);
 
-        $collectionWrapper->addDataAttribute('prototype', htmlentities($prototype->render()));
+        $collectionWrapper->attributes->setData('prototype', htmlentities($prototype->render()));
 
         return $collectionWrapper;
     }

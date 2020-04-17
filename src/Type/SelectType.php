@@ -14,18 +14,16 @@ class SelectType extends AbstractType
     {
         $element = parent::getElement();
 
-        $element->removeAttribute('type');
+        unset($element->attributes['type']);
 
         if ($this->isMultiple()) {
-            $element->addAttribute('multiple');
+            $element->attributes->set('multiple');
         } else {
-            if ($placeholder = $element->getAttribute('placeholder')) {
-                $element->removeAttribute('placeholder');
+            if ($placeholder = $element->attributes['placeholder']) {
+                unset($element->attributes['placeholder']);
 
-                $option = new Element('option');
-                $option
-                    ->setInnerText($placeholder)
-                    ->addAttribute('value', '');
+                $option                      = Element::create('option')->setInnerText($placeholder);
+                $option->attributes['value'] = '';
 
                 $element->addChild($option);
             }

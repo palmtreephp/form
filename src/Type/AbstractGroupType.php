@@ -12,7 +12,7 @@ abstract class AbstractGroupType extends AbstractType
 
         foreach ($this->getChildren() as $child) {
             $wrapper = new Element($this->getForm()->getFieldWrapper());
-            $wrapper->addChildren($child->getElements());
+            $wrapper->addChild(...$child->getElements());
             $element->addChild($wrapper);
         }
 

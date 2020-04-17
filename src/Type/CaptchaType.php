@@ -45,8 +45,8 @@ class CaptchaType extends AbstractType
         $elements = $this->captcha->getElements($element, $this->getForm());
 
         if (!$this->isValid()) {
-            $element->addClass('is-invalid');
-            $error = $this->getForm()->createInvalidElement();
+            $element->classes[] = 'is-invalid';
+            $error              = $this->getForm()->createInvalidElement();
             $error->setInnerText($this->getErrorMessage());
             $elements[] = $error;
         }

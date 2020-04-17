@@ -15,12 +15,12 @@ class OptionType extends AbstractType
 
         $element = parent::getElement();
 
-        $element
-            ->setAttributes([
-                'value' => $this->getValue(),
-            ], true)
-            ->setClasses([])
-            ->setInnerText($this->getLabelElement()->getInnerText());
+        $element->attributes->clear();
+        $element->attributes['value'] = $this->getValue();
+
+        $element->classes->clear();
+
+        $element->setInnerText($this->getLabelElement()->getInnerText());
 
         $data    = $this->getData();
         $compare = true;
@@ -36,7 +36,7 @@ class OptionType extends AbstractType
         }
 
         if ($compare && strcmp($data, $this->getValue()) === 0) {
-            $element->addAttribute('selected');
+            $element->attributes->set('selected');
         }
 
         $elements[] = $element;

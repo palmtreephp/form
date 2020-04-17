@@ -16,10 +16,9 @@ class CheckboxType extends AbstractType
     {
         $element = parent::getElement();
 
-        $element
-            ->removeClass('form-control')
-            ->addClass('form-check-input')
-            ->addAttribute('value', $this->getValue());
+        unset($element->classes['form-control']);
+        $element->classes[]           = 'form-check-input';
+        $element->attributes['value'] = $this->getValue();
 
         $data    = $this->getData();
         $compare = true;
@@ -35,7 +34,7 @@ class CheckboxType extends AbstractType
         }
 
         if ($compare && strcmp($data, $this->getValue()) === 0) {
-            $element->addAttribute('checked');
+            $element->attributes->set('checked');
         }
 
         return $element;
@@ -44,7 +43,7 @@ class CheckboxType extends AbstractType
     public function getElements(Element $wrapper = null)
     {
         if ($wrapper instanceof Element) {
-            $wrapper->addClass('form-check');
+            $wrapper->classes[] = 'form-check';
         }
 
         $formId   = $this->form->getKey();
@@ -54,8 +53,8 @@ class CheckboxType extends AbstractType
 
         $name = $this->getName();
 
-        if (!$element->getAttribute('id')) {
-            $element->addAttribute('id', "$formId-$name");
+        if (!$element->attributes['id']) {
+            $element->attributes['id'] = "$formId-$name";
         }
 
         $elements[] = $element;
@@ -63,7 +62,7 @@ class CheckboxType extends AbstractType
         $label = $this->getLabelElement();
 
         if ($label instanceof Element) {
-            $label->addClass('form-check-label');
+            $label->classes[] = 'form-check-label';
 
             $elements[] = $label;
         }

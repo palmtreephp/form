@@ -61,8 +61,8 @@ class ChoiceType extends AbstractType
             }
 
             if (\is_array($label)) {
-                $optGroup = new Element('optgroup');
-                $optGroup->addAttribute('label', $value);
+                $optGroup                      = new Element('optgroup');
+                $optGroup->attributes['label'] = $value;
 
                 foreach ($label as $subValue => $subLabel) {
                     $args['label'] = $subLabel;
@@ -96,7 +96,7 @@ class ChoiceType extends AbstractType
 
                 foreach ($choice->getElements() as $child) {
                     // Don't add child feedback as we already display our own.
-                    if (!$child->hasClass('palmtree-invalid-feedback')) {
+                    if (!$child->classes->has('palmtree-invalid-feedback')) {
                         if ($choiceWrapper) {
                             $choiceWrapper->addChild($child);
                         } else {

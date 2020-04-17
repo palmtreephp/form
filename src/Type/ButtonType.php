@@ -16,12 +16,12 @@ class ButtonType extends AbstractType
 
     public function getElement()
     {
-        $element = parent::getElement();
+        $element                     = parent::getElement();
+        $element->attributes['type'] = $this->getType();
 
-        $element->addAttribute('type', $this->getType());
         $element->setInnerText($this->getLabel());
 
-        $element->removeClass('form-control');
+        unset($element->classes['form-control']);
 
         return $element;
     }
