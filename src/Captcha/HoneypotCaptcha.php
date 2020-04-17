@@ -21,11 +21,13 @@ class HoneypotCaptcha extends AbstractCaptcha implements CaptchaInterface
     {
         $elements = [];
 
-        $element
-            ->addAttribute('type', 'text')
-            ->addAttribute('style', 'display: none;')
-            ->addAttribute('autocomplete', 'off')
-            ->removeAttribute('placeholder');
+        unset($element->attributes['placeholder']);
+
+        $element->attributes->add([
+            'type'         => 'text',
+            'style'        => 'display: none;',
+            'autocomplete' => 'off',
+        ]);
 
         $elements[] = $element;
 

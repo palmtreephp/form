@@ -72,25 +72,27 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
 
     public function getElements(Element $formControl, Form $form)
     {
-        $controlId = $formControl->getAttribute('id');
+        $controlId = $formControl->attributes['id'];
 
-        $formControl->removeClass('palmtree-form-control');
-        $formControl->addAttribute('hidden');
+        unset($formControl->classes['palmtree-form-control']);
+
+        $formControl->attributes->set('hidden');
 
         // Placeholder Element that actually displays the captcha
         $placeholderId = sprintf('%s_placeholder', $controlId);
 
-        $placeholder = new Element('div.palmtree-form-control.g-recaptcha');
-        $placeholder->addAttribute('id', $placeholderId);
-        $placeholder->addDataAttribute('name', $formControl->getAttribute('data-name'));
-        $formControl->removeAttribute('data-name');
+        $placeholder                   = new Element('div.palmtree-form-control.g-recaptcha');
+        $placeholder->attributes['id'] = $placeholderId;
+        $placeholder->attributes->setData('name', $formControl->attributes['data-name']);
 
-        $placeholder->addDataAttribute('site_key', $this->siteKey);
-        $placeholder->addDataAttribute('form_control', $controlId);
+        unset($formControl->attributes['data-name']);
+
+        $placeholder->attributes->setData('site_key', $this->siteKey);
+        $placeholder->attributes->setData('form_control', $controlId);
 
         $onloadCallback = sprintf('%s_onload', str_replace('-', '_', $controlId));
-        $placeholder->addDataAttribute('script_url', $this->getScriptSrc($onloadCallback));
-        $placeholder->addDataAttribute('onload', $onloadCallback);
+        $placeholder->attributes->setData('script_url', $this->getScriptSrc($onloadCallback));
+        $placeholder->attributes->setData('onload', $onloadCallback);
 
         $elements = [
             $placeholder,
