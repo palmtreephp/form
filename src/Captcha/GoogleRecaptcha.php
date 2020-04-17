@@ -150,9 +150,6 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
             curl_setopt($handle, CURLOPT_POSTFIELDS, http_build_query($postFields));
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
-            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, 0);
-
             $result = curl_exec($handle);
 
             if (!$result || !\is_string($result)) {
