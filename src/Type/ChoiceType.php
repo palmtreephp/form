@@ -97,6 +97,10 @@ class ChoiceType extends AbstractType
                 foreach ($choice->getElements() as $child) {
                     // Don't add child feedback as we already display our own.
                     if (!$child->classes->has('palmtree-invalid-feedback')) {
+                        if ($child->classes->has('palmtree-form-control') && !$this->isValid()) {
+                            $child->classes->add('is-invalid');
+                        }
+
                         if ($choiceWrapper) {
                             $choiceWrapper->addChild($child);
                         } else {
@@ -116,6 +120,20 @@ class ChoiceType extends AbstractType
         }
 
         return $parent;
+    }
+
+    public function getElements(Element $wrapper = null)
+    {
+        $elements = parent::getElements($wrapper);
+
+        foreach ($elements as $element) {
+            if ($element->classes->has('palmtree-invalid-feedback')) {
+                $element->classes->add('d-block');
+                break;
+            }
+        }
+
+        return $elements;
     }
 
     public function setChoices(array $choices)
