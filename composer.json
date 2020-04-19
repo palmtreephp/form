@@ -12,8 +12,8 @@
     ],
     "require": {
         "php": ">=7.1",
-        "palmtree/argparser": "~1.2",
-        "palmtree/nameconverter": "~1.0",
+        "palmtree/argparser": "~2.0",
+        "palmtree/nameconverter": "~2.0",
         "palmtree/html": "^3.0.3"
     },
     "autoload": {
