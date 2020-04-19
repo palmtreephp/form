@@ -16,5 +16,5 @@ interface CaptchaInterface
     public function getSlug(): string;
 
     /** @return Element[] */
-    public function getElements(Element $element, Form $form): array;
+    public function getElements(Element $element, Form $form);
 }

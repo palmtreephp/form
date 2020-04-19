@@ -11,19 +11,29 @@ use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
 class Form
 {
+    /** @var string */
     protected $key;
     /** @var AbstractType[] */
-    protected $fields    = [];
-    protected $ajax      = false;
+    protected $fields = [];
+    /** @var bool */
+    protected $ajax = false;
+    /** @var bool */
     protected $submitted = false;
-    protected $method    = 'POST';
+    /** @var string */
+    protected $method = 'POST';
+    /** @var string */
     protected $action;
-    protected $encType                = '';
-    protected $errors                 = [];
-    protected $fieldWrapper           = 'div.form-group';
+    /** @var string */
+    protected $encType = '';
+    /** @var array */
+    protected $errors = [];
+    /** @var string */
+    protected $fieldWrapper = 'div.form-group';
+    /** @var string */
     protected $invalidElementSelector = 'div.invalid-feedback.small';
-    protected $htmlValidation         = true;
-
+    /** @var bool */
+    protected $htmlValidation = true;
+    /** @var string */
     private const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
     public function __construct(array $args = [])
@@ -108,7 +118,7 @@ class Form
         return empty($this->errors);
     }
 
-    public function submit($data): void
+    public function submit(array $data): void
     {
         if ($this->submitted) {
             throw new AlreadySubmittedException(__METHOD__ . ' can only be called once');
@@ -130,7 +140,11 @@ class Form
 
     public function handleRequest(): void
     {
-        $requestData = $this->getRequest();
+        $requestData = $this->getRequestData();
+
+        if (!isset($requestData[$this->key])) {
+            return;
+        }
 
         $data = [];
 
@@ -147,7 +161,7 @@ class Form
         $this->submit($data);
     }
 
-    public function getRequest(): array
+    public function getRequestData(): array
     {
         return strtoupper($this->method) === 'POST' ? $_POST : $_GET;
     }

@@ -11,7 +11,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
     private const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
 
     /** @var array */
-    private static $errorCodes = [
+    private const ERROR_CODES = [
         'missing-input-secret'   => 'The secret parameter is missing.',
         'invalid-input-secret'   => 'The secret parameter is invalid or malformed.',
         'missing-input-response' => 'The response parameter is missing.',
@@ -64,7 +64,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         return false;
     }
 
-    public function getElements(Element $formControl, Form $form): array
+    public function getElements(Element $formControl, Form $form)
     {
         $controlId = $formControl->attributes['id'];
 
@@ -117,7 +117,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
     {
         $error = reset($this->errors);
 
-        return self::$errorCodes[$error] ?? $error;
+        return self::ERROR_CODES[$error] ?? $error;
     }
 
     /**

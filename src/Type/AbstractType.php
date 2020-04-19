@@ -268,12 +268,10 @@ abstract class AbstractType
 
     public function mapData(): void
     {
-        if (\is_array($this->data)) {
-            foreach ($this->data as $key => $value) {
-                if ($child = $this->getChild($key)) {
-                    $child->setData($value);
-                    $child->mapData();
-                }
+        foreach ($this->data ?? [] as $key => $value) {
+            if ($child = $this->getChild($key)) {
+                $child->setData($value);
+                $child->mapData();
             }
         }
     }
@@ -439,7 +437,7 @@ abstract class AbstractType
     /**
      * @param ConstraintInterface[] $constraints
      */
-    public function setConstraints($constraints): self
+    public function setConstraints(array $constraints): self
     {
         $this->constraints = [];
 
