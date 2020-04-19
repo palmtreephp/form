@@ -16,13 +16,13 @@ class Length extends AbstractConstraint implements ConstraintInterface
 
     public function validate($input)
     {
-        if (null !== $this->getMin() && \strlen($input) < $this->getMin()) {
+        if ($this->min !== null && \strlen($input) < $this->min) {
             $this->setErrorCode(self::ERROR_TOO_SMALL);
 
             return false;
         }
 
-        if (null !== $this->getMax() && \strlen($input) > $this->getMax()) {
+        if ($this->max !== null && \strlen($input) > $this->max) {
             $this->setErrorCode(self::ERROR_TOO_LARGE);
 
             return false;
@@ -58,10 +58,10 @@ class Length extends AbstractConstraint implements ConstraintInterface
     {
         switch ($this->getErrorCode()) {
             case self::ERROR_TOO_SMALL:
-                $errorMessage = 'This field must be at least ' . $this->getMin() . ' characters';
+                $errorMessage = "This field must be at least $this->min characters";
                 break;
             case self::ERROR_TOO_LARGE:
-                $errorMessage = 'This field must be less than ' . $this->getMax() . ' characters';
+                $errorMessage = "This field must be less than  $this->max characters";
                 break;
             default:
                 $errorMessage = 'Invalid string length';

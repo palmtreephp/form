@@ -15,9 +15,6 @@ class Number extends AbstractConstraint implements ConstraintInterface
     /** @var int|null */
     private $max;
 
-    /**
-     * @inheritDoc
-     */
     public function validate($input)
     {
         if (!is_numeric($input)) {
@@ -26,13 +23,13 @@ class Number extends AbstractConstraint implements ConstraintInterface
             return false;
         }
 
-        if ($this->getMin() !== null && $input < $this->getMin()) {
+        if ($this->min !== null && $input < $this->min) {
             $this->errorCode = self::ERROR_TOO_SMALL;
 
             return false;
         }
 
-        if ($this->getMax() !== null && $input > $this->getMax()) {
+        if ($this->max !== null && $input > $this->max) {
             $this->errorCode = self::ERROR_TOO_LARGE;
 
             return false;
@@ -50,7 +47,7 @@ class Number extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @param int $min
+     * @param int|null $min
      *
      * @return Number
      */
@@ -70,7 +67,7 @@ class Number extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @param int $max
+     * @param int|null $max
      *
      * @return Number
      */
@@ -82,7 +79,7 @@ class Number extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getErrorCode()
     {
@@ -96,10 +93,10 @@ class Number extends AbstractConstraint implements ConstraintInterface
     {
         switch ($this->getErrorCode()) {
             case self::ERROR_TOO_SMALL:
-                $errorMessage = 'This value must be greater than or equal to ' . $this->getMin();
+                $errorMessage = "This value must be greater than or equal to $this->min";
                 break;
             case self::ERROR_TOO_LARGE:
-                $errorMessage = 'This value must be less than ' . $this->getMax();
+                $errorMessage = "'This value must be less than $this->max";
                 break;
             default:
                 $errorMessage = 'This value must be a number';

@@ -18,7 +18,7 @@ class Match extends AbstractConstraint implements ConstraintInterface
      */
     public function validate($input)
     {
-        return $input === $this->getMatchField()->getData();
+        return $input === $this->matchField->getData();
     }
 
     /**

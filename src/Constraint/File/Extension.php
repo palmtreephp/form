@@ -16,10 +16,8 @@ class Extension extends AbstractConstraint implements ConstraintInterface
     {
         $extension = pathinfo($uploadedFile['name'], PATHINFO_EXTENSION);
 
-        if (!\in_array($extension, $this->getExtensions())) {
-            $this->setErrorMessage(
-                'Only the following file extensions are allowed: ' . implode(', ', $this->getExtensions())
-            );
+        if (!\in_array($extension, $this->extensions, true)) {
+            $this->setErrorMessage('Only the following file extensions are allowed: ' . implode(', ', $this->extensions));
 
             return false;
         }
