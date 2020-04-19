@@ -12,13 +12,21 @@ use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 abstract class AbstractType
 {
+    /** @var string */
     protected $tag = 'input';
+    /** @var string */
     protected $type;
+    /** @var string */
     protected $name;
+    /** @var mixed */
     protected $data;
+    /** @var string|null */
     protected $label;
-    protected $userInput    = true;
-    protected $required     = true;
+    /** @var bool */
+    protected $userInput = true;
+    /** @var bool */
+    protected $required = true;
+    /** @var string */
     protected $errorMessage = 'Please fill in this field';
     /** @var Form */
     protected $form;
@@ -26,6 +34,7 @@ abstract class AbstractType
     protected $parent;
     /** @var AbstractType[] */
     protected $children = [];
+    /** @var int|string */
     protected $position = 0;
     /** @var array */
     protected $args = [];
@@ -33,7 +42,7 @@ abstract class AbstractType
     protected $constraints = [];
     /** @var SnakeCaseToHumanNameConverter */
     protected $nameConverter;
-
+    /** @var array */
     public static $defaultArgs = [
         'placeholder' => true,
         'classes'     => [],
