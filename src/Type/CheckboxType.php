@@ -72,15 +72,12 @@ class CheckboxType extends AbstractType
 
     public function getNameAttribute(): string
     {
-        $formId = $this->form->getKey();
-
-        $format = '%s[%s]';
-
+        $value = $this->form->getKey() . "[$this->name]";
         if ($this->siblings) {
-            $format .= '[]';
+            $value .= '[]';
         }
 
-        return sprintf($format, $formId, $this->name);
+        return $value;
     }
 
     public function isValid(): bool

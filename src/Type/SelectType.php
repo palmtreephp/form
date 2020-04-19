@@ -33,15 +33,12 @@ class SelectType extends AbstractType
 
     public function getNameAttribute(): string
     {
-        $formId = $this->form->getKey();
-
-        $format = '%s[%s]';
-
+        $value = $this->form->getKey() . "[$this->name]";
         if ($this->multiple) {
-            $format .= '[]';
+            $value .= '[]';
         }
 
-        return sprintf($format, $formId, $this->name);
+        return $value;
     }
 
     public function setMultiple(bool $multiple): self
