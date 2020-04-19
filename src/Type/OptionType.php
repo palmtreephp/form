@@ -46,22 +46,14 @@ class OptionType extends AbstractType
         return $elements;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return OptionType
-     */
-    public function setValue($value)
+    public function setValue(string $value): self
     {
         $this->value = $value;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }

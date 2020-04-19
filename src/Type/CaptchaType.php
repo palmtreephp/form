@@ -30,7 +30,7 @@ class CaptchaType extends AbstractType
         }
     }
 
-    public function isValid()
+    public function isValid(): bool
     {
         if (!$this->getForm()->isSubmitted()) {
             return true;

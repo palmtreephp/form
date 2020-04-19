@@ -3,12 +3,13 @@
 namespace Palmtree\Form\Type;
 
 use Palmtree\Form\Constraint\Number;
+use Palmtree\Html\Element;
 
 class NumberType extends AbstractType
 {
     protected $type = 'number';
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
@@ -17,11 +18,11 @@ class NumberType extends AbstractType
                 $min = $constraint->getMin();
                 $max = $constraint->getMax();
 
-                if (null !== $min) {
+                if ($min !== null) {
                     $element->attributes['min'] = $min;
                 }
 
-                if (null !== $max) {
+                if ($max !== null) {
                     $element->attributes['max'] = $max;
                 }
             }

@@ -4,7 +4,7 @@ namespace Palmtree\Form\Type;
 
 class PersonType extends AbstractGroupType
 {
-    public function build()
+    public function build(): void
     {
         $this
             ->add('name', TextType::class, [

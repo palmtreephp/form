@@ -26,17 +26,15 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
     private $ip;
     /** @var array */
     private $errors = [];
-    /** @var mixed */
+    /** @var array */
     private $verificationResult = [];
 
     /**
-     * GoogleRecaptcha constructor.
-     *
      * @param string      $siteKey   Site key obtained from Google Recaptcha admin
      * @param string      $secretKey Secret key obtained from Google Recaptcha admin
      * @param bool|string $ip        Client's IP address. Setting to true uses $_SERVER['REMOTE_ADDR']
      */
-    public function __construct($siteKey, $secretKey, $ip = true)
+    public function __construct(string $siteKey, string $secretKey, $ip = true)
     {
         $this->siteKey   = $siteKey;
         $this->secretKey = $secretKey;
@@ -49,13 +47,9 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
     }
 
     /**
-     * Returns whether the given response was successful.
-     *
      * @param string $response The form's 'g-recaptcha-response' field value.
-     *
-     * @return bool
      */
-    public function verify($response)
+    public function verify($response): bool
     {
         $result = $this->getVerificationResult($response);
 
@@ -70,7 +64,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         return false;
     }
 
-    public function getElements(Element $formControl, Form $form)
+    public function getElements(Element $formControl, Form $form): array
     {
         $controlId = $formControl->attributes['id'];
 
@@ -81,7 +75,8 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         // Placeholder Element that actually displays the captcha
         $placeholderId = sprintf('%s_placeholder', $controlId);
 
-        $placeholder                   = new Element('div.palmtree-form-control.g-recaptcha');
+        $placeholder = new Element('div.palmtree-form-control.g-recaptcha');
+
         $placeholder->attributes['id'] = $placeholderId;
         $placeholder->attributes->setData('name', $formControl->attributes['data-name']);
 
@@ -102,14 +97,10 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
 
     /**
      * Returns the recaptcha API script source with an onload callback.
-     *
-     * @param string $onloadCallbackName
-     *
-     * @return string
      */
-    protected function getScriptSrc($onloadCallbackName)
+    protected function getScriptSrc(string $onloadCallbackName): string
     {
-        $url = static::SCRIPT_URL;
+        $url = self::SCRIPT_URL;
 
         $queryArgs = [];
         parse_str(parse_url($url, PHP_URL_QUERY), $queryArgs);
@@ -122,17 +113,17 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         return $url;
     }
 
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
-        return $this->errors;
+        $error = reset($this->errors);
+
+        return self::$errorCodes[$error] ?? $error;
     }
 
     /**
      * @param string $response
-     *
-     * @return array
      */
-    protected function getVerificationResult($response)
+    protected function getVerificationResult($response): array
     {
         if (!isset($this->verificationResult[$response])) {
             $postFields = [

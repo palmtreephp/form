@@ -7,12 +7,11 @@ use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 class CheckboxType extends AbstractType
 {
-    protected $type  = 'checkbox';
-    protected $value = '1';
-
+    protected $type     = 'checkbox';
+    protected $value    = '1';
     protected $siblings = false;
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
@@ -75,7 +74,7 @@ class CheckboxType extends AbstractType
         return $elements;
     }
 
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
         $formId = $this->form->getKey();
 
@@ -92,7 +91,7 @@ class CheckboxType extends AbstractType
         return sprintf($format, $formId, $this->name);
     }
 
-    public function isValid()
+    public function isValid(): bool
     {
         if (!$this->required || !$this->form->isSubmitted()) {
             return true;
@@ -101,50 +100,31 @@ class CheckboxType extends AbstractType
         return $this->data && filter_var($this->data, FILTER_VALIDATE_BOOLEAN);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return CheckboxType
-     */
-    public function setValue($value)
+    public function setValue(string $value): self
     {
         $this->value = $value;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
 
-    /**
-     * @param bool $siblings
-     *
-     * @return CheckboxType
-     */
-    public function setSiblings($siblings)
+    public function setSiblings(bool $siblings): self
     {
         $this->siblings = $siblings;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSiblings()
+    public function hasSiblings(): bool
     {
-        return (bool)$this->siblings;
+        return $this->siblings;
     }
 
-    /**
-     * @return mixed|string
-     */
-    protected function getIdAttribute()
+    protected function getIdAttribute(): string
     {
         $attribute = parent::getIdAttribute();
 

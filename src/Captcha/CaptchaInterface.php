@@ -7,33 +7,14 @@ use Palmtree\Html\Element;
 
 interface CaptchaInterface
 {
-    /**
-     * @param mixed $answer
-     *
-     * @return bool
-     */
-    public function verify($answer);
+    public function verify($answer): bool;
 
-    /**
-     * @return string
-     */
-    public function getErrorMessage();
+    public function getErrorMessage(): string;
 
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
-    /**
-     * @return string
-     */
-    public function getSlug();
+    public function getSlug(): string;
 
-    /**
-     * @param Element $element
-     * @param Form    $form
-     *
-     * @return array
-     */
-    public function getElements(Element $element, Form $form);
+    /** @return Element[] */
+    public function getElements(Element $element, Form $form): array;
 }

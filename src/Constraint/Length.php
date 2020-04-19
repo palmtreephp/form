@@ -14,7 +14,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
     /** @var int|null */
     private $errorCode;
 
-    public function validate($input)
+    public function validate($input): bool
     {
         if ($this->min !== null && \strlen($input) < $this->min) {
             $this->setErrorCode(self::ERROR_TOO_SMALL);
@@ -31,30 +31,19 @@ class Length extends AbstractConstraint implements ConstraintInterface
         return true;
     }
 
-    /**
-     * @return int
-     */
-    public function getErrorCode()
+    public function getErrorCode(): ?int
     {
         return $this->errorCode;
     }
 
-    /**
-     * @param int $errorCode
-     *
-     * @return Length
-     */
-    public function setErrorCode($errorCode)
+    public function setErrorCode(int $errorCode): self
     {
         $this->errorCode = $errorCode;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         switch ($this->getErrorCode()) {
             case self::ERROR_TOO_SMALL:
@@ -71,40 +60,24 @@ class Length extends AbstractConstraint implements ConstraintInterface
         return $errorMessage;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMin()
+    public function getMin(): ?int
     {
         return $this->min;
     }
 
-    /**
-     * @param int|null $min
-     *
-     * @return Length
-     */
-    public function setMin($min)
+    public function setMin(?int $min): self
     {
         $this->min = $min;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMax()
+    public function getMax(): ?int
     {
         return $this->max;
     }
 
-    /**
-     * @param int|null $max
-     *
-     * @return Length
-     */
-    public function setMax($max)
+    public function setMax(?int $max): self
     {
         $this->max = $max;
 

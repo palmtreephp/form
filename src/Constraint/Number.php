@@ -15,7 +15,7 @@ class Number extends AbstractConstraint implements ConstraintInterface
     /** @var int|null */
     private $max;
 
-    public function validate($input)
+    public function validate($input): bool
     {
         if (!is_numeric($input)) {
             $this->errorCode = self::ERROR_NOT_NUMERIC;
@@ -38,60 +38,38 @@ class Number extends AbstractConstraint implements ConstraintInterface
         return true;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMin()
+    public function getMin(): ?int
     {
         return $this->min;
     }
 
-    /**
-     * @param int|null $min
-     *
-     * @return Number
-     */
-    public function setMin($min)
+    public function setMin(?int $min): self
     {
         $this->min = $min;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMax()
+    public function getMax(): ?int
     {
         return $this->max;
     }
 
-    /**
-     * @param int|null $max
-     *
-     * @return Number
-     */
-    public function setMax($max)
+    public function setMax(?int $max): self
     {
         $this->max = $max;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getErrorCode()
+    public function getErrorCode(): ?int
     {
         return $this->errorCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
-        switch ($this->getErrorCode()) {
+        switch ($this->errorCode) {
             case self::ERROR_TOO_SMALL:
                 $errorMessage = "This value must be greater than or equal to $this->min";
                 break;

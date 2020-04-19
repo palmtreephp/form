@@ -2,11 +2,13 @@
 
 namespace Palmtree\Form\Type;
 
+use Palmtree\Html\Element;
+
 class TextareaType extends AbstractType
 {
     protected $tag = 'textarea';
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 

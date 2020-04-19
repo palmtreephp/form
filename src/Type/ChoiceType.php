@@ -30,7 +30,7 @@ class ChoiceType extends AbstractType
         }
     }
 
-    public function getElement()
+    public function getElement(): Element
     {
         $wrapper = new Element('div');
         if ($this->expanded) {
@@ -136,47 +136,31 @@ class ChoiceType extends AbstractType
         return $elements;
     }
 
-    public function setChoices(array $choices)
+    public function setChoices(array $choices): self
     {
         $this->choices = $choices;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getChoices()
+    public function getChoices(): array
     {
         return $this->choices;
     }
 
-    /**
-     * @param bool $multiple
-     *
-     * @return ChoiceType
-     */
-    public function setMultiple($multiple)
+    public function setMultiple(bool $multiple): self
     {
         $this->multiple = $multiple;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMultiple()
+    public function isMultiple(): bool
     {
         return $this->multiple;
     }
 
-    /**
-     * @param bool $expanded
-     *
-     * @return ChoiceType
-     */
-    public function setExpanded($expanded)
+    public function setExpanded(bool $expanded): self
     {
         $this->expanded = $expanded;
 
@@ -185,28 +169,18 @@ class ChoiceType extends AbstractType
 
     /**
      * Returns whether this choice type is expanded i.e not a select box.
-     *
-     * @return bool
      */
-    public function isExpanded()
+    public function isExpanded(): bool
     {
         return $this->expanded;
     }
 
-    /**
-     * @return bool
-     */
-    public function isInline()
+    public function isInline(): bool
     {
         return $this->inline;
     }
 
-    /**
-     * @param bool $inline
-     *
-     * @return ChoiceType
-     */
-    public function setInline($inline)
+    public function setInline(bool $inline): self
     {
         $this->inline = $inline;
 

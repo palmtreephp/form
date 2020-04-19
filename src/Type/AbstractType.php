@@ -51,7 +51,7 @@ abstract class AbstractType
         }
     }
 
-    protected function parseArgs($args)
+    protected function parseArgs(array $args): array
     {
         $parser = new ArgParser($args, '', new SnakeCaseToCamelCaseNameConverter());
 
@@ -60,69 +60,45 @@ abstract class AbstractType
         return $parser->resolveOptions(static::$defaultArgs);
     }
 
-    public function build()
+    public function build(): void
     {
-        foreach ($this->getChildren() as $child) {
+        foreach ($this->children as $child) {
             $child->build();
         }
     }
 
-    /**
-     * @param string $type
-     *
-     * @return self
-     */
-    public function setType($type)
+    public function setType(string $type): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @param mixed $name
-     *
-     * @return self
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @param mixed $label
-     *
-     * @return self
-     */
-    public function setLabel($label)
+    public function setLabel(?string $label): self
     {
         $this->label = $label;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLabel()
+    public function getLabel(): ?string
     {
         return $this->label;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return bool
-     */
-    public function isValid()
+    public function isValid(): bool
     {
         if (!$this->form->isSubmitted()) {
             return true;
@@ -145,10 +121,7 @@ abstract class AbstractType
         return true;
     }
 
-    /**
-     * @return Element|null
-     */
-    public function getLabelElement()
+    public function getLabelElement(): ?Element
     {
         if (!$this->label) {
             return null;
@@ -163,10 +136,7 @@ abstract class AbstractType
         return $element;
     }
 
-    /**
-     * @return Element
-     */
-    public function getElement()
+    public function getElement(): Element
     {
         $element = new Element($this->tag);
         $element->classes->add(...$this->args['classes'] ?? []);
@@ -203,8 +173,6 @@ abstract class AbstractType
     }
 
     /**
-     * @param Element|null $wrapper
-     *
      * @return Element[]
      */
     public function getElements(Element $wrapper = null)
@@ -238,15 +206,12 @@ abstract class AbstractType
         return $elements;
     }
 
-    /**
-     * @return string
-     */
-    public function getHumanName()
+    public function getHumanName(): string
     {
         return $this->nameConverter->normalize($this->name);
     }
 
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
         if ($this->global) {
             return $this->name;
@@ -267,7 +232,7 @@ abstract class AbstractType
         return sprintf('%s[%s]', $formId, $this->name);
     }
 
-    protected function getIdAttribute()
+    protected function getIdAttribute(): string
     {
         if ($this->global) {
             return $this->name;
@@ -276,10 +241,7 @@ abstract class AbstractType
         return $this->form->getKey() . "-$this->name";
     }
 
-    /**
-     * @return string
-     */
-    public function getPlaceHolderAttribute()
+    public function getPlaceHolderAttribute(): string
     {
         $placeholder = '';
 
@@ -292,27 +254,19 @@ abstract class AbstractType
         return $placeholder;
     }
 
-    /**
-     * @return string|array|mixed
-     */
     public function getData()
     {
         return $this->data;
     }
 
-    /**
-     * @param string|array|mixed $data
-     *
-     * @return self
-     */
-    public function setData($data)
+    public function setData($data): self
     {
         $this->data = $data;
 
         return $this;
     }
 
-    public function mapData()
+    public function mapData(): void
     {
         if (\is_array($this->data)) {
             foreach ($this->data as $key => $value) {
@@ -324,113 +278,70 @@ abstract class AbstractType
         }
     }
 
-    /**
-     * @return mixed
-     */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return $this->errorMessage;
     }
 
-    /**
-     * @param mixed $errorMessage
-     *
-     * @return self
-     */
-    public function setErrorMessage($errorMessage)
+    public function setErrorMessage(string $errorMessage): self
     {
         $this->errorMessage = $errorMessage;
 
         return $this;
     }
 
-    /**
-     * @param string $tag
-     *
-     * @return self
-     */
-    public function setTag($tag)
+    public function setTag(string $tag): self
     {
         $this->tag = $tag;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTag()
+    public function getTag(): string
     {
         return $this->tag;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function isType($type)
+    public function isType(string $type): bool
     {
         return $type === $this->type;
     }
 
-    /**
-     * @param bool $required
-     *
-     * @return self
-     */
-    public function setRequired($required)
+    public function setRequired(bool $required): self
     {
         $this->required = $required;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return $this->required;
     }
 
-    /**
-     * @return Form
-     */
-    public function getForm()
+    public function getForm(): Form
     {
         return $this->form;
     }
 
-    /**
-     * @param Form $form
-     *
-     * @return self
-     */
-    public function setForm(Form $form)
+    public function setForm(Form $form): self
     {
         $this->form = $form;
 
         return $this;
     }
 
-    /**
-     * @return self|null
-     */
-    public function getParent()
+    public function getParent(): ?self
     {
         return $this->parent;
     }
 
-    /**
-     * @param self $parent
-     *
-     * @return self
-     */
-    public function setParent(self $parent)
+    public function setParent(self $parent): self
     {
         $this->parent = $parent;
         $this->form   = $parent->getForm();
@@ -438,12 +349,7 @@ abstract class AbstractType
         return $this;
     }
 
-    /**
-     * @param self $child
-     *
-     * @return self
-     */
-    public function addChild(self $child)
+    public function addChild(self $child): self
     {
         if ($child->getParent() !== $this) {
             $child->setParent($this);
@@ -454,7 +360,7 @@ abstract class AbstractType
         return $this;
     }
 
-    public function add($name, $fqcn, array $options = [])
+    public function add(string $name, string $fqcn, array $options = []): self
     {
         /** @var self $type */
         $type = new $fqcn($options);
@@ -468,73 +374,51 @@ abstract class AbstractType
     /**
      * @return AbstractType[]
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         return $this->children;
     }
 
-    public function getChild($name)
+    public function getChild(string $name): ?self
     {
         return $this->children[$name] ?? null;
     }
 
-    /**
-     * @param mixed $position
-     */
-    public function setPosition($position)
+    public function setPosition($position): void
     {
         $this->position = $position;
     }
 
-    /**
-     * @return mixed
-     */
     public function getPosition()
     {
         return $this->position;
     }
 
-    /**
-     * @param bool $global
-     *
-     * @return self
-     */
-    public function setGlobal($global)
+    public function setGlobal(bool $global): self
     {
         $this->global = $global;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isGlobal()
+    public function isGlobal(): bool
     {
         return $this->global;
     }
 
-    /**
-     * @return bool
-     */
-    public function isUserInput()
+    public function isUserInput(): bool
     {
         return $this->userInput;
     }
 
-    /**
-     * @param bool $userInput
-     *
-     * @return self
-     */
-    public function setUserInput($userInput)
+    public function setUserInput(bool $userInput): self
     {
         $this->userInput = $userInput;
 
         return $this;
     }
 
-    public function filter(array $args = [])
+    public function filter(array $args = []): bool
     {
         foreach ($args as $key => $value) {
             if (property_exists($this, $key) && $this->$key !== $value) {
@@ -545,12 +429,7 @@ abstract class AbstractType
         return true;
     }
 
-    /**
-     * @param ConstraintInterface $constraint
-     *
-     * @return self
-     */
-    public function addConstraint(ConstraintInterface $constraint)
+    public function addConstraint(ConstraintInterface $constraint): self
     {
         $this->constraints[] = $constraint;
 
@@ -559,10 +438,8 @@ abstract class AbstractType
 
     /**
      * @param ConstraintInterface[] $constraints
-     *
-     * @return self
      */
-    public function setConstraints($constraints)
+    public function setConstraints($constraints): self
     {
         $this->constraints = [];
 
@@ -576,7 +453,7 @@ abstract class AbstractType
     /**
      * @return ConstraintInterface[]
      */
-    public function getConstraints()
+    public function getConstraints(): array
     {
         return $this->constraints;
     }

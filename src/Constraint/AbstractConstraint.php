@@ -15,25 +15,17 @@ abstract class AbstractConstraint
         $parser->parseSetters($this);
     }
 
-    public static function create($args = [])
+    public static function create($args = []): self
     {
         return new static($args);
     }
 
-    /**
-     * @return string
-     */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return $this->errorMessage;
     }
 
-    /**
-     * @param string $message
-     *
-     * @return AbstractConstraint
-     */
-    public function setErrorMessage($message)
+    public function setErrorMessage(string $message): self
     {
         $this->errorMessage = $message;
 

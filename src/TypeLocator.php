@@ -15,12 +15,7 @@ class TypeLocator
         $this->findTypeClasses();
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string|null
-     */
-    public function getTypeClass($type)
+    public function getTypeClass(string $type): ?string
     {
         if (isset(self::$types[$type])) {
             return self::$types[$type];
@@ -38,10 +33,8 @@ class TypeLocator
      *
      * @param string $type FQCN of the form type or short hand e.g 'text', 'email'.
      * @param array  $args Arguments to pass to the type class constructor.
-     *
-     * @return AbstractType
      */
-    public function getTypeObject($type, $args)
+    public function getTypeObject(string $type, array $args): AbstractType
     {
         if ($type instanceof AbstractType) {
             return $type;
@@ -56,11 +49,11 @@ class TypeLocator
         return new $class($args, $this);
     }
 
-    private function findTypeClasses()
+    private function findTypeClasses(): void
     {
         if (self::$types === null) {
             self::$types = [];
-            foreach (new \GlobIterator(__DIR__ . '/Type/*Type.php') as $file) {
+            foreach (glob(__DIR__ . '/Type/*Type.php') ?: [] as $file) {
                 $type = basename($file, 'Type.php');
 
                 self::$types[strtolower($type)] = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');

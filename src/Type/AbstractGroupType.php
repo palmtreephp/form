@@ -6,7 +6,7 @@ use Palmtree\Html\Element;
 
 abstract class AbstractGroupType extends AbstractType
 {
-    public function getElement()
+    public function getElement(): Element
     {
         $element = new Element('div.' . $this->getGroupName());
 
@@ -19,7 +19,7 @@ abstract class AbstractGroupType extends AbstractType
         return $element;
     }
 
-    public function getGroupName()
+    public function getGroupName(): string
     {
         $shortClass = substr(strrchr(static::class, '\\'), 1);
 

@@ -20,7 +20,7 @@ class FileType extends AbstractType
         }
     }
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
@@ -33,7 +33,7 @@ class FileType extends AbstractType
         return $element;
     }
 
-    public function getLabelElement()
+    public function getLabelElement(): Element
     {
         $element = parent::getLabelElement();
 
@@ -64,34 +64,22 @@ class FileType extends AbstractType
         return [$customFileWrapper];
     }
 
-    /**
-     * @param bool $custom
-     */
-    public function setCustom($custom)
+    public function setCustom(bool $custom): void
     {
         $this->custom = $custom;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCustom()
+    public function isCustom(): bool
     {
         return $this->custom;
     }
 
-    /**
-     * @param string $browseText
-     */
-    public function setBrowseText($browseText)
+    public function setBrowseText(string $browseText): void
     {
         $this->browseText = $browseText;
     }
 
-    /**
-     * @return string
-     */
-    public function getBrowseText()
+    public function getBrowseText(): string
     {
         return $this->browseText;
     }

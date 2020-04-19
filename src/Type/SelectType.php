@@ -10,7 +10,7 @@ class SelectType extends AbstractType
     /** @var bool */
     protected $multiple = false;
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
@@ -31,7 +31,7 @@ class SelectType extends AbstractType
         return $element;
     }
 
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
         $formId = $this->form->getKey();
 
@@ -48,22 +48,14 @@ class SelectType extends AbstractType
         return sprintf($format, $formId, $this->name);
     }
 
-    /**
-     * @param bool $multiple
-     *
-     * @return SelectType
-     */
-    public function setMultiple($multiple)
+    public function setMultiple(bool $multiple): self
     {
         $this->multiple = $multiple;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMultiple()
+    public function isMultiple(): bool
     {
         return $this->multiple;
     }

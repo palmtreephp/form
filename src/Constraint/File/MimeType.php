@@ -9,10 +9,7 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
 {
     private $mimeTypes = [];
 
-    /**
-     * @inheritDoc
-     */
-    public function validate($uploadedFile)
+    public function validate($uploadedFile): bool
     {
         $mimeType = $this->getUploadedFileMimeType($uploadedFile);
         if ($mimeType === null) {
@@ -30,27 +27,19 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
         return true;
     }
 
-    /**
-     * @param array $mimeTypes
-     *
-     * @return MimeType
-     */
-    public function setMimeTypes(array $mimeTypes)
+    public function setMimeTypes(array $mimeTypes): self
     {
         $this->mimeTypes = $mimeTypes;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getMimeTypes()
+    public function getMimeTypes(): array
     {
         return $this->mimeTypes;
     }
 
-    private function getUploadedFileMimeType($uploadedFile)
+    private function getUploadedFileMimeType($uploadedFile): ?string
     {
         if (\extension_loaded('fileinfo')) {
             $finfo = new \finfo(\FILEINFO_MIME_TYPE);

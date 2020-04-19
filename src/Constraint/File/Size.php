@@ -24,10 +24,7 @@ class Size extends AbstractConstraint implements ConstraintInterface
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function validate($uploadedFile)
+    public function validate($uploadedFile): bool
     {
         $size = (int)$uploadedFile['size'];
 

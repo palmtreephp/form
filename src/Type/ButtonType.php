@@ -2,6 +2,8 @@
 
 namespace Palmtree\Form\Type;
 
+use Palmtree\Html\Element;
+
 class ButtonType extends AbstractType
 {
     protected $tag       = 'button';
@@ -14,7 +16,7 @@ class ButtonType extends AbstractType
         'classes'     => [],
     ];
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
@@ -27,8 +29,8 @@ class ButtonType extends AbstractType
         return $element;
     }
 
-    public function getLabelElement()
+    public function getLabelElement(): ?Element
     {
-        return false;
+        return null;
     }
 }

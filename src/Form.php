@@ -17,26 +17,28 @@ class Form
     protected $submitted = false;
     protected $method    = 'POST';
     protected $action;
-    protected $encType        = '';
-    protected $errors         = [];
-    protected $fieldWrapper   = 'div.form-group';
-    protected $invalidElement = 'div.invalid-feedback.small';
-    protected $htmlValidation = true;
+    protected $encType                = '';
+    protected $errors                 = [];
+    protected $fieldWrapper           = 'div.form-group';
+    protected $invalidElementSelector = 'div.invalid-feedback.small';
+    protected $htmlValidation         = true;
 
-    public function __construct($args = [])
+    private const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
+
+    public function __construct(array $args = [])
     {
         $this->parseArgs($args);
     }
 
-    public function render()
+    public function render(): string
     {
         $formElement = new Element('form.palmtree-form');
 
         $formElement->attributes->add([
-            'method'  => $this->getMethod(),
-            'id'      => $this->getKey(),
-            'action'  => $this->getAction(),
-            'enctype' => $this->getEncType(),
+            'method'  => $this->method,
+            'id'      => $this->key,
+            'action'  => $this->action,
+            'enctype' => $this->encType,
         ]);
 
         if (!$this->htmlValidation) {
@@ -64,10 +66,7 @@ class Form
         return $formElement->render();
     }
 
-    /**
-     * @param Element $form
-     */
-    private function renderFields($form)
+    private function renderFields(Element $form): void
     {
         foreach ($this->fields as $field) {
             $fieldWrapper = null;
@@ -93,10 +92,7 @@ class Form
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isValid()
+    public function isValid(): bool
     {
         foreach ($this->fields as $field) {
             if (!$field->isValid()) {
@@ -107,7 +103,7 @@ class Form
         return empty($this->errors);
     }
 
-    public function submit($data)
+    public function submit($data): void
     {
         if ($this->submitted) {
             throw new AlreadySubmittedException(__METHOD__ . ' can only be called once');
@@ -127,185 +123,98 @@ class Form
         }
     }
 
-    public function handleRequest()
+    public function handleRequest(): void
     {
         $requestData = $this->getRequest();
-        if (!isset($requestData[$this->getKey()])) {
-            return;
-        }
 
         $data = [];
 
-        foreach ($requestData[$this->getKey()] as $key => $value) {
+        foreach ($requestData[$this->key] ?? [] as $key => $value) {
             $data[$key] = $value;
         }
 
-        $data = $this->addFilesToData($data);
-
-        $this->submit($data);
-    }
-
-    /**
-     * @return array
-     */
-    public function getRequest()
-    {
-        switch ($this->method) {
-            case 'POST':
-                $data = $_POST;
-                break;
-            case 'GET':
-            default:
-                $data = $_GET;
-                break;
-        }
-
-        return $data;
-    }
-
-    protected function addFilesToData($data)
-    {
-        if (!isset($_FILES[$this->getKey()])) {
-            return $data;
-        }
-
-        foreach ($_FILES[$this->getKey()] as $key => $parts) {
+        foreach ($_FILES[$this->key] ?? [] as $key => $parts) {
             foreach ($parts as $name => $value) {
                 $data[$name][$key] = $value;
             }
         }
 
-        return $data;
+        $this->submit($data);
     }
 
-    /**
-     * @param mixed $key
-     *
-     * @return Form
-     */
-    public function setKey($key)
+    public function getRequest(): array
+    {
+        return strtoupper($this->method) === 'POST' ? $_POST : $_GET;
+    }
+
+    public function setKey(string $key): self
     {
         $this->key = "form_$key";
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @param bool $ajax
-     *
-     * @return Form
-     */
-    public function setAjax($ajax)
+    public function setAjax(bool $ajax): self
     {
         $this->ajax = $ajax;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isAjax()
+    public function isAjax(): bool
     {
         return $this->ajax;
     }
 
-    public static function isAjaxRequest()
+    public static function isAjaxRequest(): bool
     {
-        $key = 'HTTP_X_REQUESTED_WITH';
-
-        return isset($_SERVER[$key]) && strtolower($_SERVER[$key]) === 'xmlhttprequest';
+        return strtolower($_SERVER[self::REQUESTED_WITH_HEADER] ?? '') === 'xmlhttprequest';
     }
 
-    /**
-     * @return bool
-     */
-    public function isSubmitted()
+    public function isSubmitted(): bool
     {
         return $this->submitted;
     }
 
-    /**
-     * @return Form
-     */
-    public function setSubmitted()
-    {
-        $this->submitted = true;
-
-        return $this;
-    }
-
-    /**
-     * @param string $method
-     *
-     * @return Form
-     */
-    public function setMethod($method)
+    public function setMethod(string $method): self
     {
         $this->method = strtoupper($method);
 
         return $this;
     }
 
-    /**
-     * @param string $action
-     *
-     * @return Form
-     */
-    public function setAction($action)
+    public function setAction(string $action): self
     {
         $this->action = $action;
 
         return $this;
     }
 
-    /**
-     * @param string $encType
-     *
-     * @return Form
-     */
-    public function setEncType($encType)
+    public function setEncType(string $encType): self
     {
         $this->encType = $encType;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
-    /**
-     * @param array $errors
-     *
-     * @return Form
-     */
-    public function setErrors($errors)
+    public function setErrors(array $errors): self
     {
         $this->errors = $errors;
 
         return $this;
     }
 
-    /**
-     * @param string $fieldName
-     * @param string $errorMessage
-     *
-     * @return Form
-     */
-    public function addError($fieldName, $errorMessage)
+    public function addError(string $fieldName, string $errorMessage): self
     {
         $this->errors[$fieldName] = $errorMessage;
 
@@ -313,11 +222,9 @@ class Form
     }
 
     /**
-     * @param array $args
-     *
      * @return AbstractType[]
      */
-    public function getFields(array $args = [])
+    public function getFields(array $args = []): array
     {
         if (empty($args)) {
             return $this->fields;
@@ -331,7 +238,7 @@ class Form
     /**
      * @param AbstractType[] $fields
      */
-    public function setFields($fields)
+    public function setFields(array $fields): void
     {
         $this->fields = [];
 
@@ -340,23 +247,12 @@ class Form
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return AbstractType
-     */
-    public function get($name)
+    public function get(string $name): ?AbstractType
     {
         return $this->fields[$name] ?? null;
     }
 
-    /**
-     * @param AbstractType $field
-     * @param int|null     $offset
-     *
-     * @return Form
-     */
-    public function add(AbstractType $field, $offset = null)
+    public function add(AbstractType $field, ?int $offset = null): self
     {
         $field->setForm($this);
 
@@ -379,37 +275,26 @@ class Form
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasHtmlValidation()
+    public function hasHtmlValidation(): bool
     {
         return $this->htmlValidation;
     }
 
-    /**
-     * @param bool $htmlValidation
-     *
-     * @return Form
-     */
-    public function setHtmlValidation($htmlValidation)
+    public function setHtmlValidation(bool $htmlValidation): self
     {
         $this->htmlValidation = $htmlValidation;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getAction()
+    public function getAction(): string
     {
         return $this->action;
     }
 
-    public function hasRequiredField()
+    public function hasRequiredField(): bool
     {
-        foreach ($this->getFields() as $field) {
+        foreach ($this->fields as $field) {
             if ($field->isRequired()) {
                 return true;
             }
@@ -418,68 +303,49 @@ class Form
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
 
-    private function parseArgs($args)
+    private function parseArgs($args): void
     {
         $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
 
         $parser->parseSetters($this);
     }
 
-    /**
-     * @param string $fieldWrapper
-     *
-     * @return Form
-     */
-    public function setFieldWrapper($fieldWrapper)
+    public function setFieldWrapper(string $fieldWrapper): self
     {
         $this->fieldWrapper = $fieldWrapper;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFieldWrapper()
+    public function getFieldWrapper(): string
     {
         return $this->fieldWrapper;
     }
 
-    /**
-     * @return string
-     */
-    public function getEncType()
+    public function getEncType(): string
     {
         return $this->encType;
     }
 
-    /**
-     * @param string $invalidElement
-     */
-    public function setInvalidElement($invalidElement)
+    public function setInvalidElementSelector(string $invalidElementSelector): void
     {
-        $this->invalidElement = $invalidElement;
+        $this->invalidElementSelector = $invalidElementSelector;
     }
 
-    /**
-     * @return string
-     */
-    public function getInvalidElement()
+    public function getInvalidElementSelector(): string
     {
-        return $this->invalidElement;
+        return $this->invalidElementSelector;
     }
 
-    public function createInvalidElement()
+    public function createInvalidElement(): Element
     {
-        $element            = new Element($this->getInvalidElement());
+        $element = new Element($this->invalidElementSelector);
+
         $element->classes[] = 'palmtree-invalid-feedback';
 
         return $element;

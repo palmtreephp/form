@@ -20,14 +20,7 @@ class FormBuilder
         $this->typeLocator = new TypeLocator();
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param array  $args
-     *
-     * @return FormBuilder
-     */
-    public function add($name, $type = TextType::class, $args = [])
+    public function add(string $name, string $type = TextType::class, array $args = []): self
     {
         if ($type instanceof RepeatedType || $this->typeLocator->getTypeClass($type) === RepeatedType::class) {
             return $this->addRepeatedType($name, $type, $args);
@@ -48,31 +41,24 @@ class FormBuilder
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return AbstractType
-     */
-    public function get($name)
+    public function get(string $name): ?AbstractType
     {
         return $this->form->get($name);
     }
 
-    /**
-     * @return Form
-     */
-    public function getForm()
+    public function getForm(): Form
     {
         return $this->form;
     }
 
-    private function addRepeatedType($name, $type, $args)
+    private function addRepeatedType(string $name, string $type, array $args): self
     {
         /** @var RepeatedType $typeObject */
         $typeObject = $this->typeLocator->getTypeObject($type, $args);
 
         $this->add($name, $typeObject->getRepeatableType(), $args);
 
+        /** @var AbstractType $firstOfType */
         $firstOfType = $this->get($name);
 
         $secondArgs = $args;
@@ -91,6 +77,7 @@ class FormBuilder
 
         $this->add($secondArgs['name'], $typeObject->getRepeatableType(), $secondArgs);
 
+        /** @var AbstractType $secondOfType */
         $secondOfType = $this->get($secondArgs['name']);
 
         $matchConstraint = new Match([

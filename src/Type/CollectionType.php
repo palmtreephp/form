@@ -11,7 +11,7 @@ class CollectionType extends AbstractType
     /** @var array */
     private $entryOptions = [];
 
-    public function getElement()
+    public function getElement(): Element
     {
         $collectionWrapper = new Element('div.palmtree-form-collection');
 
@@ -38,7 +38,7 @@ class CollectionType extends AbstractType
         return $collectionWrapper;
     }
 
-    public function build()
+    public function build(): void
     {
         if (\is_array($this->data)) {
             foreach ($this->data as $key => $value) {
@@ -47,7 +47,7 @@ class CollectionType extends AbstractType
         }
     }
 
-    private function buildEntry($position = 0, $data = null)
+    private function buildEntry($position = 0, ?array $data = null): AbstractType
     {
         $entryType = $this->entryType;
         /** @var AbstractType $entry */
@@ -66,7 +66,7 @@ class CollectionType extends AbstractType
         return $entry;
     }
 
-    private function buildEntryElement(AbstractType $entry)
+    private function buildEntryElement(AbstractType $entry): Element
     {
         $entryWrapper = new Element('div.palmtree-form-collection-entry');
         foreach ($entry->getElements() as $element) {
@@ -76,7 +76,7 @@ class CollectionType extends AbstractType
         return $entryWrapper;
     }
 
-    private function clearPrototypeEntryConstraints(AbstractType $entry)
+    private function clearPrototypeEntryConstraints(AbstractType $entry): void
     {
         $entry->setConstraints([]);
 
@@ -85,10 +85,7 @@ class CollectionType extends AbstractType
         }
     }
 
-    /**
-     * @return self
-     */
-    public function addChild(AbstractType $child)
+    public function addChild(AbstractType $child): AbstractType
     {
         if ($child->getParent() !== $this) {
             $child->setParent($this);
@@ -99,44 +96,30 @@ class CollectionType extends AbstractType
         return $this;
     }
 
-    /**
-     * @param string $entryType
-     */
-    public function setEntryType($entryType)
+    public function setEntryType(string $entryType): void
     {
         $this->entryType = $entryType;
     }
 
-    /**
-     * @return string
-     */
-    public function getEntryType()
+    public function getEntryType(): string
     {
         return $this->entryType;
     }
 
-    /**
-     * @param array $entryOptions
-     */
-    public function setEntryOptions($entryOptions)
+    public function setEntryOptions(array $entryOptions): void
     {
         $this->entryOptions = $entryOptions;
     }
 
-    /**
-     * @return array
-     */
-    public function getEntryOptions()
+    public function getEntryOptions(): array
     {
         return $this->entryOptions;
     }
 
     /**
      * @param array $data
-     *
-     * @return AbstractType
      */
-    public function setData($data)
+    public function setData($data): AbstractType
     {
         if ($this->getEntryType() === FileType::class) {
             $data = self::normalizeFilesArray($data);
@@ -147,7 +130,7 @@ class CollectionType extends AbstractType
         return $this;
     }
 
-    private static function normalizeFilesArray($data)
+    private static function normalizeFilesArray(array $data): array
     {
         $normalized = [];
         $keys       = array_keys($data);
