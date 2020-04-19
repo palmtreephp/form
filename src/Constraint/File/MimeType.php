@@ -15,10 +15,14 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
     public function validate($uploadedFile)
     {
         $mimeType = $this->getUploadedFileMimeType($uploadedFile);
-        if (!\in_array($this->getUploadedFileMimeType($uploadedFile), $this->getMimeTypes())) {
-            $this->setErrorMessage(
-                "Invalid mime type '$mimeType'. Only the following are allowed: " . implode(', ', $this->getMimeTypes())
-            );
+        if ($mimeType === null) {
+            $this->setErrorMessage('Could not determine the uploaded file\'s mime type');
+
+            return false;
+        }
+
+        if (!\in_array($mimeType, $this->mimeTypes, true)) {
+            $this->setErrorMessage("Invalid mime type '$mimeType'. Only the following are allowed: " . implode(', ', $this->mimeTypes));
 
             return false;
         }
@@ -48,12 +52,16 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
 
     private function getUploadedFileMimeType($uploadedFile)
     {
-        if (class_exists('finfo') && \defined('FILEINFO_MIME_TYPE')) {
-            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        if (\extension_loaded('fileinfo')) {
+            $finfo = new \finfo(\FILEINFO_MIME_TYPE);
 
             return $finfo->file($uploadedFile['tmp_name']);
         }
 
-        return mime_content_type($uploadedFile['tmp_name']);
+        if (\function_exists('mime_content_type')) {
+            return mime_content_type($uploadedFile['tmp_name']);
+        }
+
+        return null;
     }
 }
