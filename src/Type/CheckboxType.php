@@ -40,12 +40,8 @@ class CheckboxType extends AbstractType
         return $element;
     }
 
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
-        if ($wrapper instanceof Element) {
-            $wrapper->classes[] = 'form-check';
-        }
-
         $formId   = $this->form->getKey();
         $elements = [];
 

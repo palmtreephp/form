@@ -3,7 +3,6 @@
 namespace Palmtree\Form\Type;
 
 use Palmtree\Form\Captcha\CaptchaInterface;
-use Palmtree\Html\Element;
 
 class CaptchaType extends AbstractType
 {
@@ -39,7 +38,7 @@ class CaptchaType extends AbstractType
         return $this->captcha->verify($this->getData());
     }
 
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
         $element  = $this->getElement();
         $elements = $this->captcha->getElements($element, $this->form);

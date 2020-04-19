@@ -45,9 +45,9 @@ class FileType extends AbstractType
         return $element;
     }
 
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
-        $elements = parent::getElements($wrapper);
+        $elements = parent::getElements();
 
         if (!$this->custom) {
             return $elements;

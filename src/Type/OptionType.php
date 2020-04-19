@@ -2,14 +2,12 @@
 
 namespace Palmtree\Form\Type;
 
-use Palmtree\Html\Element;
-
 class OptionType extends AbstractType
 {
     protected $tag = 'option';
     protected $value;
 
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
         $elements = [];
 

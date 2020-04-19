@@ -5,6 +5,7 @@ namespace Palmtree\Form;
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Exception\AlreadySubmittedException;
 use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Type\CheckboxType;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
@@ -80,6 +81,10 @@ class Form
                 }
 
                 $parent = $fieldWrapper;
+            }
+
+            if ($field instanceof CheckboxType) {
+                $parent->classes[] = 'form-check';
             }
 
             foreach ($field->getElements($parent) as $element) {

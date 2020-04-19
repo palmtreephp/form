@@ -175,7 +175,7 @@ abstract class AbstractType
     /**
      * @return Element[]
      */
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
         $elements = [];
 

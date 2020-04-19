@@ -122,9 +122,9 @@ class ChoiceType extends AbstractType
         return $parent;
     }
 
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
-        $elements = parent::getElements($wrapper);
+        $elements = parent::getElements();
 
         foreach ($elements as $element) {
             if ($element->classes->has('palmtree-invalid-feedback')) {
