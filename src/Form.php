@@ -347,7 +347,7 @@ class Form
      */
     public function get($name)
     {
-        return isset($this->fields[$name]) ? $this->fields[$name] : null;
+        return $this->fields[$name] ?? null;
     }
 
     /**

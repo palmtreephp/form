@@ -4,8 +4,8 @@ namespace Palmtree\Form\Constraint;
 
 class Length extends AbstractConstraint implements ConstraintInterface
 {
-    const ERROR_TOO_SMALL = 1;
-    const ERROR_TOO_LARGE = 2;
+    public const ERROR_TOO_SMALL = 1;
+    public const ERROR_TOO_LARGE = 2;
 
     /** @var int|null */
     private $min;

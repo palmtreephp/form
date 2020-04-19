@@ -4,9 +4,9 @@ namespace Palmtree\Form\Constraint;
 
 class Number extends AbstractConstraint implements ConstraintInterface
 {
-    const ERROR_NOT_NUMERIC = 1;
-    const ERROR_TOO_SMALL   = 2;
-    const ERROR_TOO_LARGE   = 4;
+    public const ERROR_NOT_NUMERIC = 1;
+    public const ERROR_TOO_SMALL   = 2;
+    public const ERROR_TOO_LARGE   = 4;
 
     /** @var int|null */
     private $errorCode;

@@ -7,8 +7,8 @@ use Palmtree\Html\Element;
 
 class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
 {
-    const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
-    const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
+    private const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
+    private const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
 
     /** @var array */
     private static $errorCodes = [

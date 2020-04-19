@@ -17,9 +17,7 @@ class Size extends AbstractConstraint implements ConstraintInterface
 
         $this->constraint = new Constraint\Number();
 
-        $minBytes = isset($args['min_bytes']) ? $args['min_bytes'] : 1;
-
-        $this->constraint->setMin($minBytes);
+        $this->constraint->setMin($args['min_bytes'] ?? 1);
 
         if (isset($args['max_bytes'])) {
             $this->constraint->setMax($args['max_bytes']);

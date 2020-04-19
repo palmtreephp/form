@@ -20,7 +20,9 @@ class OptionType extends AbstractType
 
         $element->classes->clear();
 
-        $element->setInnerText($this->getLabelElement()->getInnerText());
+        if ($labelElement = $this->getLabelElement()) {
+            $element->setInnerText($labelElement->getInnerText());
+        }
 
         $data    = $this->data;
         $compare = true;

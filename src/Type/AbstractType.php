@@ -475,7 +475,7 @@ abstract class AbstractType
 
     public function getChild($name)
     {
-        return isset($this->children[$name]) ? $this->children[$name] : null;
+        return $this->children[$name] ?? null;
     }
 
     /**
