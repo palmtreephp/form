@@ -74,10 +74,6 @@ class CheckboxType extends AbstractType
     {
         $formId = $this->form->getKey();
 
-        if ($this->global) {
-            return $this->name;
-        }
-
         $format = '%s[%s]';
 
         if ($this->siblings) {

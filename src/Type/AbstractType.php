@@ -18,7 +18,6 @@ abstract class AbstractType
     protected $data;
     protected $label;
     protected $userInput    = true;
-    protected $global       = false;
     protected $required     = true;
     protected $errorMessage = 'Please fill in this field';
     /** @var Form */
@@ -213,10 +212,6 @@ abstract class AbstractType
 
     public function getNameAttribute(): string
     {
-        if ($this->global) {
-            return $this->name;
-        }
-
         $formId = $this->form->getKey();
 
         if ($this->parent) {
@@ -234,10 +229,6 @@ abstract class AbstractType
 
     protected function getIdAttribute(): string
     {
-        if ($this->global) {
-            return $this->name;
-        }
-
         return $this->form->getKey() . "-$this->name";
     }
 
@@ -390,18 +381,6 @@ abstract class AbstractType
     public function getPosition()
     {
         return $this->position;
-    }
-
-    public function setGlobal(bool $global): self
-    {
-        $this->global = $global;
-
-        return $this;
-    }
-
-    public function isGlobal(): bool
-    {
-        return $this->global;
     }
 
     public function isUserInput(): bool
