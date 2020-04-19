@@ -94,12 +94,10 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         $placeholder->attributes->setData('script_url', $this->getScriptSrc($onloadCallback));
         $placeholder->attributes->setData('onload', $onloadCallback);
 
-        $elements = [
+        return [
             $placeholder,
             $formControl,
         ];
-
-        return $elements;
     }
 
     /**
