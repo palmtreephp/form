@@ -216,7 +216,7 @@ abstract class AbstractType
 
     public function getHumanName(): string
     {
-        return $this->nameConverter->normalize($this->name);
+        return $this->nameConverter->normalize($this->name ?? '');
     }
 
     public function getNameAttribute(): string
@@ -233,7 +233,7 @@ abstract class AbstractType
             );
         }
 
-        return sprintf('%s[%s]', $formId, $this->name);
+        return $this->form->getKey() . "[$this->name]";
     }
 
     protected function getIdAttribute(): string
@@ -268,10 +268,12 @@ abstract class AbstractType
 
     public function mapData(): void
     {
-        foreach ($this->data ?? [] as $key => $value) {
-            if ($child = $this->getChild($key)) {
-                $child->setData($value);
-                $child->mapData();
+        if (\is_array($this->data)) {
+            foreach ($this->data as $key => $value) {
+                if ($child = $this->getChild($key)) {
+                    $child->setData($value);
+                    $child->mapData();
+                }
             }
         }
     }
