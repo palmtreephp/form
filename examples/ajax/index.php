@@ -44,6 +44,16 @@ $builder
             '2' => 'No',
         ],
     ])
+    ->add('preferences', 'choice', [
+        'expanded'      => true,
+        'multiple'      => true,
+        'error_message' => 'Please select preferences',
+        'choices'       => [
+            '1' => 'Yes',
+            '2' => 'No',
+            '3' => 'Maybe',
+        ],
+    ])
     ->add('age', 'choice', [
         'error_message' => 'Please select your age group',
         'choices'       => [

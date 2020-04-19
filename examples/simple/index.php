@@ -19,6 +19,24 @@ $builder
     ->add('email_address', 'email')
     ->add('phone_number', 'tel', ['required' => false])
     ->add('message', 'textarea', ['required' => false])
+    ->add('preferences', 'choice', [
+        'expanded'      => false,
+        'multiple'      => true,
+        'error_message' => 'Please select preferences',
+        'choices'       => [
+            '1' => 'Yes',
+            '2' => 'No',
+            '3' => 'Maybe',
+        ],
+    ])
+    ->add('age', 'choice', [
+        'error_message' => 'Please select your age group',
+        'choices'       => [
+            '18_to_24' => '18 to 24',
+            '25_to_30' => '25 to 30',
+            '30_to_25' => '30 to 35',
+        ],
+    ])
     ->add('password', 'repeated', [
         'repeatable_type' => 'password',
         'constraints'     => [

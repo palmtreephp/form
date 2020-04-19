@@ -12,6 +12,8 @@ class EmailType extends TextType
     {
         parent::__construct($args);
 
-        $this->addConstraint(new Email());
+        if ($this->required) {
+            $this->addConstraint(new Email());
+        }
     }
 }
