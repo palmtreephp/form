@@ -29,38 +29,38 @@ class Form
 
     public function render()
     {
-        $form = new Element('form.palmtree-form');
+        $formElement = new Element('form.palmtree-form');
 
-        $form->attributes->add([
+        $formElement->attributes->add([
             'method'  => $this->getMethod(),
             'id'      => $this->getKey(),
             'action'  => $this->getAction(),
             'enctype' => $this->getEncType(),
         ]);
 
-        if (!$this->hasHtmlValidation()) {
-            $form->attributes['novalidate'] = true;
+        if (!$this->htmlValidation) {
+            $formElement->attributes->set('novalidate');
         }
 
-        if ($this->isAjax()) {
-            $form->classes[] = 'is-ajax';
+        if ($this->ajax) {
+            $formElement->classes[] = 'is-ajax';
         }
 
-        if ($this->isSubmitted()) {
-            $form->classes[] = 'is-submitted';
+        if ($this->submitted) {
+            $formElement->classes[] = 'is-submitted';
         }
 
-        $form->attributes->setData('invalid_element', htmlentities($this->createInvalidElement()->render()));
+        $formElement->attributes->setData('invalid_element', htmlentities($this->createInvalidElement()->render()));
 
-        $this->renderFields($form);
+        $this->renderFields($formElement);
 
         if ($this->hasRequiredField()) {
             $info = (new Element('small'))->setInnerText('* required field');
 
-            $form->addChild($info);
+            $formElement->addChild($info);
         }
 
-        return $form->render();
+        return $formElement->render();
     }
 
     /**
@@ -68,7 +68,7 @@ class Form
      */
     private function renderFields($form)
     {
-        foreach ($this->getFields() as $field) {
+        foreach ($this->fields as $field) {
             $fieldWrapper = null;
             $parent       = $form;
 
@@ -97,7 +97,7 @@ class Form
      */
     public function isValid()
     {
-        foreach ($this->getFields() as $field) {
+        foreach ($this->fields as $field) {
             if (!$field->isValid()) {
                 $this->addError($field->getName(), $field->getErrorMessage());
             }
@@ -110,12 +110,10 @@ class Form
     {
         $this->submitted = true;
 
-        foreach ($this->getFields() as $field) {
+        foreach ($this->fields as $field) {
             $key = $field->getName();
 
-            if ($field->isGlobal() && \array_key_exists($key, $data)) {
-                $field->setData($data[$key]);
-            } elseif (\array_key_exists($key, $data)) {
+            if (isset($data[$key]) || \array_key_exists($key, $data)) {
                 $field->setData($data[$key]);
             }
 
@@ -147,7 +145,7 @@ class Form
      */
     public function getRequest()
     {
-        switch ($this->getMethod()) {
+        switch ($this->method) {
             case 'POST':
                 $data = $_POST;
                 break;
@@ -320,7 +318,7 @@ class Form
             return $this->fields;
         }
 
-        return array_filter($this->fields, function (AbstractType $field) use ($args) {
+        return array_filter($this->fields, static function (AbstractType $field) use ($args) {
             return $field->filter($args);
         });
     }
