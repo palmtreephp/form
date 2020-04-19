@@ -3,6 +3,7 @@
 namespace Palmtree\Form;
 
 use Palmtree\ArgParser\ArgParser;
+use Palmtree\Form\Exception\AlreadySubmittedException;
 use Palmtree\Form\Type\AbstractType;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
@@ -108,6 +109,10 @@ class Form
 
     public function submit($data)
     {
+        if ($this->submitted) {
+            throw new AlreadySubmittedException(__METHOD__ . ' can only be called once');
+        }
+
         $this->submitted = true;
 
         foreach ($this->fields as $field) {
