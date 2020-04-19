@@ -15,8 +15,8 @@ class FileType extends AbstractType
     {
         parent::__construct($args);
 
-        if ($this->isCustom() && !$this->getLabel()) {
-            $this->setLabel('Choose file...');
+        if ($this->custom && !$this->label) {
+            $this->label = 'Choose file...';
         }
     }
 
@@ -26,7 +26,7 @@ class FileType extends AbstractType
 
         unset($element->attributes['value']);
 
-        if ($this->isCustom()) {
+        if ($this->custom) {
             $element->classes[] = 'custom-file-input';
         }
 
@@ -37,7 +37,7 @@ class FileType extends AbstractType
     {
         $element = parent::getLabelElement();
 
-        if ($element && $this->isCustom()) {
+        if ($element && $this->custom) {
             $element->classes[] = 'custom-file-label';
             $element->attributes->setData('browse', $this->getBrowseText());
         }
@@ -49,7 +49,7 @@ class FileType extends AbstractType
     {
         $elements = parent::getElements($wrapper);
 
-        if (!$this->isCustom()) {
+        if (!$this->custom) {
             return $elements;
         }
 

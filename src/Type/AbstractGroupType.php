@@ -11,7 +11,7 @@ abstract class AbstractGroupType extends AbstractType
         $element = new Element('div.' . $this->getGroupName());
 
         foreach ($this->getChildren() as $child) {
-            $wrapper = new Element($this->getForm()->getFieldWrapper());
+            $wrapper = new Element($this->form->getFieldWrapper());
             $wrapper->addChild(...$child->getElements());
             $element->addChild($wrapper);
         }
@@ -22,8 +22,7 @@ abstract class AbstractGroupType extends AbstractType
     public function getGroupName()
     {
         $shortClass = substr(strrchr(static::class, '\\'), 1);
-        $name       = strtolower(basename($shortClass, 'Type'));
 
-        return $name;
+        return strtolower(basename($shortClass, 'Type'));
     }
 }

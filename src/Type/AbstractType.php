@@ -46,7 +46,7 @@ abstract class AbstractType
 
         $this->args = $this->parseArgs($args);
 
-        if ($this->isRequired()) {
+        if ($this->required) {
             $this->addConstraint(new NotBlank($this->errorMessage));
         }
     }
@@ -124,19 +124,19 @@ abstract class AbstractType
      */
     public function isValid()
     {
-        if (!$this->getForm()->isSubmitted()) {
+        if (!$this->form->isSubmitted()) {
             return true;
         }
 
         foreach ($this->getConstraints() as $constraint) {
-            if (!$constraint->validate($this->getData())) {
+            if (!$constraint->validate($this->data)) {
                 $this->setErrorMessage($constraint->getErrorMessage());
 
                 return false;
             }
         }
 
-        foreach ($this->getChildren() as $child) {
+        foreach ($this->children as $child) {
             if (!$child->isValid()) {
                 return false;
             }
@@ -146,24 +146,18 @@ abstract class AbstractType
     }
 
     /**
-     * @return bool|Element
+     * @return Element|null
      */
     public function getLabelElement()
     {
-        $label = $this->getLabel();
-
-        if (!$label) {
-            return false;
+        if (!$this->label) {
+            return null;
         }
 
-        $element                    = Element::create('label')->setInnerText($label);
-        $element->attributes['for'] = $this->getIdAttribute();
+        $element = Element::create('label[for="' . $this->getIdAttribute() . '"]')->setInnerText($this->label);
 
-        if ($this->isRequired() && !$this->getParent()) {
-            $abbr                      = Element::create('abbr')->setInnerText('*');
-            $abbr->attributes['title'] = 'Required Field';
-
-            $element->addChild($abbr);
+        if ($this->required && !$this->parent) {
+            $element->addChild(Element::create('abbr[title="Required Field"]')->setInnerText('*'));
         }
 
         return $element;
@@ -174,36 +168,32 @@ abstract class AbstractType
      */
     public function getElement()
     {
-        $args        = $this->args;
-        $element     = new Element($this->getTag());
-        $element->classes->add(...$args['classes'] ?? []);
+        $element = new Element($this->tag);
+        $element->classes->add(...$this->args['classes'] ?? []);
 
-        $attributes = [
-            'type'  => $this->getType(),
-            'id'    => $this->getIdAttribute(),
-            'name'  => $this->getNameAttribute(),
-            'value' => $this->getData(),
-        ];
+        $element->attributes->add([
+            'type' => $this->type,
+            'id'   => $this->getIdAttribute(),
+            'name' => $this->getNameAttribute(),
+        ]);
 
-        if ($attributes['type'] === 'hidden') {
-            unset($attributes['placeholder']);
-        } else {
-            if ($placeholder = $this->getPlaceHolderAttribute()) {
-                $attributes['placeholder'] = $placeholder;
-            }
+        if ($placeholder = $this->getPlaceHolderAttribute()) {
+            $element->attributes['placeholder'] = $placeholder;
         }
 
-        if ($this->isRequired() && $this->getForm()->hasHtmlValidation()) {
-            $attributes['required'] = true;
+        if ($this->required && $this->form->hasHtmlValidation()) {
+            $element->attributes['required'] = true;
         }
 
-        $element->attributes->add($attributes);
-
-        if ($this->getName()) {
-            $element->attributes->setData('name', $this->getName());
+        if (!\is_array($this->data)) {
+            $element->attributes['value'] = $this->data;
         }
 
-        if ($this->form->hasHtmlValidation() && $this->isRequired()) {
+        if ($this->name) {
+            $element->attributes->setData('name', $this->name);
+        }
+
+        if ($this->required && $this->form->hasHtmlValidation()) {
             $element->attributes->set('required');
         }
 
@@ -233,16 +223,16 @@ abstract class AbstractType
             $element->attributes['id'] = $this->getIdAttribute();
         }
 
-        if (!$this->isValid()) {
+        $isValid = $this->isValid();
+
+        if (!$isValid) {
             $element->classes[] = 'is-invalid';
         }
 
         $elements[] = $element;
 
-        if (!$this->isValid()) {
-            $error = $this->getForm()->createInvalidElement();
-            $error->setInnerText($this->getErrorMessage());
-            $elements[] = $error;
+        if (!$isValid) {
+            $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
         }
 
         return $elements;
@@ -253,40 +243,37 @@ abstract class AbstractType
      */
     public function getHumanName()
     {
-        return $this->nameConverter->normalize($this->getName());
+        return $this->nameConverter->normalize($this->name);
     }
 
     public function getNameAttribute()
     {
-        $formId = $this->form->getKey();
-        $name   = $this->getName();
-
-        if ($this->isGlobal()) {
-            return $name;
+        if ($this->global) {
+            return $this->name;
         }
 
-        if ($this->getParent()) {
+        $formId = $this->form->getKey();
+
+        if ($this->parent) {
             return sprintf(
                 '%s[%s][%s][%s]',
-                $formId, $this->getParent()->getName(),
-                $this->getParent()->getPosition(),
-                $name
+                $formId,
+                $this->parent->getName(),
+                $this->parent->getPosition(),
+                $this->name
             );
         }
 
-        return sprintf('%s[%s]', $formId, $name);
+        return sprintf('%s[%s]', $formId, $this->name);
     }
 
     protected function getIdAttribute()
     {
-        $formId = $this->form->getKey();
-        $name   = $this->getName();
-
-        if ($this->isGlobal()) {
-            return $name;
+        if ($this->global) {
+            return $this->name;
         }
 
-        return "$formId-$name";
+        return $this->form->getKey() . "-$this->name";
     }
 
     /**
@@ -387,7 +374,7 @@ abstract class AbstractType
 
     public function isType($type)
     {
-        return (string)$type === (string)$this->getType();
+        return $type === $this->type;
     }
 
     /**
@@ -446,7 +433,7 @@ abstract class AbstractType
     public function setParent(self $parent)
     {
         $this->parent = $parent;
-        $this->setForm($parent->getForm());
+        $this->form   = $parent->getForm();
 
         return $this;
     }
@@ -550,10 +537,8 @@ abstract class AbstractType
     public function filter(array $args = [])
     {
         foreach ($args as $key => $value) {
-            if (property_exists($this, $key)) {
-                if ($this->$key !== $value) {
-                    return false;
-                }
+            if (property_exists($this, $key) && $this->$key !== $value) {
+                return false;
             }
         }
 

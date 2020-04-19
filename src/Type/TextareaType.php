@@ -12,8 +12,8 @@ class TextareaType extends AbstractType
 
         unset($element->attributes['value']);
 
-        if ($data = $this->getData()) {
-            $element->setInnerText($data);
+        if ($this->data) {
+            $element->setInnerText($this->data);
         }
 
         return $element;

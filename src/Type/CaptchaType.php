@@ -42,11 +42,12 @@ class CaptchaType extends AbstractType
     public function getElements(Element $wrapper = null)
     {
         $element  = $this->getElement();
-        $elements = $this->captcha->getElements($element, $this->getForm());
+        $elements = $this->captcha->getElements($element, $this->form);
 
         if (!$this->isValid()) {
             $element->classes[] = 'is-invalid';
-            $error              = $this->getForm()->createInvalidElement();
+
+            $error = $this->form->createInvalidElement();
             $error->setInnerText($this->getErrorMessage());
             $elements[] = $error;
         }

@@ -16,17 +16,16 @@ class SelectType extends AbstractType
 
         unset($element->attributes['type']);
 
-        if ($this->isMultiple()) {
+        if ($this->multiple) {
             $element->attributes->set('multiple');
-        } else {
-            if ($placeholder = $element->attributes['placeholder']) {
-                unset($element->attributes['placeholder']);
+        } elseif ($placeholder = $element->attributes['placeholder']) {
+            unset($element->attributes['placeholder']);
 
-                $option                      = Element::create('option')->setInnerText($placeholder);
-                $option->attributes['value'] = '';
+            $option = Element::create('option')->setInnerText($placeholder);
 
-                $element->addChild($option);
-            }
+            $option->attributes['value'] = '';
+
+            $element->addChild($option);
         }
 
         return $element;
@@ -34,20 +33,19 @@ class SelectType extends AbstractType
 
     public function getNameAttribute()
     {
-        $formId = $this->getForm()->getKey();
-        $name   = $this->getName();
+        $formId = $this->form->getKey();
 
-        if ($this->isGlobal()) {
-            return $name;
+        if ($this->global) {
+            return $this->name;
         }
 
         $format = '%s[%s]';
 
-        if ($this->isMultiple()) {
+        if ($this->multiple) {
             $format .= '[]';
         }
 
-        return sprintf($format, $formId, $name);
+        return sprintf($format, $formId, $this->name);
     }
 
     /**

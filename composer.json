@@ -14,7 +14,7 @@
         "php": ">=7.1",
         "palmtree/argparser": "~1.2",
         "palmtree/nameconverter": "~1.0",
-        "palmtree/html": "~3.0"
+        "palmtree/html": "^3.0.3"
     },
     "autoload": {
         "psr-4": {
@@ -23,6 +23,11 @@
     },
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^1.0"
+    },
+    "suggest": {
+        "ext-curl": "For Google Recaptcha support",
+        "ext-json": "For Google Recaptcha support",
+        "ext-fileinfo": "For mime type upload validation"
     },
     "scripts": {
         "sniff": "vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff --diff-format=udiff",

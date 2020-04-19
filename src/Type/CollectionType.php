@@ -40,8 +40,8 @@ class CollectionType extends AbstractType
 
     public function build()
     {
-        if ($data = $this->getData()) {
-            foreach ($data as $key => $value) {
+        if (\is_array($this->data)) {
+            foreach ($this->data as $key => $value) {
                 $this->addChild($this->buildEntry($key, $value));
             }
         }
@@ -51,10 +51,10 @@ class CollectionType extends AbstractType
     {
         $entryType = $this->entryType;
         /** @var AbstractType $entry */
-        $entry = new $entryType($this->getEntryOptions());
+        $entry = new $entryType($this->entryOptions);
         $entry
             ->setParent($this)
-            ->setName($this->getName())
+            ->setName($this->name)
             ->setPosition($position);
 
         $entry->build();

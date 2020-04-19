@@ -19,8 +19,8 @@ class ChoiceType extends AbstractType
     {
         parent::__construct($args);
 
-        if ($this->isExpanded()) {
-            if ($this->isMultiple()) {
+        if ($this->expanded) {
+            if ($this->multiple) {
                 $this->choiceClass = CheckboxType::class;
             } else {
                 $this->choiceClass = RadioType::class;
@@ -33,35 +33,35 @@ class ChoiceType extends AbstractType
     public function getElement()
     {
         $wrapper = new Element('div');
-
-        if ($this->isExpanded()) {
+        if ($this->expanded) {
             $parent = $wrapper;
         } else {
             $select = new SelectType([
-                'name'        => $this->getName(),
-                'multiple'    => $this->isMultiple(),
+                'name'        => $this->name,
+                'multiple'    => $this->multiple,
                 'placeholder' => $this->args['placeholder'],
             ]);
 
-            $select->setForm($this->getForm());
+            $select->setForm($this->form);
 
             $parent = $select->getElement();
         }
 
         $choiceClass = $this->choiceClass;
 
-        foreach ($this->getChoices() as $value => $label) {
+        foreach ($this->choices as $value => $label) {
             $args = [
-                'data'   => $this->getData(),
+                'data'   => $this->data,
                 'parent' => $this,
             ];
 
-            if ($this->isMultiple()) {
+            if ($this->multiple) {
                 $args['siblings'] = true;
             }
 
             if (\is_array($label)) {
-                $optGroup                      = new Element('optgroup');
+                $optGroup = new Element('optgroup');
+
                 $optGroup->attributes['label'] = $value;
 
                 foreach ($label as $subValue => $subLabel) {
@@ -70,7 +70,7 @@ class ChoiceType extends AbstractType
 
                     $choice = new OptionType($args);
 
-                    $choice->setForm($this->getForm());
+                    $choice->setForm($this->form);
 
                     foreach ($choice->getElements() as $element) {
                         $optGroup->addChild($element);
@@ -83,16 +83,16 @@ class ChoiceType extends AbstractType
                 $args['value'] = $value;
 
                 $choiceWrapper = null;
-                if ($this->isExpanded()) {
-                    $args['name'] = $this->getName();
+                if ($this->expanded) {
+                    $args['name'] = $this->name;
 
-                    $choiceWrapper = new Element($this->isInline() ? 'div.form-check-inline' : 'div.form-check');
+                    $choiceWrapper = new Element($this->inline ? 'div.form-check-inline' : 'div.form-check');
                 }
 
                 /** @var AbstractType $choice */
                 $choice = new $choiceClass($args);
 
-                $choice->setForm($this->getForm());
+                $choice->setForm($this->form);
 
                 foreach ($choice->getElements() as $child) {
                     // Don't add child feedback as we already display our own.

@@ -13,7 +13,7 @@ class OptionType extends AbstractType
     {
         $elements = [];
 
-        $element = parent::getElement();
+        $element = $this->getElement();
 
         $element->attributes->clear();
         $element->attributes['value'] = $this->getValue();
@@ -22,11 +22,11 @@ class OptionType extends AbstractType
 
         $element->setInnerText($this->getLabelElement()->getInnerText());
 
-        $data    = $this->getData();
+        $data    = $this->data;
         $compare = true;
 
         if (\is_array($data)) {
-            $key = array_search($this->getValue(), $data);
+            $key = array_search($this->value, $data, false);
 
             if ($key !== false) {
                 $data = $data[$key];
@@ -35,7 +35,7 @@ class OptionType extends AbstractType
             }
         }
 
-        if ($compare && strcmp($data, $this->getValue()) === 0) {
+        if ($compare && (string)$data === (string)$this->value) {
             $element->attributes->set('selected');
         }
 

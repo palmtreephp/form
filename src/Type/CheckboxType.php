@@ -17,14 +17,15 @@ class CheckboxType extends AbstractType
         $element = parent::getElement();
 
         unset($element->classes['form-control']);
-        $element->classes[]           = 'form-check-input';
-        $element->attributes['value'] = $this->getValue();
+        $element->classes[] = 'form-check-input';
 
-        $data    = $this->getData();
+        $element->attributes['value'] = $this->value;
+
+        $data    = $this->data;
         $compare = true;
 
         if (\is_array($data)) {
-            $key = array_search($this->getValue(), $data);
+            $key = array_search($this->getValue(), $data, false);
 
             if ($key !== false) {
                 $data = $data[$key];
@@ -33,7 +34,7 @@ class CheckboxType extends AbstractType
             }
         }
 
-        if ($compare && strcmp($data, $this->getValue()) === 0) {
+        if ($compare && (string)$data === (string)$this->value) {
             $element->attributes->set('checked');
         }
 
@@ -51,10 +52,8 @@ class CheckboxType extends AbstractType
 
         $element = $this->getElement();
 
-        $name = $this->getName();
-
         if (!$element->attributes['id']) {
-            $element->attributes['id'] = "$formId-$name";
+            $element->attributes['id'] = "$formId-$this->name";
         }
 
         $elements[] = $element;
@@ -68,7 +67,7 @@ class CheckboxType extends AbstractType
         }
 
         if (!$this->isValid()) {
-            $error = $this->getForm()->createInvalidElement();
+            $error = $this->form->createInvalidElement();
             $error->setInnerText($this->getErrorMessage());
             $elements[] = $error;
         }
@@ -78,29 +77,28 @@ class CheckboxType extends AbstractType
 
     public function getNameAttribute()
     {
-        $formId = $this->getForm()->getKey();
-        $name   = $this->getName();
+        $formId = $this->form->getKey();
 
-        if ($this->isGlobal()) {
-            return $name;
+        if ($this->global) {
+            return $this->name;
         }
 
         $format = '%s[%s]';
 
-        if ($this->hasSiblings()) {
+        if ($this->siblings) {
             $format .= '[]';
         }
 
-        return sprintf($format, $formId, $name);
+        return sprintf($format, $formId, $this->name);
     }
 
     public function isValid()
     {
-        if (!$this->getForm()->isSubmitted() || !$this->isRequired()) {
+        if (!$this->required || !$this->form->isSubmitted()) {
             return true;
         }
 
-        return $this->getData() && filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN);
+        return $this->data && filter_var($this->data, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -150,9 +148,9 @@ class CheckboxType extends AbstractType
     {
         $attribute = parent::getIdAttribute();
 
-        if ($this->getParent()) {
+        if ($this->parent) {
             $converter = new SnakeCaseToHumanNameConverter();
-            $attribute .= '-' . $converter->denormalize($this->getValue());
+            $attribute .= '-' . $converter->denormalize($this->value);
         }
 
         return $attribute;
