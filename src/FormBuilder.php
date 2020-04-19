@@ -11,13 +11,13 @@ class FormBuilder
 {
     /** @var Form */
     private $form;
-    /** @var array */
-    private $types;
+    /** @var TypeLocator */
+    private $typeLocator;
 
     public function __construct(array $args = [])
     {
-        $this->findTypeClasses();
-        $this->form = new Form($args);
+        $this->form        = new Form($args);
+        $this->typeLocator = new TypeLocator();
     }
 
     /**
@@ -29,11 +29,11 @@ class FormBuilder
      */
     public function add($name, $type = TextType::class, $args = [])
     {
-        if ($this->getTypeClass($type) === RepeatedType::class || $type instanceof RepeatedType) {
+        if ($type instanceof RepeatedType || $this->typeLocator->getTypeClass($type) === RepeatedType::class) {
             return $this->addRepeatedType($name, $type, $args);
         }
 
-        $formControl = $this->getTypeObject($type, $args);
+        $formControl = $this->typeLocator->getTypeObject($type, $args);
 
         if (!isset($args['name'])) {
             $formControl->setName($name);
@@ -43,7 +43,7 @@ class FormBuilder
             $formControl->setLabel($formControl->getHumanName());
         }
 
-        $this->getForm()->add($formControl);
+        $this->form->add($formControl);
 
         return $this;
     }
@@ -55,25 +55,7 @@ class FormBuilder
      */
     public function get($name)
     {
-        return $this->getForm()->get($name);
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return string|null
-     */
-    public function getTypeClass($type)
-    {
-        if (isset($this->types[$type])) {
-            return $this->types[$type];
-        }
-
-        if (class_exists($type)) {
-            return $type;
-        }
-
-        return null;
+        return $this->form->get($name);
     }
 
     /**
@@ -87,7 +69,7 @@ class FormBuilder
     private function addRepeatedType($name, $type, $args)
     {
         /** @var RepeatedType $typeObject */
-        $typeObject = $this->getTypeObject($type, $args);
+        $typeObject = $this->typeLocator->getTypeObject($type, $args);
 
         $this->add($name, $typeObject->getRepeatableType(), $args);
 
@@ -124,48 +106,5 @@ class FormBuilder
         $secondOfType->addConstraint($secondMatchConstraint);
 
         return $this;
-    }
-
-    /**
-     * Returns a new instance of the given form type.
-     *
-     * @param string $type FQCN of the form type or short hand e.g 'text', 'email'.
-     * @param array  $args Arguments to pass to the type class constructor.
-     *
-     * @return AbstractType
-     */
-    private function getTypeObject($type, $args)
-    {
-        /* @var AbstractType $object */
-        if ($type instanceof AbstractType) {
-            $object = $type;
-        } else {
-            $class = $this->getTypeClass($type);
-
-            if (!class_exists($class)) {
-                $class = TextType::class;
-            }
-
-            $object = new $class($args, $this);
-        }
-
-        return $object;
-    }
-
-    private function findTypeClasses()
-    {
-        if ($this->types === null) {
-            $this->types = [];
-            $namespace   = __NAMESPACE__ . '\\Type';
-
-            $files = new \GlobIterator(__DIR__ . '/Type/*Type.php');
-
-            foreach ($files as $file) {
-                $class = basename($file, '.php');
-                $type  = basename($file, 'Type.php');
-
-                $this->types[strtolower($type)] = $namespace . '\\' . $class;
-            }
-        }
     }
 }
