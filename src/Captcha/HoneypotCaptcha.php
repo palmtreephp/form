@@ -5,11 +5,11 @@ namespace Palmtree\Form\Captcha;
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 
-class HoneypotCaptcha extends AbstractCaptcha implements CaptchaInterface
+class HoneypotCaptcha implements CaptchaInterface
 {
-    public function verify($response): bool
+    public function verify($input): bool
     {
-        return empty($response);
+        return empty($input);
     }
 
     public function getErrorMessage(): string

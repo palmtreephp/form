@@ -5,7 +5,7 @@ namespace Palmtree\Form\Captcha;
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 
-class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
+class GoogleRecaptcha implements CaptchaInterface
 {
     private const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
     private const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
@@ -47,11 +47,11 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
     }
 
     /**
-     * @param string $response The form's 'g-recaptcha-response' field value.
+     * @param string $input The form's 'g-recaptcha-response' field value.
      */
-    public function verify($response): bool
+    public function verify($input): bool
     {
-        $result = $this->getVerificationResult($response);
+        $result = $this->getVerificationResult($input);
 
         if ($result['success']) {
             return true;
@@ -95,6 +95,13 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         ];
     }
 
+    public function getErrorMessage(): string
+    {
+        $error = reset($this->errors);
+
+        return self::ERROR_CODES[$error] ?? $error;
+    }
+
     /**
      * Returns the recaptcha API script source with an onload callback.
      */
@@ -111,13 +118,6 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         $url = sprintf('%s?%s', strtok($url, '?'), http_build_query($queryArgs));
 
         return $url;
-    }
-
-    public function getErrorMessage(): string
-    {
-        $error = reset($this->errors);
-
-        return self::ERROR_CODES[$error] ?? $error;
     }
 
     /**
