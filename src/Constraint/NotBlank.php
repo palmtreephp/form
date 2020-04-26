@@ -8,6 +8,6 @@ class NotBlank extends AbstractConstraint implements ConstraintInterface
 
     public function validate($input): bool
     {
-        return $input !== false && (string)$input !== '';
+        return !($input === false || (empty($input) && $input !== '0' && $input !== 0));
     }
 }
