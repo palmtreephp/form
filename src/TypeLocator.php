@@ -2,8 +2,8 @@
 
 namespace Palmtree\Form;
 
+use Palmtree\Form\Exception\InvalidTypeException;
 use Palmtree\Form\Type\AbstractType;
-use Palmtree\Form\Type\TextType;
 
 class TypeLocator
 {
@@ -31,19 +31,24 @@ class TypeLocator
     /**
      * Returns a new instance of the given form type.
      *
-     * @param string $type FQCN of the form type or short hand e.g 'text', 'email'.
-     * @param array  $args Arguments to pass to the type class constructor.
+     * @param string|object $type Fully-qualified class name of the form type or short hand e.g 'text', 'email'.
+     *                            Can also be a pre-constructed instance.
+     * @param array         $args Arguments to pass to the type class constructor.
      */
-    public function getTypeObject(string $type, array $args): AbstractType
+    public function getTypeObject($type, array $args): AbstractType
     {
-        if ($type instanceof AbstractType) {
+        if (\is_object($type)) {
+            if (!$type instanceof AbstractType) {
+                throw new InvalidTypeException('Type must be an instance of ' . AbstractType::class . '. ' . \get_class($type) . ' given');
+            }
+
             return $type;
         }
 
         $class = $this->getTypeClass($type);
 
-        if (!class_exists($class)) {
-            $class = TextType::class;
+        if (!is_subclass_of($class, AbstractType::class, true)) {
+            throw new InvalidTypeException('Type must be a subclass of ' . AbstractType::class . ". '$type' given");
         }
 
         return new $class($args, $this);
@@ -53,10 +58,8 @@ class TypeLocator
     {
         if (self::$types === null) {
             self::$types = [];
-            foreach (glob(__DIR__ . '/Type/*Type.php') ?: [] as $file) {
-                $type = basename($file, 'Type.php');
-
-                self::$types[strtolower($type)] = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');
+            foreach (glob(__DIR__ . '/Type/*Type.php', GLOB_NOSORT) ?: [] as $file) {
+                self::$types[strtolower(basename($file, 'Type.php'))] = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');
             }
         }
     }
