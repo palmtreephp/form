@@ -12,7 +12,9 @@ class ChoiceType extends AbstractType
     protected $expanded = false;
     /** @var bool Whether expanded choices should display inline. Has no effect if expanded is false */
     protected $inline  = true;
+    /** @var array */
     protected $choices = [];
+    /** @var string */
     protected $choiceClass;
 
     public function __construct(array $args = [])

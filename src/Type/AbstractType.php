@@ -112,8 +112,10 @@ abstract class AbstractType
             return true;
         }
 
-        foreach ($this->getConstraints() as $constraint) {
-            if (!$constraint->validate($this->data)) {
+        foreach ($this->constraints as $constraint) {
+            // We use $this->getData() over $this->data here so that the
+            // data can be normalized by its type class before validation
+            if (!$constraint->validate($this->getData())) {
                 $this->setErrorMessage($constraint->getErrorMessage());
 
                 return false;
@@ -441,7 +443,7 @@ abstract class AbstractType
     /**
      * @return ConstraintInterface[]
      */
-    public function getConstraints(): array
+    public function getConstraints()
     {
         return $this->constraints;
     }

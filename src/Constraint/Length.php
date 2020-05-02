@@ -4,7 +4,9 @@ namespace Palmtree\Form\Constraint;
 
 class Length extends AbstractConstraint implements ConstraintInterface
 {
+    /** @var int */
     public const ERROR_TOO_SMALL = 1;
+    /** @var int */
     public const ERROR_TOO_LARGE = 2;
 
     /** @var int|null */
@@ -45,7 +47,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
 
     public function getErrorMessage(): string
     {
-        switch ($this->getErrorCode()) {
+        switch ($this->errorCode) {
             case self::ERROR_TOO_SMALL:
                 $errorMessage = "This field must be at least $this->min characters";
                 break;

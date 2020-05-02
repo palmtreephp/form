@@ -3,12 +3,14 @@
 namespace Palmtree\Form\Type;
 
 use Palmtree\Html\Element;
-use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 class CheckboxType extends AbstractType
 {
-    protected $type     = 'checkbox';
-    protected $value    = '1';
+    /** @var string */
+    protected $type = 'checkbox';
+    /** @var string */
+    protected $value = '1';
+    /** @var bool */
     protected $siblings = false;
 
     public function getElement(): Element
@@ -24,7 +26,7 @@ class CheckboxType extends AbstractType
         $compare = true;
 
         if (\is_array($data)) {
-            $key = array_search($this->getValue(), $data, false);
+            $key = array_search($this->value, $data, false);
 
             if ($key !== false) {
                 $data = $data[$key];
@@ -42,13 +44,12 @@ class CheckboxType extends AbstractType
 
     public function getElements()
     {
-        $formId   = $this->form->getKey();
         $elements = [];
 
         $element = $this->getElement();
 
         if (!$element->attributes['id']) {
-            $element->attributes['id'] = "$formId-$this->name";
+            $element->attributes['id'] = $this->form->getKey() . "-$this->name";
         }
 
         $elements[] = $element;
@@ -62,9 +63,7 @@ class CheckboxType extends AbstractType
         }
 
         if (!$this->isValid()) {
-            $error = $this->form->createInvalidElement();
-            $error->setInnerText($this->getErrorMessage());
-            $elements[] = $error;
+            $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
         }
 
         return $elements;
@@ -118,8 +117,7 @@ class CheckboxType extends AbstractType
         $attribute = parent::getIdAttribute();
 
         if ($this->parent) {
-            $converter = new SnakeCaseToHumanNameConverter();
-            $attribute .= '-' . $converter->denormalize($this->value);
+            $attribute .= '-' . $this->nameConverter->denormalize($this->value);
         }
 
         return $attribute;

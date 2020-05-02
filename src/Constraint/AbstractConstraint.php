@@ -9,12 +9,18 @@ abstract class AbstractConstraint
     /** @var string */
     protected $errorMessage = 'Invalid value';
 
+    /**
+     * @param array|string $args
+     */
     public function __construct($args = [])
     {
         $parser = new ArgParser($args, 'error_message');
         $parser->parseSetters($this);
     }
 
+    /**
+     * @param array|string $args
+     */
     public static function create($args = []): self
     {
         return new static($args);

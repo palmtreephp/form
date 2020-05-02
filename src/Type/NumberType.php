@@ -13,7 +13,7 @@ class NumberType extends AbstractType
     {
         $element = parent::getElement();
 
-        foreach ($this->getConstraints() as $constraint) {
+        foreach ($this->constraints as $constraint) {
             if ($constraint instanceof Number) {
                 $min = $constraint->getMin();
                 $max = $constraint->getMax();
@@ -25,6 +25,8 @@ class NumberType extends AbstractType
                 if ($max !== null) {
                     $element->attributes['max'] = $max;
                 }
+
+                break;
             }
         }
 

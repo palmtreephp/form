@@ -4,7 +4,9 @@ namespace Palmtree\Form\Type;
 
 class OptionType extends AbstractType
 {
+    /** @var string */
     protected $tag = 'option';
+    /** @var string */
     protected $value;
 
     public function getElements()
@@ -14,7 +16,7 @@ class OptionType extends AbstractType
         $element = $this->getElement();
 
         $element->attributes->clear();
-        $element->attributes['value'] = $this->getValue();
+        $element->attributes['value'] = $this->value;
 
         $element->classes->clear();
 

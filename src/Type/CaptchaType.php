@@ -31,11 +31,11 @@ class CaptchaType extends AbstractType
 
     public function isValid(): bool
     {
-        if (!$this->getForm()->isSubmitted()) {
+        if (!$this->form->isSubmitted()) {
             return true;
         }
 
-        return $this->captcha->verify($this->getData());
+        return $this->captcha->verify($this->data);
     }
 
     public function getElements()
@@ -46,9 +46,7 @@ class CaptchaType extends AbstractType
         if (!$this->isValid()) {
             $element->classes[] = 'is-invalid';
 
-            $error = $this->form->createInvalidElement();
-            $error->setInnerText($this->getErrorMessage());
-            $elements[] = $error;
+            $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
         }
 
         return $elements;

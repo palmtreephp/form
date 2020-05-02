@@ -20,9 +20,12 @@ class FormBuilder
         $this->typeLocator = new TypeLocator();
     }
 
-    public function add(string $name, string $type = TextType::class, array $args = []): self
+    /**
+     * @param string|object $type
+     */
+    public function add(string $name, $type = TextType::class, array $args = []): self
     {
-        if ($type instanceof RepeatedType || $this->typeLocator->getTypeClass($type) === RepeatedType::class) {
+        if ((\is_object($type) && $type instanceof RepeatedType) || $this->typeLocator->getTypeClass($type) === RepeatedType::class) {
             return $this->addRepeatedType($name, $type, $args);
         }
 

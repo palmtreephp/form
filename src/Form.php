@@ -43,9 +43,9 @@ class Form
 
     public function render(): string
     {
-        $formElement = new Element('form.palmtree-form');
+        $element = new Element('form.palmtree-form');
 
-        $formElement->attributes->add([
+        $element->attributes->add([
             'method'  => $this->method,
             'id'      => $this->key,
             'action'  => $this->action,
@@ -53,28 +53,28 @@ class Form
         ]);
 
         if (!$this->htmlValidation) {
-            $formElement->attributes->set('novalidate');
+            $element->attributes->set('novalidate');
         }
 
         if ($this->ajax) {
-            $formElement->classes[] = 'is-ajax';
+            $element->classes[] = 'is-ajax';
         }
 
         if ($this->submitted) {
-            $formElement->classes[] = 'is-submitted';
+            $element->classes[] = 'is-submitted';
         }
 
-        $formElement->attributes->setData('invalid_element', htmlentities($this->createInvalidElement()->render()));
+        $element->attributes->setData('invalid_element', htmlentities($this->createInvalidElement()->render()));
 
-        $this->renderFields($formElement);
+        $this->renderFields($element);
 
         if ($this->hasRequiredField()) {
             $info = (new Element('small'))->setInnerText('* required field');
 
-            $formElement->addChild($info);
+            $element->addChild($info);
         }
 
-        return $formElement->render();
+        return $element->render();
     }
 
     private function renderFields(Element $form): void
@@ -97,7 +97,7 @@ class Form
                 $parent->classes[] = 'form-check';
             }
 
-            foreach ($field->getElements($parent) as $element) {
+            foreach ($field->getElements() as $element) {
                 $parent->addChild($element);
             }
 
@@ -243,7 +243,7 @@ class Form
     /**
      * @return AbstractType[]
      */
-    public function getFields(array $args = []): array
+    public function getFields(array $args = [])
     {
         if (empty($args)) {
             return $this->fields;
@@ -327,13 +327,6 @@ class Form
         return $this->method;
     }
 
-    private function parseArgs($args): void
-    {
-        $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
-
-        $parser->parseSetters($this);
-    }
-
     public function setFieldWrapper(string $fieldWrapper): self
     {
         $this->fieldWrapper = $fieldWrapper;
@@ -368,5 +361,15 @@ class Form
         $element->classes[] = 'palmtree-invalid-feedback';
 
         return $element;
+    }
+
+    /**
+     * @param string|array $args
+     */
+    private function parseArgs($args): void
+    {
+        $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
+
+        $parser->parseSetters($this);
     }
 }
