@@ -209,7 +209,7 @@ abstract class AbstractType
 
         $elements[] = $element;
 
-        if (!$isValid) {
+        if (!$isValid && $this->errorMessage) {
             $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
         }
 
@@ -280,7 +280,7 @@ abstract class AbstractType
         }
     }
 
-    public function getErrorMessage(): string
+    public function getErrorMessage(): ?string
     {
         return $this->errorMessage;
     }

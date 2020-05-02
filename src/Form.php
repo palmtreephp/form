@@ -4,8 +4,10 @@ namespace Palmtree\Form;
 
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Exception\AlreadySubmittedException;
+use Palmtree\Form\Exception\NotSubmittedException;
 use Palmtree\Form\Type\AbstractType;
 use Palmtree\Form\Type\CheckboxType;
+use Palmtree\Form\Type\HiddenType;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
@@ -19,6 +21,8 @@ class Form
     protected $ajax = false;
     /** @var bool */
     protected $submitted = false;
+    /** @var bool|null */
+    protected $valid;
     /** @var string */
     protected $method = 'POST';
     /** @var string */
@@ -83,7 +87,7 @@ class Form
             $fieldWrapper = null;
             $parent       = $form;
 
-            if ($this->fieldWrapper && !$field->isType('hidden')) {
+            if ($this->fieldWrapper && !$field instanceof HiddenType) {
                 $fieldWrapper = new Element($this->fieldWrapper);
 
                 if ($field->isRequired()) {
@@ -109,13 +113,22 @@ class Form
 
     public function isValid(): bool
     {
-        foreach ($this->fields as $field) {
-            if (!$field->isValid()) {
-                $this->addError($field->getName(), $field->getErrorMessage());
+        if (!$this->submitted) {
+            throw new NotSubmittedException('Form must be submitted before calling ' . __METHOD__);
+        }
+
+        if ($this->valid === null) {
+            foreach ($this->fields as $field) {
+                if (!$field->isValid()) {
+                    $this->valid = false;
+                    if ($errorMessage = $field->getErrorMessage()) {
+                        $this->addError($field->getName(), $errorMessage);
+                    }
+                }
             }
         }
 
-        return empty($this->errors);
+        return $this->valid;
     }
 
     public function submit(array $data): void

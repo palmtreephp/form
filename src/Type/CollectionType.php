@@ -6,6 +6,10 @@ use Palmtree\Html\Element;
 
 class CollectionType extends AbstractType
 {
+    /** @var null */
+    protected $errorMessage = null;
+    /** @var bool */
+    protected $required = false;
     /** @var string */
     private $entryType;
     /** @var array */
@@ -19,11 +23,11 @@ class CollectionType extends AbstractType
 
         $collectionWrapper->addChild($entriesWrapper);
 
-        if ($entries = $this->getChildren()) {
-            foreach ($entries as $entry) {
-                $entriesWrapper->addChild($this->buildEntryElement($entry));
-            }
-        } else {
+        foreach ($this->children as $entry) {
+            $entriesWrapper->addChild($this->buildEntryElement($entry));
+        }
+
+        if (empty($this->children)) {
             $entriesWrapper->addChild($this->buildEntryElement($this->buildEntry()));
         }
 
@@ -47,6 +51,9 @@ class CollectionType extends AbstractType
         }
     }
 
+    /**
+     * @param int|string $position
+     */
     private function buildEntry($position = 0, ?array $data = null): AbstractType
     {
         $entryType = $this->entryType;
@@ -121,7 +128,7 @@ class CollectionType extends AbstractType
      */
     public function setData($data): AbstractType
     {
-        if ($this->getEntryType() === FileType::class) {
+        if ($this->entryType === FileType::class) {
             $data = self::normalizeFilesArray($data);
         }
 
