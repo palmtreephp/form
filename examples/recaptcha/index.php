@@ -9,7 +9,6 @@ require __DIR__ . '/../bootstrap.php';
 
 $builder = new FormBuilder([
     'key'             => 'recaptcha',
-    'method'          => 'POST',
     'html_validation' => false,
 ]);
 

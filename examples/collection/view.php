@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Palmtree Form - Collection Example</title>
-    <?php include '../shared/styles.php'; ?>
+    <?= get_styles(); ?>
 </head>
 <body>
 <main>
@@ -15,7 +15,7 @@
         <?php echo $form->render(); ?>
     </div>
 </main>
-<?php include '../shared/scripts.php'; ?>
+<?= get_scripts(); ?>
 <script src="../../public/dist/js/palmtree-form.pkgd.js"></script>
 <script>
     $(function () {

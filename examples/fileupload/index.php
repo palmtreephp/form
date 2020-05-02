@@ -22,10 +22,10 @@ $builder->add('file', 'file', [
             'max' => 1024 * 100,
         ]),
         new Extension([
-            'extensions' => ['jpg', 'gif'],
+            'extensions' => ['jpg', 'gif', 'png'],
         ]),
         new MimeType([
-            'mime_types' => ['image/jpeg', 'image/gif'],
+            'mime_types' => ['image/jpeg', 'image/gif', 'image/png'],
         ]),
     ],
 ]);

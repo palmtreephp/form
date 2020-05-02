@@ -20,7 +20,7 @@ $builder
     ->add('phone_number', 'tel', ['required' => false])
     ->add('message', 'textarea', ['required' => false])
     ->add('preferences', 'choice', [
-        'expanded'      => false,
+        'expanded'      => true,
         'multiple'      => true,
         'error_message' => 'Please select preferences',
         'choices'       => [
