@@ -309,11 +309,6 @@ abstract class AbstractType
         return $this->type;
     }
 
-    public function isType(string $type): bool
-    {
-        return $type === $this->type;
-    }
-
     public function setRequired(bool $required): self
     {
         $this->required = $required;
