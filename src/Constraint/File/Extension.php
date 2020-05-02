@@ -4,14 +4,19 @@ namespace Palmtree\Form\Constraint\File;
 
 use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
+use Palmtree\Form\UploadedFile;
 
 class Extension extends AbstractConstraint implements ConstraintInterface
 {
+    /** @var array */
     private $extensions = [];
 
+    /**
+     * @param UploadedFile $uploadedFile
+     */
     public function validate($uploadedFile): bool
     {
-        $extension = pathinfo($uploadedFile['name'], PATHINFO_EXTENSION);
+        $extension = pathinfo($uploadedFile->getName(), PATHINFO_EXTENSION);
 
         if (!\in_array($extension, $this->extensions, true)) {
             $this->setErrorMessage('Only the following file extensions are allowed: ' . implode(', ', $this->extensions));

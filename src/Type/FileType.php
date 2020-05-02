@@ -2,14 +2,19 @@
 
 namespace Palmtree\Form\Type;
 
+use Palmtree\Form\UploadedFile;
 use Palmtree\Html\Element;
 
 class FileType extends AbstractType
 {
-    private $custom     = true;
-    private $browseText = 'Browse';
-
+    /** @var string */
     protected $type = 'file';
+    /** @var bool */
+    private $custom = true;
+    /** @var string */
+    private $browseText = 'Browse';
+    /** @var UploadedFile */
+    private $normData;
 
     public function __construct(array $args = [])
     {
@@ -33,13 +38,13 @@ class FileType extends AbstractType
         return $element;
     }
 
-    public function getLabelElement(): Element
+    public function getLabelElement(): ?Element
     {
         $element = parent::getLabelElement();
 
         if ($element && $this->custom) {
             $element->classes[] = 'custom-file-label';
-            $element->attributes->setData('browse', $this->getBrowseText());
+            $element->attributes->setData('browse', $this->browseText);
         }
 
         return $element;
@@ -82,5 +87,33 @@ class FileType extends AbstractType
     public function getBrowseText(): string
     {
         return $this->browseText;
+    }
+
+    public function isValid(): bool
+    {
+        if (!$this->form->isSubmitted()) {
+            return true;
+        }
+
+        if (!parent::isValid()) {
+            return false;
+        }
+
+        if (($uploadedFile = $this->getData()) && $uploadedFile->getErrorCode() > 0) {
+            $this->setErrorMessage($uploadedFile->getErrorMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getData(): UploadedFile
+    {
+        if (!$this->normData) {
+            $this->normData = new UploadedFile($this->data);
+        }
+
+        return $this->normData;
     }
 }

@@ -4,11 +4,16 @@ namespace Palmtree\Form\Constraint\File;
 
 use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
+use Palmtree\Form\UploadedFile;
 
 class MimeType extends AbstractConstraint implements ConstraintInterface
 {
+    /** @var array */
     private $mimeTypes = [];
 
+    /**
+     * @param UploadedFile $uploadedFile
+     */
     public function validate($uploadedFile): bool
     {
         $mimeType = $this->getUploadedFileMimeType($uploadedFile);
@@ -39,16 +44,16 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
         return $this->mimeTypes;
     }
 
-    private function getUploadedFileMimeType($uploadedFile): ?string
+    private function getUploadedFileMimeType(UploadedFile $uploadedFile): ?string
     {
         if (\extension_loaded('fileinfo')) {
             $finfo = new \finfo(\FILEINFO_MIME_TYPE);
 
-            return $finfo->file($uploadedFile['tmp_name']);
+            return $finfo->file($uploadedFile->getTempName());
         }
 
         if (\function_exists('mime_content_type')) {
-            return mime_content_type($uploadedFile['tmp_name']);
+            return mime_content_type($uploadedFile->getTempName());
         }
 
         return null;

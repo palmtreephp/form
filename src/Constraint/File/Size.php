@@ -2,20 +2,21 @@
 
 namespace Palmtree\Form\Constraint\File;
 
-use Palmtree\Form\Constraint;
 use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
+use Palmtree\Form\Constraint\Number as NumberConstraint;
+use Palmtree\Form\UploadedFile;
 
 class Size extends AbstractConstraint implements ConstraintInterface
 {
-    /** @var Constraint\Number */
+    /** @var NumberConstraint */
     private $constraint;
 
-    public function __construct(array $args = [])
+    public function __construct($args = [])
     {
         parent::__construct($args);
 
-        $this->constraint = new Constraint\Number();
+        $this->constraint = new NumberConstraint();
 
         $this->constraint->setMin($args['min_bytes'] ?? 1);
 
@@ -24,19 +25,20 @@ class Size extends AbstractConstraint implements ConstraintInterface
         }
     }
 
+    /**
+     * @param UploadedFile $uploadedFile
+     */
     public function validate($uploadedFile): bool
     {
-        $size = (int)$uploadedFile['size'];
-
-        if ($this->constraint->validate($size)) {
+        if ($this->constraint->validate($uploadedFile->getSize())) {
             return true;
         }
 
         $errorCode = $this->constraint->getErrorCode();
 
-        if ($errorCode === Constraint\Number::ERROR_TOO_SMALL) {
+        if ($errorCode === NumberConstraint::ERROR_TOO_SMALL) {
             $this->setErrorMessage('File size must be greater than ' . $this->constraint->getMin() . ' bytes');
-        } elseif ($errorCode === Constraint\Number::ERROR_TOO_LARGE) {
+        } elseif ($errorCode === NumberConstraint::ERROR_TOO_LARGE) {
             $this->setErrorMessage('File size must be less than ' . $this->constraint->getMax() . ' bytes');
         }
 
