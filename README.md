@@ -17,7 +17,6 @@ composer require palmtree/form
 
 #### Build
 ```php
-<?php
 use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Captcha\GoogleRecaptcha;
 
@@ -48,8 +47,6 @@ $form = $builder->getForm();
 
 #### Process
 ```php
-<?php
-
 $form->handleRequest();
 
 if($form->isSubmitted() && $form->isValid()) {
@@ -57,6 +54,8 @@ if($form->isSubmitted() && $form->isValid()) {
     $name = $form->get('name')->getData();
 }
 ```
+
+See the [examples](examples) directory for examples using AJAX, file uploads, collections and more.
 
 ## Constraints
 
@@ -70,17 +69,11 @@ Constraints allow you to validate a field type. The current built in constraints
 | [Length](src/Constraint/Length.php)      | Ensures the field has a minimum and/or maximum length of characters
 | [Match](src/Constraint/Match.php)        | Ensures the field matches another fields value. Useful for password confirmations
 
-By default, all fields have a NotBlank constraint.
+By default, all required fields have a NotBlank constraint.
 Email fields have an email constraint and number fields a Number constraint.
 
 ## Using Constraints
 ```php
-<?php
-use Palmtree\Form\FormBuilder;
-use Palmtree\Form\Constraint;
-
-$builder = new FormBuilder();
-
 // Add an age field where the value must be between 18 and 80
 $builder->add('age', 'number', [
     'constraints' => [
