@@ -27,10 +27,6 @@ class CollectionType extends AbstractType
             $entriesWrapper->addChild($this->buildEntryElement($entry));
         }
 
-        if (empty($this->children)) {
-            $entriesWrapper->addChild($this->buildEntryElement($this->buildEntry()));
-        }
-
         $prototypeEntry = $this->buildEntry('__name__');
 
         $this->clearPrototypeEntryConstraints($prototypeEntry);
