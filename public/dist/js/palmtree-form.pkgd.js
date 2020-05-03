@@ -1,5 +1,5 @@
 /**
- * jquery-bsalert v1.0.3
+ * jquery-bsalert v2.0.0
  *
  * @author Andy Palmer <andy@andypalmer.me>
  * @license MIT
@@ -12,7 +12,7 @@
         define(["jquery"], factory);
     } else if (typeof module === "object" && module.exports) {
         // Node/CommonJS
-        module.exports = factory;
+        module.exports = factory(require("jquery"));
     } else {
         // Browser globals
         factory(jQuery);
@@ -21,68 +21,47 @@
     /* jshint unused: vars */
     "use strict";
 
-    var instances = [];
-
     var pluginName = "bsAlert";
+
+    var instances = {};
+    var instanceIdCounter = -1;
 
     var publicAPI = {
         destroy: function () {
             this.clear();
+            var instanceId = this.$el.data(pluginName + ".id");
+            this.$el.removeData(pluginName + ".id");
+            delete instances[instanceId];
         },
 
         show: function () {
             if ($.isFunction(this.options.position)) {
                 this.options.position.call(this, this.getAlert());
+            } else if (this.options.position === "after") {
+                this.$el.after(this.getAlert());
             } else {
-                switch (this.options.position) {
-                    case "after":
-                        this.$el.after(this.getAlert());
-                        break;
-                    default:
-                        this.$el.before(this.getAlert());
-                        break;
-                }
+                this.$el.before(this.getAlert());
             }
         },
 
         clear: function () {
-            for (var i = 0; i < instances.length; i++) {
-                instances[i].$alert.remove();
-            }
+            instances[this.$el.data(pluginName + ".id")].$alert.remove();
         }
     };
 
     var privateAPI = {
-        init: function () {
-            if (this.options.clear) {
-                this.clear();
-            }
-
-            this.show();
-        },
-
         getAlert: function () {
-            var $alert = $("<div />");
-
-            $alert
+            var $alert = $("<div />")
                 .attr("role", "alert")
                 .addClass("alert alert-" + this.options.type)
-                .append(
-                    document.createTextNode(this.getContent(this.options.content))
-                );
+                .append(document.createTextNode(" " + this.getContent(this.options.content)));
 
             if (this.options.icons && this.options.icons[this.options.type]) {
-                var $icon = $("<span />").addClass(
-                    this.options.icons[this.options.type]
-                );
-
-                $alert.prepend($icon);
+                $alert.prepend($("<span />").addClass(this.options.icons[this.options.type]));
             }
 
             if (this.options.dismissible) {
-                $alert.addClass("alert-dismissible");
-
-                $alert.append(
+                $alert.addClass("alert-dismissible").append(
                     $("<button />")
                         .attr({
                             type: "button",
@@ -100,33 +79,17 @@
         },
 
         getContent: function (arg) {
-            var _this = this,
-                content = "";
-
-            switch (typeof arg) {
-                case "function":
-                    content = arg.call(_this);
-                    break;
-                case "object":
-                    $.each(arg, function (i, part) {
-                        content += this.getContent(part);
-                    });
-                    break;
-                default:
-                    content = arg;
-                    break;
-            }
-
-            return content;
+            return $.isFunction(arg) ? arg.call(this) : arg;
         }
     };
 
-    function Plugin(element, options) {
-        this.$el = $(element);
+    function Plugin($element, options, instanceId) {
+        $element.data(pluginName + ".id", instanceId);
+        this.$el = $element;
         this.$alert = null;
         this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        this.show();
     }
 
     Plugin.prototype = $.extend({}, publicAPI, privateAPI);
@@ -134,39 +97,32 @@
     $.fn[pluginName] = function () {
         var args = arguments;
 
-        return this.each(function (i) {
-            if (
-                args.length === 2 &&
-                typeof args[0] === "string" &&
-                typeof args[1] === "string"
-            ) {
-                args[0] = {
-                    type: args[0],
-                    content: args[1]
-                };
+        var instanceId = this.data(pluginName + ".id");
+
+        if (typeof instanceId === "undefined") {
+            instanceId = ++instanceIdCounter;
+        }
+
+        if (instances.hasOwnProperty(instanceId)) {
+            if (typeof args[0] === "string" && $.isFunction(publicAPI[args[0]])) {
+                return publicAPI[args[0]].apply(instances[instanceId], Array.prototype.slice.call(args, 1));
             }
 
-            if (
-                instances[i] &&
-                typeof args[0] === "string" &&
-                $.isFunction(publicAPI[args[0]])
-            ) {
-                publicAPI[args[0]].apply(
-                    instances[i],
-                    Array.prototype.slice.call(args, 1)
-                );
-            } else {
-                instances[i] = new Plugin(this, args[0]);
-            }
-        });
+            instances[instanceId].destroy();
+        }
+
+        if (typeof args[0] !== "object") {
+            args[0] = { type: args[0], content: args[1] };
+        }
+
+        instances[instanceId] = new Plugin(this, args[0], instanceId);
     };
 
     $.fn[pluginName].defaults = {
-        type: "danger", // danger, warning, info, success
+        type: "danger", // one of danger, warning, info or success
         content: "",
-        clear: true,
         dismissible: false,
-        position: "default",
+        position: "before",
         icons: {
             danger: "fa fa-exclamation-circle",
             warning: "fa fa-question-circle",
@@ -175,7 +131,7 @@
         }
     };
 
-    //noinspection JSAnnotator
+    // noinspection JSAnnotator
     return $.fn[pluginName];
 
 });
