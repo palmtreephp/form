@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <title>Palmtree Form - Collection Example</title>
     <?= get_styles(); ?>
+    <style>
+        .remove-entry-link {margin-bottom:1rem;}
+    </style>
 </head>
 <body>
 <main>
@@ -21,8 +24,10 @@
     $(function () {
         $('.palmtree-form-collection').each(function () {
             $(this).palmtreeFormCollection({
+                minEntries: 1,
+                maxEntries: 4,
                 labels: {
-                    add: 'Add another person'
+                    add: 'Add person'
                 }
             });
         });
