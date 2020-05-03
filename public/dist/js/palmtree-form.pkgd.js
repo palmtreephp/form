@@ -305,13 +305,17 @@
      */
     function Plugin(element, options) {
         this.$collection = $(element);
+        this.$entriesWrapper = this.$collection.children('.palmtree-form-collection-entries');
         this.options = $.extend(true, {}, $.fn[pluginName].defaults, options);
+
+        this.$collection.data('index', this.$entriesWrapper.children().length);
+
+        this.$addEntryLink = $('<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>');
+        this.removeEntryLink = '<button type="button" class="remove-entry-link btn btn-sm btn-danger">' + this.options.labels.remove + '</button>';
 
         var _this = this;
 
-        this.$collection.data('index', this.$collection.find(this.options.entrySelector).length);
-
-        this.$collection.find(this.options.entrySelector).each(function () {
+        this.$entriesWrapper.children().each(function () {
             _this.addRemoveLink($(this));
         });
 
@@ -322,9 +326,6 @@
             _this.removeEntry($(this).closest('.palmtree-form-collection-entry'));
         });
 
-        this.$addEntryLink = $('<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>');
-        this.removeEntryLink = '<button type="button" class="remove-entry-link btn btn-sm btn-danger">' + this.options.labels.remove + '</button>';
-
         this.$collection.after(this.$addEntryLink);
 
         this.$addEntryLink.on('click', function (e) {
@@ -333,7 +334,7 @@
         });
 
         for (var i = this.getTotalEntries(); i < this.options.minEntries; i++) {
-            _this.addEntry();
+            this.addEntry();
         }
 
         if (this.hasMaxEntries()) {
@@ -365,7 +366,7 @@
 
             this.addRemoveLink($entry);
 
-            this.$collection.children('.palmtree-form-collection-entries').append($entry);
+            this.$entriesWrapper.append($entry);
 
             this.$collection.data('index', index + 1);
 
@@ -404,7 +405,7 @@
          * @returns {number}
          */
         getTotalEntries: function () {
-            return this.$collection.find(this.options.entrySelector).length;
+            return this.$entriesWrapper.children().length;
         },
 
         /**
@@ -432,7 +433,6 @@
     };
 
     $.fn[pluginName].defaults = {
-        entrySelector: '> div > .palmtree-form-collection-entry',
         prototype: null,
         labels: {
             add: 'Add Entry',
