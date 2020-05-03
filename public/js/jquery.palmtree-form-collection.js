@@ -63,7 +63,7 @@
         });
 
         if (typeof this.options.minEntries === 'number') {
-            for (var i = 0; i <= this.options.minEntries; i++) {
+            for (var i = 1; i <= this.options.minEntries; i++) {
                 _this.addEntry();
             }
         }
