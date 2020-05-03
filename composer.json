@@ -21,17 +21,12 @@
             "Palmtree\\Form\\": "src"
         }
     },
-    "require-dev": {
-        "palmtree/php-cs-fixer-config": "^1.0"
-    },
     "suggest": {
         "ext-curl": "For Google Recaptcha support",
         "ext-json": "For Google Recaptcha support",
         "ext-fileinfo": "For mime type upload validation"
     },
-    "scripts": {
-        "sniff": "vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff --diff-format=udiff",
-        "fix": "vendor/bin/php-cs-fixer fix --diff",
-        "lint": "find -L .  -path ./vendor -prune -o -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l"
+    "require-dev": {
+        "palmtree/php-cs-fixer-config": "^1.0"
     }
 }
