@@ -51,9 +51,8 @@
             _this.removeEntry($(this).closest('.palmtree-form-collection-entry'));
         });
 
-        this.$addEntryLink = $(
-            '<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>'
-        );
+        this.$addEntryLink = $('<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>');
+        this.removeEntryLink = '<button type="button" class="remove-entry-link btn btn-sm btn-danger">' + this.options.labels.remove + '</button>';
 
         this.$collection.after(this.$addEntryLink);
 
@@ -62,10 +61,8 @@
             _this.addEntry();
         });
 
-        if (typeof this.options.minEntries === 'number') {
-            for (var i = 1; i <= this.options.minEntries; i++) {
-                _this.addEntry();
-            }
+        for (var i = this.getTotalEntries(); i < this.options.minEntries; i++) {
+            _this.addEntry();
         }
 
         if (this.hasMaxEntries()) {
@@ -97,7 +94,7 @@
 
             this.addRemoveLink($entry);
 
-            this.$collection.append($entry);
+            this.$collection.children('.palmtree-form-collection-entries').append($entry);
 
             this.$collection.data('index', index + 1);
 
@@ -113,7 +110,7 @@
          * @param {jQuery} $entry
          */
         removeEntry: function ($entry) {
-            if (typeof this.options.minEntries === 'number' && this.options.minEntries === this.getTotalEntries()) {
+            if (this.options.minEntries === this.getTotalEntries()) {
                 return;
             }
 
@@ -129,15 +126,10 @@
         },
 
         addRemoveLink: function ($entry) {
-            $entry.append(
-                '<button type="button" class="remove-entry-link btn btn-sm btn-danger">' +
-                    this.options.labels.remove +
-                    '</button>'
-            );
+            $entry.append($(this.removeEntryLink));
         },
 
         /**
-         *
          * @returns {number}
          */
         getTotalEntries: function () {
@@ -145,11 +137,10 @@
         },
 
         /**
-         *
          * @returns {boolean}
          */
         hasMaxEntries: function () {
-            return typeof this.options.maxEntries === 'number' && this.options.maxEntries === this.getTotalEntries();
+            return this.options.maxEntries === -1 || this.getTotalEntries() >= this.options.maxEntries;
         }
     };
 
@@ -176,7 +167,7 @@
             add: 'Add Entry',
             remove: 'Remove'
         },
-        minEntries: null,
-        maxEntries: null
+        minEntries: 0,
+        maxEntries: -1
     };
 });
