@@ -23,9 +23,12 @@ use Palmtree\Form\Captcha\GoogleRecaptcha;
 $builder = new FormBuilder();
 
 $builder
-    ->add('name', 'text', ['error_message' => 'Please tell me your name'])
+    ->add('name', 'text', ['error_message' => 'Please enter your name'])
     ->add('email_address', 'email')
-    ->add('message', 'textarea', ['required' => false])
+    ->add('message', 'textarea', [
+        'required' => false,
+        'label' => 'Enter your message',
+    ])
     ->add('recaptcha', 'captcha', [
         'captcha' => new GoogleRecaptcha('<site_key>', '<secret>'),
     ]);
@@ -39,7 +42,7 @@ $form = $builder->getForm();
 
 #### Render
 ```html
-<script src="/path/to/palmtree-form-pkgd.min.js"></script> <!-- Optional -->
+<script src="/path/to/palmtree-form.pkgd.min.js"></script> <!-- Optional -->
 <div class="container">
     <?= $form->render(); ?>
 </div>
@@ -92,6 +95,35 @@ $builder->add('password', 'repeated', [
 ```
 
 You can also implement your own constraints, they just need to implement the [ConstraintInterface](src/Constraint/ConstraintInterface.php)
+
+## File Uploads
+
+### EncType Attribute
+
+A form's enctype attribute must be set to `multipart/form-data` for file uploads to work.
+The easiest way to do this is to use the form builder's helper method:
+
+```php
+$builder = new FormBuilder(['key' => 'fileupload_example']);
+$builder->enableFileUploads();
+```
+
+### UploadedFile Object
+
+When you retrieve a FileType's data from a form, an instance of [UploadedFile](src/UploadedFile.php) will be returned.
+This is a small wrapper object around PHPs native uploaded file array.
+
+### File Constraints
+
+The following constraints can be used on the FileType field:
+
+| Constraint       | Description |
+| ------------- |-------------|
+| [Extension](src/Constraint/File/Extension.php)  | Ensures the file has an allowed extension
+| [MimeType](src/Constraint/File/MimeType.php)  | Ensures the file has an allowed mime type
+| [Size](src/Constraint/File/MimeType.php)  | Ensures the file size is between an allowed range
+
+See the [file upload example](examples/fileupload/index.php) for usage examples of these constraints
 
 ## License
 
