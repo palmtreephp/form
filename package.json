@@ -1,13 +1,12 @@
 {
-  "name": "palmtree-form",
-  "private": true,
-  "dependencies": {
-    "jquery": "*",
-    "jquery-bsalert": "^1.0.3"
-  },
-  "devDependencies": {
-    "grunt": "^1.1.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-uglify": "^4.0.1"
-  }
+    "private": true,
+    "dependencies": {
+        "jquery": ">=1.9",
+        "jquery-bsalert": "^1.0.3"
+    },
+    "devDependencies": {
+        "grunt": "^1.1.0",
+        "grunt-contrib-concat": "^1.0.1",
+        "grunt-contrib-uglify": "^4.0.1"
+    }
 }
