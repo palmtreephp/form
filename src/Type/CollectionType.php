@@ -26,10 +26,7 @@ class CollectionType extends AbstractType
             $entriesWrapper->addChild($this->buildEntryElement($entry));
         }
 
-        $prototypeEntry = $this->buildEntry('__name__');
-        $this->clearPrototypeEntryConstraints($prototypeEntry);
-        $prototype = $this->buildEntryElement($prototypeEntry);
-        $collectionWrapper->attributes->setData('prototype', htmlentities($prototype->render()));
+        $collectionWrapper->attributes->setData('prototype', $this->generatePrototype());
 
         return $collectionWrapper;
     }
@@ -118,6 +115,18 @@ class CollectionType extends AbstractType
         }
 
         return $entryWrapper;
+    }
+
+    private function generatePrototype(): string
+    {
+        $entry = $this->buildEntry('__name__');
+        $this->clearPrototypeEntryConstraints($entry);
+
+        $prototype = $this->buildEntryElement($entry);
+
+        $html = trim(preg_replace('/>\s+</', '><', $prototype->render()));
+
+        return htmlentities($html);
     }
 
     private function clearPrototypeEntryConstraints(AbstractType $entry): void
