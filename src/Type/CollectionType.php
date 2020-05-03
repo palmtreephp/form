@@ -18,8 +18,7 @@ class CollectionType extends AbstractType
     public function getElement(): Element
     {
         $collectionWrapper = new Element('div.palmtree-form-collection');
-
-        $entriesWrapper = new Element('div.palmtree-form-collection-entries');
+        $entriesWrapper    = new Element('div.palmtree-form-collection-entries');
 
         $collectionWrapper->addChild($entriesWrapper);
 
@@ -28,11 +27,8 @@ class CollectionType extends AbstractType
         }
 
         $prototypeEntry = $this->buildEntry('__name__');
-
         $this->clearPrototypeEntryConstraints($prototypeEntry);
-
         $prototype = $this->buildEntryElement($prototypeEntry);
-
         $collectionWrapper->attributes->setData('prototype', htmlentities($prototype->render()));
 
         return $collectionWrapper;
@@ -44,47 +40,6 @@ class CollectionType extends AbstractType
             foreach ($this->data as $key => $value) {
                 $this->addChild($this->buildEntry($key, $value));
             }
-        }
-    }
-
-    /**
-     * @param int|string $position
-     */
-    private function buildEntry($position = 0, ?array $data = null): AbstractType
-    {
-        $entryType = $this->entryType;
-        /** @var AbstractType $entry */
-        $entry = new $entryType($this->entryOptions);
-        $entry
-            ->setParent($this)
-            ->setName($this->name)
-            ->setPosition($position);
-
-        $entry->build();
-
-        if (\func_num_args() > 0) {
-            $entry->setData($data);
-        }
-
-        return $entry;
-    }
-
-    private function buildEntryElement(AbstractType $entry): Element
-    {
-        $entryWrapper = new Element('div.palmtree-form-collection-entry');
-        foreach ($entry->getElements() as $element) {
-            $entryWrapper->addChild($element);
-        }
-
-        return $entryWrapper;
-    }
-
-    private function clearPrototypeEntryConstraints(AbstractType $entry): void
-    {
-        $entry->setConstraints([]);
-
-        foreach ($entry->getChildren() as $child) {
-            $this->clearPrototypeEntryConstraints($child);
         }
     }
 
@@ -131,6 +86,47 @@ class CollectionType extends AbstractType
         $this->data = $data;
 
         return $this;
+    }
+
+    /**
+     * @param int|string $position
+     */
+    private function buildEntry($position = 0, ?array $data = null): AbstractType
+    {
+        $entryType = $this->entryType;
+        /** @var AbstractType $entry */
+        $entry = new $entryType($this->entryOptions);
+        $entry
+            ->setParent($this)
+            ->setName($this->name)
+            ->setPosition($position);
+
+        $entry->build();
+
+        if (\func_num_args() > 0) {
+            $entry->setData($data);
+        }
+
+        return $entry;
+    }
+
+    private function buildEntryElement(AbstractType $entry): Element
+    {
+        $entryWrapper = new Element('div.palmtree-form-collection-entry');
+        foreach ($entry->getElements() as $element) {
+            $entryWrapper->addChild($element);
+        }
+
+        return $entryWrapper;
+    }
+
+    private function clearPrototypeEntryConstraints(AbstractType $entry): void
+    {
+        $entry->setConstraints([]);
+
+        foreach ($entry->getChildren() as $child) {
+            $this->clearPrototypeEntryConstraints($child);
+        }
     }
 
     private static function normalizeFilesArray(array $data): array
