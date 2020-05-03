@@ -4,18 +4,18 @@
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
+        module.exports = factory(require('jquery'));
     } else {
         factory(window.jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     $(function () {
         $('.palmtree-form').each(function () {
             var $recaptcha = $(this).find('.g-recaptcha');
 
-            if ($recaptcha && $.isFunction($.fn.palmtreeRecaptcha)) {
+            if ($recaptcha.length && typeof window.grecaptcha !== 'undefined') {
                 $recaptcha.palmtreeRecaptcha(this);
             }
         });
@@ -23,61 +23,46 @@
 
     var pluginName = 'palmtreeRecaptcha';
 
-    function Plugin(element, form, options) {
+    /**
+     *
+     * @param {HTMLElement} element
+     * @param {HTMLElement} form
+     * @constructor
+     */
+    function Plugin(element, form) {
         this.$el = $(element);
         this.$form = $(form);
         this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        var _this = this;
+
+        window[this.$el.data('onload')] = function () {
+            var widgetId = window.grecaptcha.render(_this.$el.attr('id'), {
+                sitekey: _this.$el.data('site_key'),
+                callback: function (response) {
+                    var $formControl = $('#' + _this.$el.data('form_control'));
+                    $formControl.val(response);
+                    if (_this.$form.palmtreeForm('isInitialized')) {
+                        _this.$form.palmtreeForm('clearState', $formControl);
+                    }
+                }
+            });
+
+            _this.$form.on('error.palmtreeForm success.palmtreeForm', function () {
+                window.grecaptcha.reset(widgetId);
+            });
+        };
+
+        $.getScript(this.$el.data('script_url'));
     }
 
-    var publicAPI = {};
-
-    var privateAPI = {
-        init: function () {
-            var _this = this;
-
-            window[this.$el.data('onload')] = function () {
-                var widgetId = window.grecaptcha.render(_this.$el.attr('id'), {
-                    sitekey: _this.$el.data('site_key'),
-                    callback: function (response) {
-                        var $formControl = $('#' + _this.$el.data('form_control'));
-                        $formControl.val(response);
-                        if (_this.$form.palmtreeForm('isInitialized')) {
-                            _this.$form.palmtreeForm('clearState', $formControl);
-                        }
-                    }
-                });
-
-                _this.$form.on('error.palmtreeForm success.palmtreeForm', function () {
-                    window.grecaptcha.reset(widgetId);
-                });
-            };
-
-            $.getScript(this.$el.data('script_url'));
-        }
-    };
-
-    Plugin.prototype = $.extend({}, publicAPI, privateAPI);
-
-    $.fn[pluginName] = function () {
-        var args = arguments;
-
+    $.fn[pluginName] = function (form) {
         return this.each(function () {
-                var plugin = $(this).data(pluginName);
-                if (!plugin) {
-                    plugin = new Plugin(this, args[0]);
-                    $(this).data(pluginName, plugin);
-                }
-
-                if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
-                    plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
-                }
+            if (!$(this).data(pluginName)) {
+                $(this).data(pluginName, new Plugin(this, form));
             }
-        );
+        });
     };
-
-    $.fn[pluginName].defaults = {};
 
     return $.fn[pluginName];
-}));
+});

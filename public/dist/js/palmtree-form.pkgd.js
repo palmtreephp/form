@@ -186,21 +186,19 @@
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
+        module.exports = factory(require('jquery'));
     } else {
         factory(window.jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     $(function () {
         $('.palmtree-form').on('change', '.custom-file-input', function () {
-            $(this)
-                .next('.custom-file-label')
-                .html(this.files[0].name);
+            $(this).next('.custom-file-label').html(this.files[0].name);
         });
     });
-}));
+});
 
 (function (factory) {
     'use strict';
@@ -208,18 +206,18 @@
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
+        module.exports = factory(require('jquery'));
     } else {
         factory(window.jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     $(function () {
         $('.palmtree-form').each(function () {
             var $recaptcha = $(this).find('.g-recaptcha');
 
-            if ($recaptcha && $.isFunction($.fn.palmtreeRecaptcha)) {
+            if ($recaptcha.length && typeof window.grecaptcha !== 'undefined') {
                 $recaptcha.palmtreeRecaptcha(this);
             }
         });
@@ -227,64 +225,49 @@
 
     var pluginName = 'palmtreeRecaptcha';
 
-    function Plugin(element, form, options) {
+    /**
+     *
+     * @param {HTMLElement} element
+     * @param {HTMLElement} form
+     * @constructor
+     */
+    function Plugin(element, form) {
         this.$el = $(element);
         this.$form = $(form);
         this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        var _this = this;
+
+        window[this.$el.data('onload')] = function () {
+            var widgetId = window.grecaptcha.render(_this.$el.attr('id'), {
+                sitekey: _this.$el.data('site_key'),
+                callback: function (response) {
+                    var $formControl = $('#' + _this.$el.data('form_control'));
+                    $formControl.val(response);
+                    if (_this.$form.palmtreeForm('isInitialized')) {
+                        _this.$form.palmtreeForm('clearState', $formControl);
+                    }
+                }
+            });
+
+            _this.$form.on('error.palmtreeForm success.palmtreeForm', function () {
+                window.grecaptcha.reset(widgetId);
+            });
+        };
+
+        $.getScript(this.$el.data('script_url'));
     }
 
-    var publicAPI = {};
-
-    var privateAPI = {
-        init: function () {
-            var _this = this;
-
-            window[this.$el.data('onload')] = function () {
-                var widgetId = window.grecaptcha.render(_this.$el.attr('id'), {
-                    sitekey: _this.$el.data('site_key'),
-                    callback: function (response) {
-                        var $formControl = $('#' + _this.$el.data('form_control'));
-                        $formControl.val(response);
-                        if (_this.$form.palmtreeForm('isInitialized')) {
-                            _this.$form.palmtreeForm('clearState', $formControl);
-                        }
-                    }
-                });
-
-                _this.$form.on('error.palmtreeForm success.palmtreeForm', function () {
-                    window.grecaptcha.reset(widgetId);
-                });
-            };
-
-            $.getScript(this.$el.data('script_url'));
-        }
-    };
-
-    Plugin.prototype = $.extend({}, publicAPI, privateAPI);
-
-    $.fn[pluginName] = function () {
-        var args = arguments;
-
+    $.fn[pluginName] = function (form) {
         return this.each(function () {
-                var plugin = $(this).data(pluginName);
-                if (!plugin) {
-                    plugin = new Plugin(this, args[0]);
-                    $(this).data(pluginName, plugin);
-                }
-
-                if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
-                    plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
-                }
+            if (!$(this).data(pluginName)) {
+                $(this).data(pluginName, new Plugin(this, form));
             }
-        );
+        });
     };
-
-    $.fn[pluginName].defaults = {};
 
     return $.fn[pluginName];
-}));
+});
 
 /**
  * jQuery plugin to assist with adding/removing of entries
@@ -301,67 +284,67 @@
  * @author Andy Palmer
  */
 (function (factory) {
-    // Universal Module Definition
-    /* jshint strict: false */
-    if (typeof module === 'object' && module.exports) {
-        // Node/CommonJS (Browserify/Webpack)
-        module.exports = factory;
-    } else if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
+    'use strict';
+    /* global define:false */
+    if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory(require('jquery'));
     } else {
-        // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     var pluginName = 'palmtreeFormCollection';
 
+    /**
+     * @param {Element} element
+     * @param {{}} options
+     * @constructor
+     */
     function Plugin(element, options) {
         this.$collection = $(element);
         this.options = $.extend(true, {}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        var _this = this;
+
+        this.$collection.data('index', this.$collection.find(this.options.entrySelector).length);
+
+        this.$collection.find(this.options.entrySelector).each(function () {
+            _this.addRemoveLink($(this));
+        });
+
+        this.$collection.on('click', '.remove-entry-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            _this.removeEntry($(this).closest('.palmtree-form-collection-entry'));
+        });
+
+        this.$addEntryLink = $(
+            '<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>'
+        );
+
+        this.$collection.after(this.$addEntryLink);
+
+        this.$addEntryLink.on('click', function (e) {
+            e.preventDefault();
+            _this.addEntry();
+        });
+
+        if (typeof this.options.minEntries === 'number') {
+            for (var i = 0; i <= this.options.minEntries; i++) {
+                _this.addEntry();
+            }
+        }
+
+        if (this.hasMaxEntries()) {
+            this.$addEntryLink.addClass('disabled');
+        }
     }
 
     Plugin.prototype = {
-        init: function () {
-            var _this = this;
-
-            this.$collection.data('index', this.$collection.find(this.options.entrySelector).length);
-
-            this.$collection.find(this.options.entrySelector).each(function () {
-                _this.addRemoveLink($(this));
-            });
-
-            this.$collection.on('click', '.remove-entry-link', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                _this.removeEntry($(this).closest('.palmtree-form-collection-entry'));
-            });
-
-            this.$addEntryLink = $('<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>');
-
-            this.$collection.after(this.$addEntryLink);
-
-            this.$addEntryLink.on('click', function (e) {
-                e.preventDefault();
-                _this.addEntry();
-            });
-
-            if (typeof this.options.minEntries === 'number') {
-                for (var i = 0; i <= this.options.minEntries; i++) {
-                    _this.addEntry();
-                }
-            }
-
-            if (this.hasMaxEntries()) {
-                this.$addEntryLink.addClass('disabled');
-            }
-        },
-
         addEntry: function () {
             if (this.hasMaxEntries()) {
                 return false;
@@ -373,8 +356,10 @@
             if (this.options.prototype) {
                 prototype = this.options.prototype;
             } else {
-                prototype = this.$collection.data('prototype');
-                prototype = prototype.replace(/__name__label__/g, index).replace(/__name__/g, index)
+                prototype = this.$collection
+                    .data('prototype')
+                    .replace(/__name__label__/g, index)
+                    .replace(/__name__/g, index);
             }
 
             var $entry = $(prototype);
@@ -390,13 +375,17 @@
             this.$collection.trigger('addedEntry.palmtreeFormCollection', [$entry, this]);
 
             if (this.hasMaxEntries()) {
-                this.$addEntryLink.addClass('disabled')
+                this.$addEntryLink.addClass('disabled');
             }
         },
 
+        /**
+         *
+         * @param {jQuery} $entry
+         */
         removeEntry: function ($entry) {
             if (typeof this.options.minEntries === 'number' && this.options.minEntries === this.getTotalEntries()) {
-                return false;
+                return;
             }
 
             this.$collection.triggerHandler('removeEntry.palmtreeFormCollection', [$entry, this]);
@@ -406,12 +395,16 @@
             this.$collection.triggerHandler('removedEntry.palmtreeFormCollection', [this]);
 
             if (!this.hasMaxEntries()) {
-                this.$addEntryLink.removeClass('disabled')
+                this.$addEntryLink.removeClass('disabled');
             }
         },
 
         addRemoveLink: function ($entry) {
-            $entry.append('<button type="button" class="remove-entry-link btn btn-sm btn-danger">' + this.options.labels.remove + '</button>');
+            $entry.append(
+                '<button type="button" class="remove-entry-link btn btn-sm btn-danger">' +
+                    this.options.labels.remove +
+                    '</button>'
+            );
         },
 
         /**
@@ -431,7 +424,7 @@
         }
     };
 
-    $.fn[pluginName] = function (options) {
+    $.fn[pluginName] = function () {
         var args = arguments;
         return this.each(function () {
             var plugin = $(this).data(pluginName);
@@ -457,7 +450,7 @@
         minEntries: null,
         maxEntries: null
     };
-}));
+});
 
 (function (factory) {
     'use strict';
@@ -469,7 +462,7 @@
     } else {
         factory(jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     $(function () {
@@ -482,24 +475,41 @@
 
     var pluginName = 'palmtreeForm';
 
+    /**
+     * @param {Element} element
+     * @param {{}} options
+     * @constructor
+     */
     function Plugin(element, options) {
         this.$form = $(element);
         this.$submitButton = this.$form.find('[type=submit]').last();
         this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        var _this = this;
+
+        this.$form.on('submit.palmtreeForm', function (event) {
+            event.preventDefault();
+            _this.onSubmit();
+        });
     }
 
     var publicAPI = {
+        /**
+         * @param {jQuery} $formControls
+         */
         clearState: function ($formControls) {
             this.setState($formControls, '');
         },
+        /**
+         * @param {jQuery} $formControls
+         * @param {string} state
+         */
         setState: function ($formControls, state) {
             var _this = this;
             $formControls.each(function () {
                 var $formControl = $(this),
-                    $formGroup   = $(this).closest('.form-group'),
-                    $feedback    = $formGroup.find('.palmtree-invalid-feedback');
+                    $formGroup = $(this).closest('.form-group'),
+                    $feedback = $formGroup.find('.palmtree-invalid-feedback');
 
                 // Remove all states first.
                 for (var i = 0; i < _this.options.controlStates.length; i++) {
@@ -508,13 +518,13 @@
 
                 if (!state) {
                     $feedback.hide();
-                } else if ($.inArray(state, _this.options.controlStates) > -1) {
+                } else if (_this.options.controlStates.indexOf(state) > -1) {
                     $formControl.addClass('is-' + state);
                     $feedback.show();
                 }
 
                 _this.$form.trigger(_this.getEvent('statechange'), {
-                    '$formControl': $formControl,
+                    $formControl: $formControl,
                     state: state
                 });
             });
@@ -523,23 +533,11 @@
 
     var privateAPI = {
         /**
-         * Initialises the plugin instance.
-         */
-        init: function () {
-            var _this = this;
-
-            this.$form.on('submit.palmtreeForm', function (event) {
-                event.preventDefault();
-                _this.onSubmit();
-            });
-        },
-
-        /**
          * Handler for the form element's submit event.
          */
         onSubmit: function () {
-            var _this         = this,
-                $form         = this.$form,
+            var _this = this,
+                $form = this.$form,
                 $submitButton = this.$submitButton;
 
             $form.addClass('is-submitting');
@@ -555,12 +553,10 @@
                 context: _this
             });
 
-            promise
-                .done(_this.handleResponse)
-                .always(function () {
-                    $form.removeClass('is-submitting');
-                    $submitButton.removeClass('disabled').prop('disabled', false);
-                });
+            promise.done(_this.handleResponse).always(function () {
+                $form.removeClass('is-submitting');
+                $submitButton.removeClass('disabled').prop('disabled', false);
+            });
 
             $form.trigger(this.getEvent('promise'), {
                 promise: promise
@@ -568,14 +564,7 @@
         },
 
         /**
-         *
-         * @param {object} response
-         *
-         * @param {boolean} response.success
-         *
-         * @param {object} response.data
-         * @param {string} response.data.message
-         * @param {object} response.data.errors
+         * @param {{data: {}, message: string, errors: {}, success: boolean}} response
          *
          * @returns {boolean}
          */
@@ -627,14 +616,18 @@
             return true;
         },
 
+        /**
+         * @param {jQuery} $formControls
+         * @param {{}} errors
+         */
         setControlStates: function ($formControls, errors) {
             var _this = this;
 
             $formControls.each(function () {
                 var $formControl = $(this),
-                    errorKey     = $formControl.data('name'),
-                    $formGroup   = $formControl.closest('.form-group'),
-                    $feedback    = $formGroup.find('.palmtree-invalid-feedback');
+                    errorKey = $formControl.data('name'),
+                    $formGroup = $formControl.closest('.form-group'),
+                    $feedback = $formGroup.find('.palmtree-invalid-feedback');
 
                 if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
@@ -649,10 +642,9 @@
                     $(this)
                         .off('input.palmtreeForm change.palmtreeForm')
                         .on('input.palmtreeForm change.palmtreeForm', function () {
-                            var state = ( $(this).val().length ) ? '' : 'invalid';
+                            var state = $(this).val().length ? '' : 'invalid';
                             _this.setState($formControl, state);
                         });
-
                 } else {
                     _this.clearState($formControl);
                 }
@@ -663,7 +655,7 @@
          * Returns a new jQuery event object with the plugin's namespace.
          *
          * @param {string} eventType The type of event e.g 'click'.
-         * @param {...object} props Optional properties to add to the event object.
+         * @param {...{}} props Optional properties to add to the event object.
          * @returns {jQuery.Event}
          */
         getEvent: function (eventType, props) {
@@ -674,6 +666,10 @@
             return event;
         },
 
+        /**
+         * @param {string} content
+         * @param {string} type
+         */
         showAlert: function (content, type) {
             var _this = this;
             this.$form.bsAlert({
@@ -696,17 +692,16 @@
         }
 
         return this.each(function () {
-                var plugin = $(this).data(pluginName);
-                if (!plugin) {
-                    plugin = new Plugin(this, args[0]);
-                    $(this).data(pluginName, plugin);
-                }
-
-                if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
-                    plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
-                }
+            var plugin = $(this).data(pluginName);
+            if (!plugin) {
+                plugin = new Plugin(this, args[0]);
+                $(this).data(pluginName, plugin);
             }
-        );
+
+            if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
+                plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
+            }
+        });
     };
 
     $.fn[pluginName].defaults = {
@@ -718,4 +713,4 @@
     };
 
     return $.fn[pluginName];
-}));
+});

@@ -8,7 +8,7 @@
     } else {
         factory(jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     $(function () {
@@ -21,24 +21,41 @@
 
     var pluginName = 'palmtreeForm';
 
+    /**
+     * @param {Element} element
+     * @param {{}} options
+     * @constructor
+     */
     function Plugin(element, options) {
         this.$form = $(element);
         this.$submitButton = this.$form.find('[type=submit]').last();
         this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        var _this = this;
+
+        this.$form.on('submit.palmtreeForm', function (event) {
+            event.preventDefault();
+            _this.onSubmit();
+        });
     }
 
     var publicAPI = {
+        /**
+         * @param {jQuery} $formControls
+         */
         clearState: function ($formControls) {
             this.setState($formControls, '');
         },
+        /**
+         * @param {jQuery} $formControls
+         * @param {string} state
+         */
         setState: function ($formControls, state) {
             var _this = this;
             $formControls.each(function () {
                 var $formControl = $(this),
-                    $formGroup   = $(this).closest('.form-group'),
-                    $feedback    = $formGroup.find('.palmtree-invalid-feedback');
+                    $formGroup = $(this).closest('.form-group'),
+                    $feedback = $formGroup.find('.palmtree-invalid-feedback');
 
                 // Remove all states first.
                 for (var i = 0; i < _this.options.controlStates.length; i++) {
@@ -47,13 +64,13 @@
 
                 if (!state) {
                     $feedback.hide();
-                } else if ($.inArray(state, _this.options.controlStates) > -1) {
+                } else if (_this.options.controlStates.indexOf(state) > -1) {
                     $formControl.addClass('is-' + state);
                     $feedback.show();
                 }
 
                 _this.$form.trigger(_this.getEvent('statechange'), {
-                    '$formControl': $formControl,
+                    $formControl: $formControl,
                     state: state
                 });
             });
@@ -62,23 +79,11 @@
 
     var privateAPI = {
         /**
-         * Initialises the plugin instance.
-         */
-        init: function () {
-            var _this = this;
-
-            this.$form.on('submit.palmtreeForm', function (event) {
-                event.preventDefault();
-                _this.onSubmit();
-            });
-        },
-
-        /**
          * Handler for the form element's submit event.
          */
         onSubmit: function () {
-            var _this         = this,
-                $form         = this.$form,
+            var _this = this,
+                $form = this.$form,
                 $submitButton = this.$submitButton;
 
             $form.addClass('is-submitting');
@@ -94,12 +99,10 @@
                 context: _this
             });
 
-            promise
-                .done(_this.handleResponse)
-                .always(function () {
-                    $form.removeClass('is-submitting');
-                    $submitButton.removeClass('disabled').prop('disabled', false);
-                });
+            promise.done(_this.handleResponse).always(function () {
+                $form.removeClass('is-submitting');
+                $submitButton.removeClass('disabled').prop('disabled', false);
+            });
 
             $form.trigger(this.getEvent('promise'), {
                 promise: promise
@@ -107,14 +110,7 @@
         },
 
         /**
-         *
-         * @param {object} response
-         *
-         * @param {boolean} response.success
-         *
-         * @param {object} response.data
-         * @param {string} response.data.message
-         * @param {object} response.data.errors
+         * @param {{data: {}, message: string, errors: {}, success: boolean}} response
          *
          * @returns {boolean}
          */
@@ -166,14 +162,18 @@
             return true;
         },
 
+        /**
+         * @param {jQuery} $formControls
+         * @param {{}} errors
+         */
         setControlStates: function ($formControls, errors) {
             var _this = this;
 
             $formControls.each(function () {
                 var $formControl = $(this),
-                    errorKey     = $formControl.data('name'),
-                    $formGroup   = $formControl.closest('.form-group'),
-                    $feedback    = $formGroup.find('.palmtree-invalid-feedback');
+                    errorKey = $formControl.data('name'),
+                    $formGroup = $formControl.closest('.form-group'),
+                    $feedback = $formGroup.find('.palmtree-invalid-feedback');
 
                 if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
@@ -188,10 +188,9 @@
                     $(this)
                         .off('input.palmtreeForm change.palmtreeForm')
                         .on('input.palmtreeForm change.palmtreeForm', function () {
-                            var state = ( $(this).val().length ) ? '' : 'invalid';
+                            var state = $(this).val().length ? '' : 'invalid';
                             _this.setState($formControl, state);
                         });
-
                 } else {
                     _this.clearState($formControl);
                 }
@@ -202,7 +201,7 @@
          * Returns a new jQuery event object with the plugin's namespace.
          *
          * @param {string} eventType The type of event e.g 'click'.
-         * @param {...object} props Optional properties to add to the event object.
+         * @param {...{}} props Optional properties to add to the event object.
          * @returns {jQuery.Event}
          */
         getEvent: function (eventType, props) {
@@ -213,6 +212,10 @@
             return event;
         },
 
+        /**
+         * @param {string} content
+         * @param {string} type
+         */
         showAlert: function (content, type) {
             var _this = this;
             this.$form.bsAlert({
@@ -235,17 +238,16 @@
         }
 
         return this.each(function () {
-                var plugin = $(this).data(pluginName);
-                if (!plugin) {
-                    plugin = new Plugin(this, args[0]);
-                    $(this).data(pluginName, plugin);
-                }
-
-                if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
-                    plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
-                }
+            var plugin = $(this).data(pluginName);
+            if (!plugin) {
+                plugin = new Plugin(this, args[0]);
+                $(this).data(pluginName, plugin);
             }
-        );
+
+            if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
+                plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
+            }
+        });
     };
 
     $.fn[pluginName].defaults = {
@@ -257,4 +259,4 @@
     };
 
     return $.fn[pluginName];
-}));
+});
