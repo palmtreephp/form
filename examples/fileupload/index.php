@@ -1,8 +1,6 @@
 <?php
 
-use Palmtree\Form\Constraint\File\Extension;
-use Palmtree\Form\Constraint\File\MimeType;
-use Palmtree\Form\Constraint\File\Size;
+use Palmtree\Form\Constraint\File as FileConstraint;
 use Palmtree\Form\FormBuilder;
 
 require __DIR__ . '/../../vendor/autoload.php';
@@ -13,18 +11,19 @@ $builder = new FormBuilder([
     'action'          => 'index.php',
     'ajax'            => false,
     'html_validation' => false,
-    'enc_type'        => 'multipart/form-data',
 ]);
+
+$builder->enableFileUploads();
 
 $builder->add('file', 'file', [
     'constraints' => [
-        new Size([
+        new FileConstraint\Size([
             'max' => 1024 * 100,
         ]),
-        new Extension([
+        new FileConstraint\Extension([
             'extensions' => ['jpg', 'gif', 'png'],
         ]),
-        new MimeType([
+        new FileConstraint\MimeType([
             'mime_types' => ['image/jpeg', 'image/gif', 'image/png'],
         ]),
     ],
