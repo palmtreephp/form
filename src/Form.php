@@ -118,6 +118,7 @@ class Form
         }
 
         if ($this->valid === null) {
+            $this->valid = true;
             foreach ($this->fields as $field) {
                 if (!$field->isValid()) {
                     $this->valid = false;
