@@ -54,6 +54,13 @@ class FormBuilder
         return $this->form;
     }
 
+    public function enableFileUploads(): self
+    {
+        $this->form->setEncType('multipart/form-data');
+
+        return $this;
+    }
+
     private function addRepeatedType(string $name, string $type, array $args): self
     {
         /** @var RepeatedType $typeObject */
