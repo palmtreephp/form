@@ -7,7 +7,7 @@ use Palmtree\Html\Element;
 class CollectionType extends AbstractType
 {
     /** @var null */
-    protected $errorMessage = null;
+    protected $errorMessage;
     /** @var bool */
     protected $required = false;
     /** @var string */
@@ -120,7 +120,7 @@ class CollectionType extends AbstractType
     private function generatePrototype(): string
     {
         $entry = $this->buildEntry('__name__');
-        $this->clearPrototypeEntryConstraints($entry);
+        self::clearPrototypeEntryConstraints($entry);
 
         $prototype = $this->buildEntryElement($entry);
 
@@ -129,12 +129,12 @@ class CollectionType extends AbstractType
         return htmlentities($html);
     }
 
-    private function clearPrototypeEntryConstraints(AbstractType $entry): void
+    private static function clearPrototypeEntryConstraints(AbstractType $entry): void
     {
         $entry->setConstraints([]);
 
         foreach ($entry->getChildren() as $child) {
-            $this->clearPrototypeEntryConstraints($child);
+            self::clearPrototypeEntryConstraints($child);
         }
     }
 
