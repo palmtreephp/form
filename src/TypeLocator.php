@@ -3,7 +3,7 @@
 namespace Palmtree\Form;
 
 use Palmtree\Form\Exception\InvalidTypeException;
-use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Type\TypeInterface;
 
 class TypeLocator
 {
@@ -35,11 +35,11 @@ class TypeLocator
      *                            Can also be a pre-constructed instance.
      * @param array         $args Arguments to pass to the type class constructor.
      */
-    public function getTypeObject($type, array $args): AbstractType
+    public function getTypeObject($type, array $args): TypeInterface
     {
         if (\is_object($type)) {
-            if (!$type instanceof AbstractType) {
-                throw new InvalidTypeException('Type must be an instance of ' . AbstractType::class . '. ' . \get_class($type) . ' given');
+            if (!$type instanceof TypeInterface) {
+                throw new InvalidTypeException('Type must be an instance of ' . TypeInterface::class . '. ' . \get_class($type) . ' given');
             }
 
             return $type;
@@ -47,8 +47,8 @@ class TypeLocator
 
         $class = $this->getTypeClass($type);
 
-        if (!is_subclass_of($class, AbstractType::class, true)) {
-            throw new InvalidTypeException('Type must be a subclass of ' . AbstractType::class . ". '$type' given");
+        if (!is_subclass_of($class, TypeInterface::class, true)) {
+            throw new InvalidTypeException('Type must be an instance of' . TypeInterface::class . ". '$type' given");
         }
 
         return new $class($args, $this);

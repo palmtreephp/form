@@ -2,9 +2,9 @@
 
 namespace Palmtree\Form;
 
-use Palmtree\Form\Type\AbstractType;
 use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
+use Palmtree\Form\Type\TypeInterface;
 
 class FormBuilder
 {
@@ -38,7 +38,7 @@ class FormBuilder
      *
      * @param string|object $type
      */
-    public function create(string $name, $type = TextType::class, array $args = []): AbstractType
+    public function create(string $name, $type = TextType::class, array $args = []): TypeInterface
     {
         if ((\is_object($type) && $type instanceof RepeatedType) || $this->typeLocator->getTypeClass($type) === RepeatedType::class) {
             return $this->getRepeatedTypeBuilder()->build($name, $args);
@@ -59,7 +59,7 @@ class FormBuilder
         return $fieldType;
     }
 
-    public function get(string $name): ?AbstractType
+    public function get(string $name): ?TypeInterface
     {
         return $this->form->get($name);
     }

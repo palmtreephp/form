@@ -10,7 +10,7 @@ use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
-abstract class AbstractType
+abstract class AbstractType implements TypeInterface
 {
     /** @var string */
     protected $tag = 'input';
@@ -30,9 +30,9 @@ abstract class AbstractType
     protected $errorMessage = 'Please fill in this field';
     /** @var Form */
     protected $form;
-    /** @var AbstractType|null */
+    /** @var TypeInterface|null */
     protected $parent;
-    /** @var AbstractType[] */
+    /** @var TypeInterface[] */
     protected $children = [];
     /** @var int|string */
     protected $position = 0;
@@ -75,21 +75,21 @@ abstract class AbstractType
         }
     }
 
-    public function setType(string $type): self
+    public function setType(string $type): TypeInterface
     {
         $this->type = $type;
 
         return $this;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): TypeInterface
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function setLabel(?string $label): self
+    public function setLabel(?string $label): TypeInterface
     {
         $this->label = $label;
 
@@ -182,9 +182,6 @@ abstract class AbstractType
         return $element;
     }
 
-    /**
-     * @return Element[]
-     */
     public function getElements()
     {
         $elements = [];
@@ -261,7 +258,7 @@ abstract class AbstractType
         return $this->data;
     }
 
-    public function setData($data): self
+    public function setData($data): TypeInterface
     {
         $this->data = $data;
 
@@ -285,14 +282,14 @@ abstract class AbstractType
         return $this->errorMessage;
     }
 
-    public function setErrorMessage(string $errorMessage): self
+    public function setErrorMessage(string $errorMessage): TypeInterface
     {
         $this->errorMessage = $errorMessage;
 
         return $this;
     }
 
-    public function setTag(string $tag): self
+    public function setTag(string $tag): TypeInterface
     {
         $this->tag = $tag;
 
@@ -309,7 +306,7 @@ abstract class AbstractType
         return $this->type;
     }
 
-    public function setRequired(bool $required): self
+    public function setRequired(bool $required): TypeInterface
     {
         $this->required = $required;
 
@@ -326,19 +323,19 @@ abstract class AbstractType
         return $this->form;
     }
 
-    public function setForm(Form $form): self
+    public function setForm(Form $form): TypeInterface
     {
         $this->form = $form;
 
         return $this;
     }
 
-    public function getParent(): ?self
+    public function getParent(): ?TypeInterface
     {
         return $this->parent;
     }
 
-    public function setParent(self $parent): self
+    public function setParent(TypeInterface $parent): TypeInterface
     {
         $this->parent = $parent;
         $this->form   = $parent->getForm();
@@ -346,7 +343,7 @@ abstract class AbstractType
         return $this;
     }
 
-    public function addChild(self $child): self
+    public function addChild(TypeInterface $child): TypeInterface
     {
         if ($child->getParent() !== $this) {
             $child->setParent($this);
@@ -357,9 +354,9 @@ abstract class AbstractType
         return $this;
     }
 
-    public function add(string $name, string $fqcn, array $options = []): self
+    public function add(string $name, string $fqcn, array $options = []): TypeInterface
     {
-        /** @var self $type */
+        /** @var TypeInterface $type */
         $type = new $fqcn($options);
         $type->setName($name);
 
@@ -368,15 +365,12 @@ abstract class AbstractType
         return $this;
     }
 
-    /**
-     * @return AbstractType[]
-     */
     public function getChildren(): array
     {
         return $this->children;
     }
 
-    public function getChild(string $name): ?self
+    public function getChild(string $name): ?TypeInterface
     {
         return $this->children[$name] ?? null;
     }
@@ -396,7 +390,7 @@ abstract class AbstractType
         return $this->userInput;
     }
 
-    public function setUserInput(bool $userInput): self
+    public function setUserInput(bool $userInput): TypeInterface
     {
         $this->userInput = $userInput;
 
@@ -414,17 +408,14 @@ abstract class AbstractType
         return true;
     }
 
-    public function addConstraint(ConstraintInterface $constraint): self
+    public function addConstraint(ConstraintInterface $constraint): TypeInterface
     {
         $this->constraints[] = $constraint;
 
         return $this;
     }
 
-    /**
-     * @param ConstraintInterface[] $constraints
-     */
-    public function setConstraints(array $constraints): self
+    public function setConstraints(array $constraints): TypeInterface
     {
         $this->constraints = [];
 
@@ -435,10 +426,7 @@ abstract class AbstractType
         return $this;
     }
 
-    /**
-     * @return ConstraintInterface[]
-     */
-    public function getConstraints()
+    public function getConstraints(): array
     {
         return $this->constraints;
     }

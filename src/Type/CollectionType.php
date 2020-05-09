@@ -40,7 +40,7 @@ class CollectionType extends AbstractType
         }
     }
 
-    public function addChild(AbstractType $child): AbstractType
+    public function addChild(TypeInterface $child): TypeInterface
     {
         if ($child->getParent() !== $this) {
             $child->setParent($this);
@@ -74,7 +74,7 @@ class CollectionType extends AbstractType
     /**
      * @param array $data
      */
-    public function setData($data): AbstractType
+    public function setData($data): TypeInterface
     {
         if ($this->entryType === FileType::class) {
             $data = self::normalizeFilesArray($data);
@@ -88,10 +88,10 @@ class CollectionType extends AbstractType
     /**
      * @param int|string $position
      */
-    private function buildEntry($position = 0, ?array $data = null): AbstractType
+    private function buildEntry($position = 0, ?array $data = null): TypeInterface
     {
         $entryType = $this->entryType;
-        /** @var AbstractType $entry */
+        /** @var TypeInterface $entry */
         $entry = new $entryType($this->entryOptions);
         $entry
             ->setParent($this)
@@ -107,7 +107,7 @@ class CollectionType extends AbstractType
         return $entry;
     }
 
-    private function buildEntryElement(AbstractType $entry): Element
+    private function buildEntryElement(TypeInterface $entry): Element
     {
         $entryWrapper = new Element('div.palmtree-form-collection-entry');
         foreach ($entry->getElements() as $element) {
@@ -129,7 +129,7 @@ class CollectionType extends AbstractType
         return htmlentities($html);
     }
 
-    private static function clearPrototypeEntryConstraints(AbstractType $entry): void
+    private static function clearPrototypeEntryConstraints(TypeInterface $entry): void
     {
         $entry->setConstraints([]);
 

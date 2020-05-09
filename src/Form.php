@@ -5,9 +5,9 @@ namespace Palmtree\Form;
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Exception\AlreadySubmittedException;
 use Palmtree\Form\Exception\NotSubmittedException;
-use Palmtree\Form\Type\AbstractType;
 use Palmtree\Form\Type\CheckboxType;
 use Palmtree\Form\Type\HiddenType;
+use Palmtree\Form\Type\TypeInterface;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
@@ -15,7 +15,7 @@ class Form
 {
     /** @var string */
     protected $key;
-    /** @var AbstractType[] */
+    /** @var TypeInterface[] */
     protected $fields = [];
     /** @var bool */
     protected $ajax = false;
@@ -255,7 +255,7 @@ class Form
     }
 
     /**
-     * @return AbstractType[]
+     * @return TypeInterface[]
      */
     public function getFields(array $args = [])
     {
@@ -263,13 +263,13 @@ class Form
             return $this->fields;
         }
 
-        return array_filter($this->fields, static function (AbstractType $field) use ($args) {
+        return array_filter($this->fields, static function (TypeInterface $field) use ($args) {
             return $field->filter($args);
         });
     }
 
     /**
-     * @param AbstractType[] $fields
+     * @param TypeInterface[] $fields
      */
     public function setFields(array $fields): void
     {
@@ -280,12 +280,12 @@ class Form
         }
     }
 
-    public function get(string $name): ?AbstractType
+    public function get(string $name): ?TypeInterface
     {
         return $this->fields[$name] ?? null;
     }
 
-    public function add(AbstractType $field, ?int $offset = null): self
+    public function add(TypeInterface $field, ?int $offset = null): self
     {
         $field->setForm($this);
 

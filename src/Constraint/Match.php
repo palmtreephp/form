@@ -2,11 +2,11 @@
 
 namespace Palmtree\Form\Constraint;
 
-use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Type\TypeInterface;
 
 class Match extends AbstractConstraint implements ConstraintInterface
 {
-    /** @var AbstractType */
+    /** @var TypeInterface */
     private $matchField;
 
     protected $errorMessage = 'Fields do not match';
@@ -16,12 +16,12 @@ class Match extends AbstractConstraint implements ConstraintInterface
         return $input === $this->matchField->getData();
     }
 
-    public function getMatchField(): AbstractType
+    public function getMatchField(): TypeInterface
     {
         return $this->matchField;
     }
 
-    public function setMatchField(AbstractType $matchField): self
+    public function setMatchField(TypeInterface $matchField): self
     {
         $this->matchField = $matchField;
 

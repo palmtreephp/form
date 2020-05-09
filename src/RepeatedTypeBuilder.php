@@ -3,8 +3,8 @@
 namespace Palmtree\Form;
 
 use Palmtree\Form\Constraint\Match;
-use Palmtree\Form\Type\AbstractType;
 use Palmtree\Form\Type\RepeatedType;
+use Palmtree\Form\Type\TypeInterface;
 
 class RepeatedTypeBuilder
 {
@@ -40,7 +40,7 @@ class RepeatedTypeBuilder
         return $repeatedType;
     }
 
-    private static function buildSecondArgs(AbstractType $firstOfType, array $args): array
+    private static function buildSecondArgs(TypeInterface $firstOfType, array $args): array
     {
         $secondArgs = $args;
 

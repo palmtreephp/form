@@ -91,7 +91,7 @@ class ChoiceType extends AbstractType
                     $choiceWrapper = new Element($this->inline ? 'div.form-check-inline' : 'div.form-check');
                 }
 
-                /** @var AbstractType $choice */
+                /** @var TypeInterface $choice */
                 $choice = new $choiceClass($args);
 
                 $choice->setForm($this->form);
