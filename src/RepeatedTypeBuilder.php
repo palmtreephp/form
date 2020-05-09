@@ -1,0 +1,61 @@
+<?php
+
+namespace Palmtree\Form;
+
+use Palmtree\Form\Constraint\Match;
+use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Type\RepeatedType;
+
+class RepeatedTypeBuilder
+{
+    /** @var FormBuilder */
+    private $formBuilder;
+
+    public function __construct(FormBuilder $formBuilder)
+    {
+        $this->formBuilder = $formBuilder;
+    }
+
+    public function build(string $name, array $args): RepeatedType
+    {
+        $repeatedType = new RepeatedType($args);
+
+        $firstOfType = $this->formBuilder->create($name, $repeatedType->getRepeatableType(), $args);
+
+        $secondArgs   = self::buildSecondArgs($firstOfType, $args);
+        $secondOfType = $this->formBuilder->create($secondArgs['name'], $repeatedType->getRepeatableType(), $secondArgs);
+
+        $matchError = $firstOfType->getHumanName() . 's do not match';
+
+        $firstOfType->addConstraint(new Match([
+            'match_field'   => $secondOfType,
+            'error_message' => $matchError,
+        ]));
+
+        $secondOfType->addConstraint(new Match([
+            'match_field'   => $firstOfType,
+            'error_message' => $matchError,
+        ]));
+
+        return $repeatedType;
+    }
+
+    private static function buildSecondArgs(AbstractType $firstOfType, array $args): array
+    {
+        $secondArgs = $args;
+
+        if (!isset($secondArgs['name'])) {
+            $secondArgs['name'] = $firstOfType->getName() . '_2';
+        }
+
+        if (!isset($secondArgs['label'])) {
+            $secondArgs['label'] = 'Confirm ' . $firstOfType->getLabel();
+        }
+
+        if (!isset($secondArgs['placeholder'])) {
+            $secondArgs['placeholder'] = $firstOfType->getPlaceHolderAttribute() . ' again';
+        }
+
+        return $secondArgs;
+    }
+}

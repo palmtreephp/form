@@ -2,7 +2,6 @@
 
 namespace Palmtree\Form;
 
-use Palmtree\Form\Constraint\Match;
 use Palmtree\Form\Type\AbstractType;
 use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
@@ -13,6 +12,8 @@ class FormBuilder
     private $form;
     /** @var TypeLocator */
     private $typeLocator;
+    /** @var RepeatedTypeBuilder */
+    private $repeatedTypeBuilder;
 
     public function __construct(array $args = [])
     {
@@ -21,27 +22,41 @@ class FormBuilder
     }
 
     /**
+     * Creates a form field and returns the current instance of the FormBuilder for chaining.
+     *
      * @param string|object $type
      */
     public function add(string $name, $type = TextType::class, array $args = []): self
     {
-        if ((\is_object($type) && $type instanceof RepeatedType) || $this->typeLocator->getTypeClass($type) === RepeatedType::class) {
-            return $this->addRepeatedType($name, $type, $args);
-        }
-
-        $formControl = $this->typeLocator->getTypeObject($type, $args);
-
-        if (!isset($args['name'])) {
-            $formControl->setName($name);
-        }
-
-        if ($formControl->getLabel() === null) {
-            $formControl->setLabel($formControl->getHumanName());
-        }
-
-        $this->form->add($formControl);
+        $this->create($name, $type, $args);
 
         return $this;
+    }
+
+    /**
+     * Creates and returns a form field.
+     *
+     * @param string|object $type
+     */
+    public function create(string $name, $type = TextType::class, array $args = []): AbstractType
+    {
+        if ((\is_object($type) && $type instanceof RepeatedType) || $this->typeLocator->getTypeClass($type) === RepeatedType::class) {
+            return $this->getRepeatedTypeBuilder()->build($name, $args);
+        }
+
+        $fieldType = $this->typeLocator->getTypeObject($type, $args);
+
+        if (!isset($args['name'])) {
+            $fieldType->setName($name);
+        }
+
+        if ($fieldType->getLabel() === null) {
+            $fieldType->setLabel($fieldType->getHumanName());
+        }
+
+        $this->form->add($fieldType);
+
+        return $fieldType;
     }
 
     public function get(string $name): ?AbstractType
@@ -61,47 +76,12 @@ class FormBuilder
         return $this;
     }
 
-    private function addRepeatedType(string $name, string $type, array $args): self
+    private function getRepeatedTypeBuilder(): RepeatedTypeBuilder
     {
-        /** @var RepeatedType $typeObject */
-        $typeObject = $this->typeLocator->getTypeObject($type, $args);
-
-        $this->add($name, $typeObject->getRepeatableType(), $args);
-
-        /** @var AbstractType $firstOfType */
-        $firstOfType = $this->get($name);
-
-        $secondArgs = $args;
-
-        if (!isset($secondArgs['name'])) {
-            $secondArgs['name'] = $firstOfType->getName() . '_2';
+        if (!$this->repeatedTypeBuilder) {
+            $this->repeatedTypeBuilder = new RepeatedTypeBuilder($this);
         }
 
-        if (!isset($secondArgs['label'])) {
-            $secondArgs['label'] = 'Confirm ' . $firstOfType->getLabel();
-        }
-
-        if (!isset($secondArgs['placeholder'])) {
-            $secondArgs['placeholder'] = $firstOfType->getPlaceHolderAttribute() . ' again';
-        }
-
-        $this->add($secondArgs['name'], $typeObject->getRepeatableType(), $secondArgs);
-
-        /** @var AbstractType $secondOfType */
-        $secondOfType = $this->get($secondArgs['name']);
-
-        $matchConstraint = new Match([
-            'match_field'   => $secondOfType,
-            'error_message' => $firstOfType->getHumanName() . 's do not match',
-        ]);
-
-        $firstOfType->addConstraint($matchConstraint);
-
-        $secondMatchConstraint = clone $matchConstraint;
-        $secondMatchConstraint->setMatchField($firstOfType);
-
-        $secondOfType->addConstraint($secondMatchConstraint);
-
-        return $this;
+        return $this->repeatedTypeBuilder;
     }
 }
