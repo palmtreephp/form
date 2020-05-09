@@ -397,17 +397,6 @@ abstract class AbstractType implements TypeInterface
         return $this;
     }
 
-    public function filter(array $args = []): bool
-    {
-        foreach ($args as $key => $value) {
-            if (property_exists($this, $key) && $this->$key !== $value) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public function addConstraint(ConstraintInterface $constraint): TypeInterface
     {
         $this->constraints[] = $constraint;

@@ -257,15 +257,9 @@ class Form
     /**
      * @return TypeInterface[]
      */
-    public function getFields(array $args = [])
+    public function getFields()
     {
-        if (empty($args)) {
-            return $this->fields;
-        }
-
-        return array_filter($this->fields, static function (TypeInterface $field) use ($args) {
-            return $field->filter($args);
-        });
+        return $this->fields;
     }
 
     /**

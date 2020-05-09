@@ -84,8 +84,6 @@ interface TypeInterface
 
     public function setUserInput(bool $userInput): self;
 
-    public function filter(array $args = []): bool;
-
     public function addConstraint(ConstraintInterface $constraint): self;
 
     /**
