@@ -262,6 +262,11 @@ class Form
         return $this->fields;
     }
 
+    public function get(string $name): ?TypeInterface
+    {
+        return $this->fields[$name] ?? null;
+    }
+
     /**
      * @param TypeInterface[] $fields
      */
@@ -274,30 +279,11 @@ class Form
         }
     }
 
-    public function get(string $name): ?TypeInterface
-    {
-        return $this->fields[$name] ?? null;
-    }
-
-    public function add(TypeInterface $field, ?int $offset = null): self
+    public function add(TypeInterface $field): self
     {
         $field->setForm($this);
 
-        if ($offset === null) {
-            $this->fields[$field->getName()] = $field;
-        } else {
-            if ($offset < 0) {
-                $totalFields = \count($this->fields);
-                $offset      = $totalFields - $offset + 1;
-            }
-
-            // Add the field at the specified offset
-            $this->fields = array_merge(
-                \array_slice($this->fields, 0, $offset, true),
-                [$field->getName() => $field],
-                \array_slice($this->fields, $offset, null, true)
-            );
-        }
+        $this->fields[$field->getName()] = $field;
 
         return $this;
     }
