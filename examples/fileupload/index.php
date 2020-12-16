@@ -13,8 +13,6 @@ $builder = new FormBuilder([
     'html_validation' => false,
 ]);
 
-$builder->enableFileUploads();
-
 $builder->add('file', 'file', [
     'constraints' => [
         new FileConstraint\Size([

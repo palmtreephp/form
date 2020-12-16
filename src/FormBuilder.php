@@ -4,6 +4,7 @@ namespace Palmtree\Form;
 
 use Palmtree\Form\Constraint\Match;
 use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Type\FileType;
 use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
 
@@ -41,6 +42,10 @@ class FormBuilder
 
         $this->form->add($formControl);
 
+        if ($formControl instanceof FileType) {
+            $this->form->setEncType('multipart/form-data');
+        }
+
         return $this;
     }
 
@@ -54,13 +59,6 @@ class FormBuilder
         return $this->form;
     }
 
-    public function enableFileUploads(): self
-    {
-        $this->form->setEncType('multipart/form-data');
-
-        return $this;
-    }
-
     private function addRepeatedType(string $name, string $type, array $args): self
     {
         /** @var RepeatedType $typeObject */
@@ -68,7 +66,6 @@ class FormBuilder
 
         $this->add($name, $typeObject->getRepeatableType(), $args);
 
-        /** @var AbstractType $firstOfType */
         $firstOfType = $this->get($name);
 
         $secondArgs = $args;
@@ -87,7 +84,6 @@ class FormBuilder
 
         $this->add($secondArgs['name'], $typeObject->getRepeatableType(), $secondArgs);
 
-        /** @var AbstractType $secondOfType */
         $secondOfType = $this->get($secondArgs['name']);
 
         $matchConstraint = new Match([
