@@ -52,7 +52,7 @@ $form = $builder->getForm();
 ```php
 $form->handleRequest();
 
-if($form->isSubmitted() && $form->isValid()) {
+if ($form->isSubmitted() && $form->isValid()) {
     // Send an email/save to database etc
     $name = $form->get('name')->getData();
 }
@@ -97,16 +97,6 @@ $builder->add('password', 'repeated', [
 You can also implement your own constraints, they just need to implement the [ConstraintInterface](src/Constraint/ConstraintInterface.php)
 
 ## File Uploads
-
-### EncType Attribute
-
-A form's enctype attribute must be set to `multipart/form-data` for file uploads to work.
-The easiest way to do this is to use the form builder's helper method:
-
-```php
-$builder = new FormBuilder(['key' => 'fileupload_example']);
-$builder->enableFileUploads();
-```
 
 ### UploadedFile Object
 

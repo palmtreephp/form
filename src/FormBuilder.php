@@ -2,6 +2,7 @@
 
 namespace Palmtree\Form;
 
+use Palmtree\Form\Type\FileType;
 use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
 use Palmtree\Form\Type\TypeInterface;
@@ -56,6 +57,10 @@ class FormBuilder
 
         $this->form->add($fieldType);
 
+        if ($fieldType instanceof FileType) {
+            $this->form->setEncType('multipart/form-data');
+        }
+
         return $fieldType;
     }
 
@@ -67,13 +72,6 @@ class FormBuilder
     public function getForm(): Form
     {
         return $this->form;
-    }
-
-    public function enableFileUploads(): self
-    {
-        $this->form->setEncType('multipart/form-data');
-
-        return $this;
     }
 
     private function getRepeatedTypeBuilder(): RepeatedTypeBuilder
