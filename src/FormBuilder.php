@@ -2,6 +2,7 @@
 
 namespace Palmtree\Form;
 
+use Palmtree\Form\Type\CollectionType;
 use Palmtree\Form\Type\FileType;
 use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
@@ -15,6 +16,8 @@ class FormBuilder
     private $typeLocator;
     /** @var RepeatedTypeBuilder */
     private $repeatedTypeBuilder;
+
+    private const FILE_UPLOAD_ENC_TYPE = 'multipart/form-data';
 
     public function __construct(array $args = [])
     {
@@ -57,9 +60,11 @@ class FormBuilder
 
         $this->form->add($fieldType);
 
-        if ($fieldType instanceof FileType) {
-            $this->form->setEncType('multipart/form-data');
+        if ($fieldType instanceof FileType || ($fieldType instanceof CollectionType && $fieldType->getEntryType() === FileType::class)) {
+            $this->form->setEncType(self::FILE_UPLOAD_ENC_TYPE);
         }
+
+        $this->recursiveEncTypeCheck($fieldType->getChildren());
 
         return $fieldType;
     }
@@ -81,5 +86,25 @@ class FormBuilder
         }
 
         return $this->repeatedTypeBuilder;
+    }
+
+    /** @var TypeInterface[] */
+    private function recursiveEncTypeCheck($formControls)
+    {
+        if ($this->form->getEncType() === self::FILE_UPLOAD_ENC_TYPE) {
+            return;
+        }
+
+        foreach ($formControls as $formControl) {
+            if ($formControl instanceof FileType) {
+                $this->form->setEncType(self::FILE_UPLOAD_ENC_TYPE);
+
+                return;
+            }
+
+            if ($children = $formControl->getChildren()) {
+                $this->recursiveEncTypeCheck($children);
+            }
+        }
     }
 }
