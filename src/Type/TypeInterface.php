@@ -27,7 +27,7 @@ interface TypeInterface
     public function getElement(): Element;
 
     /**
-     * @return Element[]
+     * @return array<int, Element>
      */
     public function getElements();
 
@@ -70,7 +70,7 @@ interface TypeInterface
     public function add(string $name, string $fqcn, array $options = []): self;
 
     /**
-     * @return self[]
+     * @return array<string, TypeInterface>
      */
     public function getChildren(): array;
 
@@ -84,15 +84,12 @@ interface TypeInterface
 
     public function setUserInput(bool $userInput): self;
 
-    public function addConstraint(ConstraintInterface $constraint): self;
+    public function addConstraint(ConstraintInterface ...$constraints): self;
 
     /**
-     * @param ConstraintInterface[] $constraints
-     */
-    public function setConstraints(array $constraints): self;
-
-    /**
-     * @return ConstraintInterface[]
+     * @return array<int, ConstraintInterface>
      */
     public function getConstraints(): array;
+
+    public function clearConstraints(): self;
 }

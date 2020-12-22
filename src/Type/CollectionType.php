@@ -131,7 +131,7 @@ class CollectionType extends AbstractType
 
     private static function clearPrototypeEntryConstraints(TypeInterface $entry): void
     {
-        $entry->setConstraints([]);
+        $entry->clearConstraints();
 
         foreach ($entry->getChildren() as $child) {
             self::clearPrototypeEntryConstraints($child);

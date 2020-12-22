@@ -267,23 +267,13 @@ class Form
         return $this->fields[$name] ?? null;
     }
 
-    /**
-     * @param TypeInterface[] $fields
-     */
-    public function setFields(array $fields): void
+    public function add(TypeInterface ...$fields): self
     {
-        $this->fields = [];
-
         foreach ($fields as $field) {
-            $this->add($field);
+            $field->setForm($this);
+
+            $this->fields[$field->getName()] = $field;
         }
-    }
-
-    public function add(TypeInterface $field): self
-    {
-        $field->setForm($this);
-
-        $this->fields[$field->getName()] = $field;
 
         return $this;
     }

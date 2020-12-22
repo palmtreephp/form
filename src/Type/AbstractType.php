@@ -32,13 +32,13 @@ abstract class AbstractType implements TypeInterface
     protected $form;
     /** @var TypeInterface|null */
     protected $parent;
-    /** @var TypeInterface[] */
+    /** @var array<string, TypeInterface> */
     protected $children = [];
     /** @var int|string */
     protected $position = 0;
     /** @var array */
     protected $args = [];
-    /** @var ConstraintInterface[] */
+    /** @var array<int, ConstraintInterface> */
     protected $constraints = [];
     /** @var SnakeCaseToHumanNameConverter */
     protected $nameConverter;
@@ -397,26 +397,25 @@ abstract class AbstractType implements TypeInterface
         return $this;
     }
 
-    public function addConstraint(ConstraintInterface $constraint): TypeInterface
+    public function addConstraint(ConstraintInterface ...$constraints): TypeInterface
     {
-        $this->constraints[] = $constraint;
-
-        return $this;
-    }
-
-    public function setConstraints(array $constraints): TypeInterface
-    {
-        $this->constraints = [];
-
         foreach ($constraints as $constraint) {
-            $this->addConstraint($constraint);
+            $this->constraints[] = $constraint;
         }
 
         return $this;
     }
 
+    /** @return array<int, ConstraintInterface> */
     public function getConstraints(): array
     {
         return $this->constraints;
+    }
+
+    public function clearConstraints(): TypeInterface
+    {
+        $this->constraints = [];
+
+        return $this;
     }
 }
