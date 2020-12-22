@@ -52,9 +52,15 @@ class Form
         $element->attributes->add([
             'method'  => $this->method,
             'id'      => $this->key,
-            'action'  => $this->action,
-            'enctype' => $this->encType,
         ]);
+
+        if ($this->encType !== null) {
+            $element->attributes->set('enctype', $this->encType);
+        }
+
+        if ($this->action !== null) {
+            $element->attributes->set('action', $this->action);
+        }
 
         if (!$this->htmlValidation) {
             $element->attributes->set('novalidate');

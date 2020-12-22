@@ -10,6 +10,11 @@ class TypeLocator
     /** @var array */
     private static $types;
 
+    private const TYPE_KEYS = [
+      'entry_type',
+      'repeated_type',
+    ];
+
     public function __construct()
     {
         $this->findTypeClasses();
@@ -49,6 +54,12 @@ class TypeLocator
 
         if (!is_subclass_of($class, AbstractType::class, true)) {
             throw new InvalidTypeException('Type must be a subclass of ' . AbstractType::class . ". '$type' given");
+        }
+
+        foreach($args as $key => $value) {
+            if (\in_array($key, self::TYPE_KEYS)) {
+                $args[$key] = $this->getTypeClass($value);
+            }
         }
 
         return new $class($args, $this);

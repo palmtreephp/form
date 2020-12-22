@@ -113,7 +113,7 @@ abstract class AbstractType
         }
 
         foreach ($this->constraints as $constraint) {
-            // We use $this->getData() over $this->data here so that the
+            // We use $this->getData() instead of $this->data here so that the
             // data can be normalized by its type class before validation
             if (!$constraint->validate($this->getData())) {
                 $this->setErrorMessage($constraint->getErrorMessage());
