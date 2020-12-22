@@ -22,7 +22,7 @@ class ButtonType extends AbstractType
 
         $element->attributes['type'] = $this->type;
 
-        $element->setInnerText($this->label);
+        $element->setInnerText($this->label ?? '');
 
         unset($element->classes['form-control']);
 

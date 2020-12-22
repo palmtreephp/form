@@ -5,6 +5,7 @@ namespace Palmtree\Form;
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Exception\AlreadySubmittedException;
 use Palmtree\Form\Exception\NotSubmittedException;
+use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Type\CheckboxType;
 use Palmtree\Form\Type\HiddenType;
 use Palmtree\Form\Type\TypeInterface;
@@ -50,8 +51,8 @@ class Form
         $element = new Element('form.palmtree-form');
 
         $element->attributes->add([
-            'method'  => $this->method,
-            'id'      => $this->key,
+            'method' => $this->method,
+            'id'     => $this->key,
         ]);
 
         if ($this->encType !== null) {
@@ -261,16 +262,25 @@ class Form
     }
 
     /**
-     * @return TypeInterface[]
+     * @return array<string, TypeInterface>
      */
     public function getFields()
     {
         return $this->fields;
     }
 
-    public function get(string $name): ?TypeInterface
+    public function has(string $name): bool
     {
-        return $this->fields[$name] ?? null;
+        return isset($this->fields[$name]);
+    }
+
+    public function get(string $name): TypeInterface
+    {
+        if (!$this->has($name)) {
+            throw new OutOfBoundsException("Field with key '$name' does not exist");
+        }
+
+        return $this->fields[$name];
     }
 
     public function add(TypeInterface ...$fields): self

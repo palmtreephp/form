@@ -19,6 +19,7 @@ class CaptchaType extends AbstractType
         $captcha = $args['captcha'];
 
         if (!$captcha instanceof CaptchaInterface) {
+            /** @var CaptchaInterface $captcha */
             $captcha = new $captcha();
         }
 

@@ -44,7 +44,7 @@ class FormBuilder
      */
     public function create(string $name, $type = TextType::class, array $args = []): TypeInterface
     {
-        if ((\is_object($type) && $type instanceof RepeatedType) || $this->typeLocator->getTypeClass($type) === RepeatedType::class) {
+        if ((\is_object($type) && $type instanceof RepeatedType) || (\is_string($type) && $this->typeLocator->getTypeClass($type) === RepeatedType::class)) {
             return $this->getRepeatedTypeBuilder()->build($name, $args);
         }
 
@@ -62,9 +62,9 @@ class FormBuilder
 
         if ($fieldType instanceof FileType || ($fieldType instanceof CollectionType && $fieldType->getEntryType() === FileType::class)) {
             $this->form->setEncType(self::FILE_UPLOAD_ENC_TYPE);
+        } else {
+            $this->recursiveEncTypeCheck($fieldType->getChildren());
         }
-
-        $this->recursiveEncTypeCheck($fieldType->getChildren());
 
         return $fieldType;
     }
@@ -88,21 +88,21 @@ class FormBuilder
         return $this->repeatedTypeBuilder;
     }
 
-    /** @var TypeInterface[] */
-    private function recursiveEncTypeCheck($formControls)
+    /** @var array<TypeInterface> */
+    private function recursiveEncTypeCheck(array $fieldTypes): void
     {
         if ($this->form->getEncType() === self::FILE_UPLOAD_ENC_TYPE) {
             return;
         }
 
-        foreach ($formControls as $formControl) {
-            if ($formControl instanceof FileType) {
+        foreach ($fieldTypes as $fieldType) {
+            if ($fieldType instanceof FileType) {
                 $this->form->setEncType(self::FILE_UPLOAD_ENC_TYPE);
 
                 return;
             }
 
-            if ($children = $formControl->getChildren()) {
+            if ($children = $fieldType->getChildren()) {
                 $this->recursiveEncTypeCheck($children);
             }
         }

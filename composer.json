@@ -22,7 +22,8 @@
         "palmtree/html": "^3.0.3"
     },
     "require-dev": {
-        "palmtree/php-cs-fixer-config": "^1.0"
+        "palmtree/php-cs-fixer-config": "^1.0",
+        "vimeo/psalm": "^4.3"
     },
     "suggest": {
         "ext-curl": "For Google Recaptcha support",

@@ -52,7 +52,9 @@ class TypeLocator
 
         $class = $this->getTypeClass($type);
 
-        if (!is_subclass_of($class, TypeInterface::class, true)) {
+        if ($class === null) {
+            throw new InvalidTypeException('Type could not be found');
+        } elseif (!is_subclass_of($class, TypeInterface::class, true)) {
             throw new InvalidTypeException('Type must be an instance of' . TypeInterface::class . ". '$type' given");
         }
 

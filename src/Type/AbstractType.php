@@ -54,7 +54,7 @@ abstract class AbstractType implements TypeInterface
 
         $this->args = $this->parseArgs($args);
 
-        if ($this->required) {
+        if ($this->required && $this->errorMessage !== null) {
             $this->addConstraint(new NotBlank($this->errorMessage));
         }
     }
@@ -215,7 +215,7 @@ abstract class AbstractType implements TypeInterface
 
     public function getHumanName(): string
     {
-        return $this->nameConverter->normalize($this->name ?? '');
+        return $this->nameConverter->normalize($this->name);
     }
 
     public function getNameAttribute(): string

@@ -22,20 +22,17 @@ class CheckboxType extends AbstractType
 
         $element->attributes['value'] = $this->value;
 
-        $data    = $this->data;
-        $compare = true;
+        $data = $this->data;
 
         if (\is_array($data)) {
             $key = array_search($this->value, $data, false);
 
             if ($key !== false) {
                 $data = $data[$key];
-            } else {
-                $compare = false;
             }
         }
 
-        if ($compare && (string)$data === (string)$this->value) {
+        if (is_scalar($data) && (string)$data === (string)$this->value) {
             $element->attributes->set('checked');
         }
 

@@ -79,8 +79,8 @@ class UploadedFile
     /**
      * Returns a human readable error message based on the error code.
      */
-    public function getErrorMessage(): ?string
+    public function getErrorMessage(): string
     {
-        return self::ERROR_MESSAGES[$this->errorCode] ?? null;
+        return self::ERROR_MESSAGES[$this->errorCode] ?? 'An error occurred';
     }
 }

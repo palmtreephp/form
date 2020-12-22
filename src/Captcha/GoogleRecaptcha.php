@@ -2,6 +2,7 @@
 
 namespace Palmtree\Form\Captcha;
 
+use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 
@@ -64,13 +65,17 @@ class GoogleRecaptcha implements CaptchaInterface
         return false;
     }
 
-    public function getElements(Element $formControl, Form $form)
+    public function getElements(Element $element, Form $form)
     {
-        $controlId = $formControl->attributes['id'];
+        if (!$element->attributes['id']) {
+            $element->attributes['id'] = 'g-recaptcha-' . uniqid();
+        }
 
-        unset($formControl->classes['palmtree-form-control']);
+        $controlId = $element->attributes['id'];
 
-        $formControl->attributes->set('hidden');
+        unset($element->classes['palmtree-form-control']);
+
+        $element->attributes->set('hidden');
 
         // Placeholder Element that actually displays the captcha
         $placeholderId = sprintf('%s_placeholder', $controlId);
@@ -78,9 +83,14 @@ class GoogleRecaptcha implements CaptchaInterface
         $placeholder = new Element('div.palmtree-form-control.g-recaptcha');
 
         $placeholder->attributes['id'] = $placeholderId;
-        $placeholder->attributes->setData('name', $formControl->attributes['data-name']);
 
-        unset($formControl->attributes['data-name']);
+        if (!$element->attributes['data-name']) {
+            throw new OutOfBoundsException('Required data-name attribute missing from recaptcha element');
+        }
+
+        $placeholder->attributes->setData('name', $element->attributes['data-name']);
+
+        unset($element->attributes['data-name']);
 
         $placeholder->attributes->setData('site_key', $this->siteKey);
         $placeholder->attributes->setData('form_control', $controlId);
@@ -91,7 +101,7 @@ class GoogleRecaptcha implements CaptchaInterface
 
         return [
             $placeholder,
-            $formControl,
+            $element,
         ];
     }
 
