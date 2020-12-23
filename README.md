@@ -115,6 +115,18 @@ The following constraints can be used on the FileType field:
 
 See the [file upload example](examples/fileupload/index.php) for usage examples of these constraints
 
+## Shorthand Type Values
+
+Shorthand values for [built in types](src/Type) are determined by lower-casing the class name and removing the "Type" suffix.
+For example:
+
+| Class          | Shorthand Value
+| -------------  |-------------|
+| TextType       | text        |
+| NumberType     | number      |
+| EmailType      | email      |
+| CollectionType | collection  |
+
 ## License
 
 Released under the [MIT license](LICENSE)
