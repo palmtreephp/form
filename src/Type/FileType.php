@@ -13,8 +13,8 @@ class FileType extends AbstractType
     private $custom = true;
     /** @var string */
     private $browseText = 'Browse';
-    /** @var UploadedFile */
-    private $normData;
+    /** @var UploadedFile|null */
+    private $normData = null;
 
     public function __construct(array $args = [])
     {
@@ -110,7 +110,7 @@ class FileType extends AbstractType
 
     public function getData(): UploadedFile
     {
-        if (!$this->normData) {
+        if ($this->normData === null) {
             $this->normData = new UploadedFile($this->data);
         }
 

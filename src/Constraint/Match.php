@@ -11,7 +11,7 @@ class Match extends AbstractConstraint implements ConstraintInterface
 
     protected $errorMessage = 'Fields do not match';
 
-    public function validate($input): bool
+    protected function doValidate(string $input): bool
     {
         return $input === $this->matchField->getData();
     }

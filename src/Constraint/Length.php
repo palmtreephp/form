@@ -16,7 +16,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
     /** @var int|null */
     private $errorCode;
 
-    public function validate($input): bool
+    protected function doValidate(string $input): bool
     {
         if ($this->min !== null && \strlen($input) < $this->min) {
             $this->setErrorCode(self::ERROR_TOO_SMALL);

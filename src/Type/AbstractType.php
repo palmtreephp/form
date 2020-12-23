@@ -32,9 +32,9 @@ abstract class AbstractType implements TypeInterface
     protected $form;
     /** @var TypeInterface|null */
     protected $parent;
-    /** @var array<string, TypeInterface> */
+    /** @var array<string|int, TypeInterface> */
     protected $children = [];
-    /** @var int|string */
+    /** @var int */
     protected $position = 0;
     /** @var array */
     protected $args = [];
@@ -54,7 +54,7 @@ abstract class AbstractType implements TypeInterface
 
         $this->args = $this->parseArgs($args);
 
-        if ($this->required && $this->errorMessage !== null) {
+        if ($this->required && $this->errorMessage) {
             $this->addConstraint(new NotBlank($this->errorMessage));
         }
     }
@@ -375,12 +375,14 @@ abstract class AbstractType implements TypeInterface
         return $this->children[$name] ?? null;
     }
 
-    public function setPosition($position): void
+    public function setPosition(int $position): TypeInterface
     {
         $this->position = $position;
+
+        return $this;
     }
 
-    public function getPosition()
+    public function getPosition(): int
     {
         return $this->position;
     }

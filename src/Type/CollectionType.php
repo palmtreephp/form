@@ -71,11 +71,10 @@ class CollectionType extends AbstractType
         return $this->entryOptions;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData($data): TypeInterface
     {
+        $data = (array)$data;
+
         if ($this->entryType === FileType::class) {
             $data = self::normalizeFilesArray($data);
         }
@@ -85,10 +84,7 @@ class CollectionType extends AbstractType
         return $this;
     }
 
-    /**
-     * @param int|string $position
-     */
-    private function buildEntry($position = 0, ?array $data = null): TypeInterface
+    private function buildEntry(int $position = 0, ?array $data = null): TypeInterface
     {
         $entryType = $this->entryType;
         /** @var TypeInterface $entry */
@@ -96,7 +92,8 @@ class CollectionType extends AbstractType
         $entry
             ->setParent($this)
             ->setName($this->name)
-            ->setPosition($position);
+            ->setPosition($position)
+        ;
 
         $entry->build();
 
@@ -119,7 +116,7 @@ class CollectionType extends AbstractType
 
     private function generatePrototype(): string
     {
-        $entry = $this->buildEntry('__name__');
+        $entry = $this->buildEntry(-1);
         self::clearPrototypeEntryConstraints($entry);
 
         $prototype = $this->buildEntryElement($entry);

@@ -39,6 +39,9 @@ interface TypeInterface
 
     public function getData();
 
+    /**
+     * @param array|string|null $data
+     */
     public function setData($data): self;
 
     public function mapData(): void;
@@ -70,15 +73,15 @@ interface TypeInterface
     public function add(string $name, string $fqcn, array $options = []): self;
 
     /**
-     * @return array<string, TypeInterface>
+     * @return array<string|int, TypeInterface>
      */
     public function getChildren(): array;
 
     public function getChild(string $name): ?self;
 
-    public function setPosition($position): void;
+    public function setPosition(int $position): self;
 
-    public function getPosition();
+    public function getPosition(): int;
 
     public function isUserInput(): bool;
 

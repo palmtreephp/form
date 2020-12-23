@@ -11,10 +11,7 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
     /** @var array */
     private $mimeTypes = [];
 
-    /**
-     * @param UploadedFile $uploadedFile
-     */
-    public function validate($uploadedFile): bool
+    protected function doValidate(UploadedFile $uploadedFile): bool
     {
         $mimeType = $this->getUploadedFileMimeType($uploadedFile);
         if ($mimeType === null) {

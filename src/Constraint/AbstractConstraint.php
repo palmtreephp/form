@@ -4,7 +4,7 @@ namespace Palmtree\Form\Constraint;
 
 use Palmtree\ArgParser\ArgParser;
 
-abstract class AbstractConstraint
+abstract class AbstractConstraint implements ConstraintInterface
 {
     /** @var string */
     protected $errorMessage = 'Invalid value';
@@ -18,12 +18,16 @@ abstract class AbstractConstraint
         $parser->parseSetters($this);
     }
 
-    /**
-     * @param array|string $args
+    /** {@inheritDoc}
+     * @throws \Exception
      */
-    public static function create($args = []): self
+    public function validate($input): bool
     {
-        return new static($args);
+        if (!\is_callable([$this, 'doValidate'])) {
+            throw new \Exception();
+        }
+
+        return $this->doValidate($input);
     }
 
     public function getErrorMessage(): string

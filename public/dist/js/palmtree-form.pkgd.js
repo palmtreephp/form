@@ -310,10 +310,8 @@
             if (this.options.prototype) {
                 prototype = this.options.prototype;
             } else {
-                prototype = this.$collection
-                    .data('prototype')
-                    .replace(/__name__label__/g, index)
-                    .replace(/__name__/g, index);
+                prototype = this.$collection.data('prototype').replace(/\[-1]/g, '[' + index + ']');
+                console.log(prototype);
             }
 
             var $entry = $(prototype);

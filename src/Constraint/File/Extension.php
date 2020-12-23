@@ -11,10 +11,7 @@ class Extension extends AbstractConstraint implements ConstraintInterface
     /** @var array */
     private $extensions = [];
 
-    /**
-     * @param UploadedFile $uploadedFile
-     */
-    public function validate($uploadedFile): bool
+    protected function doValidate(UploadedFile $uploadedFile): bool
     {
         $extension = pathinfo($uploadedFile->getName(), PATHINFO_EXTENSION);
 

@@ -32,7 +32,7 @@ class CheckboxType extends AbstractType
             }
         }
 
-        if (is_scalar($data) && (string)$data === (string)$this->value) {
+        if (is_scalar($data) && (string)$data === $this->value) {
             $element->attributes->set('checked');
         }
 

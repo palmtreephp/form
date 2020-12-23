@@ -9,7 +9,12 @@ class HoneypotCaptcha implements CaptchaInterface
 {
     public function verify($input): bool
     {
-        return empty($input);
+        return $this->doVerify($input);
+    }
+
+    protected function doVerify(string $input): bool
+    {
+        return $input === '';
     }
 
     public function getErrorMessage(): string

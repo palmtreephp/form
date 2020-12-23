@@ -26,10 +26,10 @@ class Form
     protected $valid;
     /** @var string */
     protected $method = 'POST';
-    /** @var string */
+    /** @var string|null */
     protected $action;
-    /** @var string */
-    protected $encType = '';
+    /** @var string|null */
+    protected $encType;
     /** @var array */
     protected $errors = [];
     /** @var string */
@@ -306,7 +306,7 @@ class Form
         return $this;
     }
 
-    public function getAction(): string
+    public function getAction(): ?string
     {
         return $this->action;
     }
@@ -339,7 +339,7 @@ class Form
         return $this->fieldWrapper;
     }
 
-    public function getEncType(): string
+    public function getEncType(): ?string
     {
         return $this->encType;
     }

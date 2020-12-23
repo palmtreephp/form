@@ -14,8 +14,8 @@ class FormBuilder
     private $form;
     /** @var TypeLocator */
     private $typeLocator;
-    /** @var RepeatedTypeBuilder */
-    private $repeatedTypeBuilder;
+    /** @var RepeatedTypeBuilder|null */
+    private $repeatedTypeBuilder = null;
 
     private const FILE_UPLOAD_ENC_TYPE = 'multipart/form-data';
 
@@ -81,7 +81,7 @@ class FormBuilder
 
     private function getRepeatedTypeBuilder(): RepeatedTypeBuilder
     {
-        if (!$this->repeatedTypeBuilder) {
+        if ($this->repeatedTypeBuilder === null) {
             $this->repeatedTypeBuilder = new RepeatedTypeBuilder($this);
         }
 

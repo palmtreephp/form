@@ -47,10 +47,15 @@ class GoogleRecaptcha implements CaptchaInterface
         $this->ip = $ip;
     }
 
+    public function verify($input): bool
+    {
+        return $this->doVerify($input);
+    }
+
     /**
      * @param string $input The form's 'g-recaptcha-response' field value.
      */
-    public function verify($input): bool
+    protected function doVerify(string $input): bool
     {
         $result = $this->getVerificationResult($input);
 

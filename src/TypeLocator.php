@@ -7,8 +7,8 @@ use Palmtree\Form\Type\TypeInterface;
 
 class TypeLocator
 {
-    /** @var array */
-    private static $types;
+    /** @var array|null */
+    private static $types = null;
 
     private const TYPE_KEYS = [
       'entry_type',

@@ -12,6 +12,9 @@ class Size extends AbstractConstraint implements ConstraintInterface
     /** @var NumberConstraint */
     private $constraint;
 
+    /**
+     * @param array|string $args
+     */
     public function __construct($args = [])
     {
         parent::__construct($args);
@@ -25,10 +28,7 @@ class Size extends AbstractConstraint implements ConstraintInterface
         }
     }
 
-    /**
-     * @param UploadedFile $uploadedFile
-     */
-    public function validate($uploadedFile): bool
+    protected function doValidate(UploadedFile $uploadedFile): bool
     {
         if ($this->constraint->validate($uploadedFile->getSize())) {
             return true;
