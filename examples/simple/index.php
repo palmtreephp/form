@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Type\TextType;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -70,7 +70,7 @@ interface TypeInterface
 
     public function addChild(self $child): self;
 
-    public function add(string $name, string $fqcn, array $options = []): self;
+    public function add(string $name, string $class, array $options = []): self;
 
     /**
      * @return array<string|int, TypeInterface>

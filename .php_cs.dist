@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use Palmtree\PhpCsFixerConfig\Config;
 
@@ -7,6 +7,8 @@ $config = new Config();
 $rules = $config->getRules();
 
 $rules['no_superfluous_phpdoc_tags'] = true;
+$rules['blank_line_after_opening_tag'] = false;
+$rules['declare_strict_types'] = true;
 
 $config
     ->setRules($rules)

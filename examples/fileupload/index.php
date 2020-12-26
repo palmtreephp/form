@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use Palmtree\Form\Constraint\File as FileConstraint;
 use Palmtree\Form\FormBuilder;

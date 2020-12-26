@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -269,7 +269,7 @@ abstract class AbstractType implements TypeInterface
     {
         if (\is_array($this->data)) {
             foreach ($this->data as $key => $value) {
-                if ($child = $this->getChild($key)) {
+                if ($child = $this->getChild((string)$key)) {
                     $child->setData($value);
                     $child->mapData();
                 }
@@ -354,10 +354,10 @@ abstract class AbstractType implements TypeInterface
         return $this;
     }
 
-    public function add(string $name, string $fqcn, array $options = []): TypeInterface
+    public function add(string $name, string $class, array $options = []): TypeInterface
     {
         /** @var TypeInterface $type */
-        $type = new $fqcn($options);
+        $type = new $class($options);
         $type->setName($name);
 
         $this->addChild($type);

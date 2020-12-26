@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form;
 
@@ -7,17 +7,21 @@ use Palmtree\Form\Type\TypeInterface;
 
 class TypeLocator
 {
-    /** @var array|null */
-    private static $types = null;
+    /** @var array<string, string> */
+    private static $types = [];
 
     private const TYPE_KEYS = [
-      'entry_type',
-      'repeated_type',
+        'entry_type',
+        'repeated_type',
     ];
 
     public function __construct()
     {
-        $this->findTypeClasses();
+        if (empty(self::$types)) {
+            foreach (glob(__DIR__ . '/Type/*Type.php', GLOB_NOSORT) ?: [] as $file) {
+                self::$types[strtolower(basename($file, 'Type.php'))] = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');
+            }
+        }
     }
 
     public function getTypeClass(string $type): ?string
@@ -65,15 +69,5 @@ class TypeLocator
         }
 
         return new $class($args, $this);
-    }
-
-    private function findTypeClasses(): void
-    {
-        if (self::$types === null) {
-            self::$types = [];
-            foreach (glob(__DIR__ . '/Type/*Type.php', GLOB_NOSORT) ?: [] as $file) {
-                self::$types[strtolower(basename($file, 'Type.php'))] = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');
-            }
-        }
     }
 }
