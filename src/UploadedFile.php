@@ -4,7 +4,7 @@ namespace Palmtree\Form;
 
 class UploadedFile
 {
-    /** @var string[] */
+    /** @var array<int, string> */
     public const ERROR_MESSAGES = [
         1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
         2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',

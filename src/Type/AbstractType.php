@@ -5,6 +5,7 @@ namespace Palmtree\Form\Type;
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Constraint\ConstraintInterface;
 use Palmtree\Form\Constraint\NotBlank;
+use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
@@ -269,7 +270,9 @@ abstract class AbstractType implements TypeInterface
     {
         if (\is_array($this->data)) {
             foreach ($this->data as $key => $value) {
-                if ($child = $this->getChild((string)$key)) {
+                $key = (string)$key;
+                if ($this->has($key)) {
+                    $child = $this->get($key);
                     $child->setData($value);
                     $child->mapData();
                 }
@@ -365,14 +368,23 @@ abstract class AbstractType implements TypeInterface
         return $this;
     }
 
-    public function getChildren(): array
+    public function all(): array
     {
         return $this->children;
     }
 
-    public function getChild(string $name): ?TypeInterface
+    public function get(string $name): TypeInterface
     {
-        return $this->children[$name] ?? null;
+        if (!$this->has($name)) {
+            throw new OutOfBoundsException("Key '$name' does not exist as a child of this field");
+        }
+
+        return $this->children[$name];
+    }
+
+    public function has(string $name): bool
+    {
+        return isset($this->children[$name]);
     }
 
     public function setPosition(int $position): TypeInterface

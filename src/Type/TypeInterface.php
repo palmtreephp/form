@@ -37,6 +37,7 @@ interface TypeInterface
 
     public function getPlaceHolderAttribute(): string;
 
+    /** @return mixed */
     public function getData();
 
     /**
@@ -75,9 +76,9 @@ interface TypeInterface
     /**
      * @return array<string|int, TypeInterface>
      */
-    public function getChildren(): array;
+    public function all(): array;
 
-    public function getChild(string $name): ?self;
+    public function get(string $name): ?self;
 
     public function setPosition(int $position): self;
 

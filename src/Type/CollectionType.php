@@ -130,7 +130,7 @@ class CollectionType extends AbstractType
     {
         $entry->clearConstraints();
 
-        foreach ($entry->getChildren() as $child) {
+        foreach ($entry->all() as $child) {
             self::clearPrototypeEntryConstraints($child);
         }
     }

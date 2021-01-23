@@ -16,7 +16,7 @@ class Form
 {
     /** @var string */
     protected $key;
-    /** @var TypeInterface[] */
+    /** @var array<string, TypeInterface> */
     protected $fields = [];
     /** @var bool */
     protected $ajax = false;
@@ -30,7 +30,7 @@ class Form
     protected $action;
     /** @var string|null */
     protected $encType;
-    /** @var array */
+    /** @var array<string, string> */
     protected $errors = [];
     /** @var string */
     protected $fieldWrapper = 'div.form-group';
@@ -38,8 +38,8 @@ class Form
     protected $invalidElementSelector = 'div.invalid-feedback.small';
     /** @var bool */
     protected $htmlValidation = true;
-    /** @var string */
-    private const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
+
+    protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
     public function __construct(array $args = [])
     {
@@ -242,11 +242,17 @@ class Form
         return $this;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getErrors(): array
     {
         return $this->errors;
     }
 
+    /**
+     * @param array<string, string> $errors
+     */
     public function setErrors(array $errors): self
     {
         $this->errors = $errors;
@@ -264,7 +270,7 @@ class Form
     /**
      * @return array<string, TypeInterface>
      */
-    public function getFields()
+    public function all(): array
     {
         return $this->fields;
     }

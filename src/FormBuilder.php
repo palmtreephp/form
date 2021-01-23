@@ -63,13 +63,13 @@ class FormBuilder
         if ($fieldType instanceof FileType || ($fieldType instanceof CollectionType && $fieldType->getEntryType() === FileType::class)) {
             $this->form->setEncType(self::FILE_UPLOAD_ENC_TYPE);
         } else {
-            $this->recursiveEncTypeCheck($fieldType->getChildren());
+            $this->recursiveEncTypeCheck($fieldType->all());
         }
 
         return $fieldType;
     }
 
-    public function get(string $name): ?TypeInterface
+    public function get(string $name): TypeInterface
     {
         return $this->form->get($name);
     }
@@ -88,7 +88,7 @@ class FormBuilder
         return $this->repeatedTypeBuilder;
     }
 
-    /** @var array<TypeInterface> */
+    /** @param array<TypeInterface> $fieldTypes */
     private function recursiveEncTypeCheck(array $fieldTypes): void
     {
         if ($this->form->getEncType() === self::FILE_UPLOAD_ENC_TYPE) {
@@ -102,9 +102,7 @@ class FormBuilder
                 return;
             }
 
-            if ($children = $fieldType->getChildren()) {
-                $this->recursiveEncTypeCheck($children);
-            }
+            $this->recursiveEncTypeCheck($fieldType->all());
         }
     }
 }

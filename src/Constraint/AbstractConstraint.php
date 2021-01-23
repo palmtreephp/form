@@ -4,6 +4,9 @@ namespace Palmtree\Form\Constraint;
 
 use Palmtree\ArgParser\ArgParser;
 
+/**
+ * @method doValidate($input)
+ */
 abstract class AbstractConstraint implements ConstraintInterface
 {
     /** @var string */
@@ -18,15 +21,8 @@ abstract class AbstractConstraint implements ConstraintInterface
         $parser->parseSetters($this);
     }
 
-    /** {@inheritDoc}
-     * @throws \Exception
-     */
     public function validate($input): bool
     {
-        if (!\is_callable([$this, 'doValidate'])) {
-            throw new \Exception();
-        }
-
         return $this->doValidate($input);
     }
 
