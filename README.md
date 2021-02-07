@@ -4,12 +4,12 @@ PHP Form builder with [Bootstrap](https://getbootstrap.com/) v4 classes, validat
 
 ## Requirements
 * PHP >= 7.1
-* jQuery (If you want to use Recaptcha and/or AJAX)
+* jQuery (If you want to use Recaptcha and/or AJAX submissions)
 
 ## Installation
 
 Use composer to add the package to your dependencies:
-```bash
+```sh
 composer require palmtree/form
 ```
 
@@ -101,7 +101,7 @@ You can also implement your own constraints, they just need to implement the [Co
 ### UploadedFile Object
 
 When you retrieve a FileType's data from a form, an instance of [UploadedFile](src/UploadedFile.php) will be returned.
-This is a small wrapper object around PHPs native uploaded file array.
+This is a small wrapper object around PHP's native uploaded file array.
 
 ### File Constraints
 
@@ -124,7 +124,7 @@ For example:
 | -------------  |-------------|
 | TextType       | text        |
 | NumberType     | number      |
-| EmailType      | email      |
+| EmailType      | email       |
 | CollectionType | collection  |
 
 ## License
