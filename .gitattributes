@@ -6,3 +6,4 @@
 /Gruntfile.js      export-ignore
 /package.json      export-ignore
 /yarn.lock         export-ignore
+/psalm.xml         export-ignore
