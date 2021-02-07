@@ -13,7 +13,7 @@ $rules['declare_strict_types']         = true;
 $config
     ->setRules($rules)
     ->getFinder()
-    ->in([__DIR__ . '/src', ])
+    ->in([__DIR__ . '/src'])
     ->in(__DIR__ . '/examples')
     ->append([__FILE__]);
 
