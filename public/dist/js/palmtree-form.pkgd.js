@@ -311,7 +311,6 @@
                 prototype = this.options.prototype;
             } else {
                 prototype = this.$collection.data('prototype').replace(/\[-1]/g, '[' + index + ']');
-                console.log(prototype);
             }
 
             var $entry = $(prototype);
