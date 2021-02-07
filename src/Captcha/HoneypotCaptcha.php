@@ -22,7 +22,8 @@ class HoneypotCaptcha implements CaptchaInterface
         return 'This is a honeypot field and should be left blank.';
     }
 
-    public function getElements(Element $element, Form $form)
+    /** {@inheritDoc} */
+    public function getElements(Element $element, Form $form): array
     {
         $elements = [];
 

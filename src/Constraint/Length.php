@@ -4,9 +4,7 @@ namespace Palmtree\Form\Constraint;
 
 class Length extends AbstractConstraint implements ConstraintInterface
 {
-    /** @var int */
     public const ERROR_TOO_SMALL = 1;
-    /** @var int */
     public const ERROR_TOO_LARGE = 2;
 
     /** @var int|null */
@@ -16,7 +14,12 @@ class Length extends AbstractConstraint implements ConstraintInterface
     /** @var int|null */
     private $errorCode;
 
-    protected function doValidate(string $input): bool
+    public function validate($input): bool
+    {
+        return $this->doValidate($input);
+    }
+
+    private function doValidate(string $input): bool
     {
         if ($this->min !== null && \strlen($input) < $this->min) {
             $this->setErrorCode(self::ERROR_TOO_SMALL);
@@ -52,7 +55,7 @@ class Length extends AbstractConstraint implements ConstraintInterface
                 $errorMessage = "This field must be at least $this->min characters";
                 break;
             case self::ERROR_TOO_LARGE:
-                $errorMessage = "This field must be less than  $this->max characters";
+                $errorMessage = "This field must be less than $this->max characters";
                 break;
             default:
                 $errorMessage = 'Invalid string length';

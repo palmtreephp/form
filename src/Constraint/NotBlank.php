@@ -4,6 +4,7 @@ namespace Palmtree\Form\Constraint;
 
 class NotBlank extends AbstractConstraint implements ConstraintInterface
 {
+    /** @var string */
     protected $errorMessage = 'Please fill in this field';
 
     public function validate($input): bool

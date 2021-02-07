@@ -11,7 +11,6 @@ class GoogleRecaptcha implements CaptchaInterface
     private const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
     private const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
 
-    /** @var array */
     private const ERROR_CODES = [
         'missing-input-secret'   => 'The secret parameter is missing.',
         'invalid-input-secret'   => 'The secret parameter is invalid or malformed.',
@@ -70,7 +69,8 @@ class GoogleRecaptcha implements CaptchaInterface
         return false;
     }
 
-    public function getElements(Element $element, Form $form)
+    /** {@inheritDoc} */
+    public function getElements(Element $element, Form $form): array
     {
         if (!$element->attributes['id']) {
             $element->attributes['id'] = 'g-recaptcha-' . uniqid();

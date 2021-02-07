@@ -6,14 +6,14 @@ $config = new Config();
 
 $rules = $config->getRules();
 
-$rules['no_superfluous_phpdoc_tags'] = true;
+$rules['no_superfluous_phpdoc_tags']   = true;
 $rules['blank_line_after_opening_tag'] = false;
-$rules['declare_strict_types'] = true;
+$rules['declare_strict_types']         = true;
 
 $config
     ->setRules($rules)
     ->getFinder()
-    ->in(__DIR__ . '/src')
+    ->in([__DIR__ . '/src', ])
     ->in(__DIR__ . '/examples')
     ->append([__FILE__]);
 

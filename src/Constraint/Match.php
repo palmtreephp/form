@@ -8,10 +8,15 @@ class Match extends AbstractConstraint implements ConstraintInterface
 {
     /** @var TypeInterface */
     private $matchField;
-
+    /** @var string */
     protected $errorMessage = 'Fields do not match';
 
-    protected function doValidate(string $input): bool
+    public function validate($input): bool
+    {
+        return $this->doValidate($input);
+    }
+
+    private function doValidate(string $input): bool
     {
         return $input === $this->matchField->getData();
     }

@@ -29,5 +29,9 @@
         "ext-curl": "For Google Recaptcha support",
         "ext-json": "For Google Recaptcha support",
         "ext-fileinfo": "For mime type upload validation"
+    },
+    "scripts": {
+        "fix": "vendor/bin/php-cs-fixer fix",
+        "lint": "vendor/bin/psalm"
     }
 }

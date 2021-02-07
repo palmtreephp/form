@@ -12,6 +12,6 @@ interface CaptchaInterface
 
     public function getErrorMessage(): string;
 
-    /** @return Element[] */
-    public function getElements(Element $element, Form $form);
+    /** @return array<int, Element> */
+    public function getElements(Element $element, Form $form): array;
 }

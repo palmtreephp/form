@@ -8,12 +8,17 @@ use Palmtree\Form\UploadedFile;
 
 class Extension extends AbstractConstraint implements ConstraintInterface
 {
-    /** @var array */
+    /** @var array<int, string> */
     private $extensions = [];
 
-    protected function doValidate(UploadedFile $uploadedFile): bool
+    public function validate($input): bool
     {
-        $extension = pathinfo($uploadedFile->getName(), PATHINFO_EXTENSION);
+        return $this->doValidate($input);
+    }
+
+    private function doValidate(UploadedFile $input): bool
+    {
+        $extension = pathinfo($input->getName(), PATHINFO_EXTENSION);
 
         if (!\in_array($extension, $this->extensions, true)) {
             $this->setErrorMessage('Only the following file extensions are allowed: ' . implode(', ', $this->extensions));
@@ -24,6 +29,9 @@ class Extension extends AbstractConstraint implements ConstraintInterface
         return true;
     }
 
+    /**
+     * @param array<int, string> $extensions
+     */
     public function setExtensions(array $extensions): self
     {
         $this->extensions = $extensions;
@@ -31,6 +39,9 @@ class Extension extends AbstractConstraint implements ConstraintInterface
         return $this;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getExtensions(): array
     {
         return $this->extensions;

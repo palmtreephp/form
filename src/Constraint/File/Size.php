@@ -28,9 +28,14 @@ class Size extends AbstractConstraint implements ConstraintInterface
         }
     }
 
-    protected function doValidate(UploadedFile $uploadedFile): bool
+    public function validate($input): bool
     {
-        if ($this->constraint->validate($uploadedFile->getSize())) {
+        return $this->doValidate($input);
+    }
+
+    private function doValidate(UploadedFile $input): bool
+    {
+        if ($this->constraint->validate($input->getSize())) {
             return true;
         }
 

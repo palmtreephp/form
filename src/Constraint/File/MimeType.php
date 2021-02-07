@@ -8,12 +8,17 @@ use Palmtree\Form\UploadedFile;
 
 class MimeType extends AbstractConstraint implements ConstraintInterface
 {
-    /** @var array */
+    /** @var array<int, string> */
     private $mimeTypes = [];
 
-    protected function doValidate(UploadedFile $uploadedFile): bool
+    public function validate($input): bool
     {
-        $mimeType = $this->getUploadedFileMimeType($uploadedFile);
+        return $this->doValidate($input);
+    }
+
+    private function doValidate(UploadedFile $input): bool
+    {
+        $mimeType = $this->getUploadedFileMimeType($input);
         if ($mimeType === null) {
             $this->setErrorMessage('Could not determine the uploaded file\'s mime type');
 
@@ -29,6 +34,7 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
         return true;
     }
 
+    /** @param array<int, string> $mimeTypes */
     public function setMimeTypes(array $mimeTypes): self
     {
         $this->mimeTypes = $mimeTypes;
@@ -36,6 +42,7 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
         return $this;
     }
 
+    /** @return array<int, string> */
     public function getMimeTypes(): array
     {
         return $this->mimeTypes;
