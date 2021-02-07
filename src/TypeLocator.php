@@ -7,7 +7,7 @@ use Palmtree\Form\Type\TypeInterface;
 
 class TypeLocator
 {
-    /** @var array<string, string> */
+    /** @var array<string, string> Map of types where key is the shorthand name e.g 'text' and value is the FCQN. */
     private static $types = [];
 
     private const TYPE_KEYS = [
@@ -48,7 +48,7 @@ class TypeLocator
     {
         if (\is_object($type)) {
             if (!$type instanceof TypeInterface) {
-                throw new InvalidTypeException('Type must be an instance of ' . TypeInterface::class . '. ' . \get_class($type) . ' given');
+                throw new InvalidTypeException(sprintf("Type must be an instance of '%s'. '%s' given", TypeInterface::class, \get_class($type)));
             }
 
             return $type;
@@ -59,7 +59,7 @@ class TypeLocator
         if ($class === null) {
             throw new InvalidTypeException('Type could not be found');
         } elseif (!is_subclass_of($class, TypeInterface::class, true)) {
-            throw new InvalidTypeException('Type must be an instance of' . TypeInterface::class . ". '$type' given");
+            throw new InvalidTypeException(sprintf("Type must be an instance of '%s'. '%s' given", TypeInterface::class, $type));
         }
 
         foreach ($args as $key => $value) {
