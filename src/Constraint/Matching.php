@@ -4,7 +4,7 @@ namespace Palmtree\Form\Constraint;
 
 use Palmtree\Form\Type\TypeInterface;
 
-class Match extends AbstractConstraint implements ConstraintInterface
+class Matching extends AbstractConstraint implements ConstraintInterface
 {
     /** @var TypeInterface */
     private $matchField;

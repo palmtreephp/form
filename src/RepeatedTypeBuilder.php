@@ -2,7 +2,7 @@
 
 namespace Palmtree\Form;
 
-use Palmtree\Form\Constraint\Match;
+use Palmtree\Form\Constraint\Matching;
 use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TypeInterface;
 
@@ -27,12 +27,12 @@ class RepeatedTypeBuilder
 
         $matchError = $firstOfType->getHumanName() . 's do not match';
 
-        $firstOfType->addConstraint(new Match([
+        $firstOfType->addConstraint(new Matching([
             'match_field'   => $secondOfType,
             'error_message' => $matchError,
         ]));
 
-        $secondOfType->addConstraint(new Match([
+        $secondOfType->addConstraint(new Matching([
             'match_field'   => $firstOfType,
             'error_message' => $matchError,
         ]));
