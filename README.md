@@ -127,6 +127,14 @@ For example:
 | EmailType      | email       |
 | CollectionType | collection  |
 
+## Examples
+
+The simplest way to run the examples is to use PHP's built-in web server through a Docker container:
+
+```sh
+docker run --rm -v $PWD/:/app -v $PWD/public:/app/examples/public -p 8080:8080 php:7.4-cli-alpine php -S 0.0.0.0:8080 -t /app/examples
+```
+
 ## License
 
 Released under the [MIT license](LICENSE)

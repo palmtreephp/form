@@ -16,6 +16,6 @@
     </div>
 </main>
 <?= get_scripts(); ?>
-<script src="../../public/dist/js/palmtree-form.pkgd.js"></script>
+<script src="/public/dist/js/palmtree-form.pkgd.js"></script>
 </body>
 </html>

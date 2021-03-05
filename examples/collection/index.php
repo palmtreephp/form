@@ -6,7 +6,7 @@ use Palmtree\Form\Type\PersonType;
 use Palmtree\Form\Type\SubmitType;
 
 require __DIR__ . '/../../vendor/autoload.php';
-require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/../.bootstrap.php';
 require __DIR__ . '/PersonType.php';
 
 $builder = new FormBuilder([

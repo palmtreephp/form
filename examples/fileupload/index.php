@@ -4,7 +4,7 @@ use Palmtree\Form\Constraint\File as FileConstraint;
 use Palmtree\Form\FormBuilder;
 
 require __DIR__ . '/../../vendor/autoload.php';
-require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/../.bootstrap.php';
 
 $builder = new FormBuilder([
     'key'             => 'fileupload_example',
