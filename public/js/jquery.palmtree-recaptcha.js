@@ -13,11 +13,7 @@
 
     $(function () {
         $('.palmtree-form').each(function () {
-            var $recaptcha = $(this).find('.g-recaptcha');
-
-            if ($recaptcha.length && typeof window.grecaptcha !== 'undefined') {
-                $recaptcha.palmtreeRecaptcha(this);
-            }
+            $(this).find('.g-recaptcha').palmtreeForm(this);
         });
     });
 
@@ -32,7 +28,6 @@
     function Plugin(element, form) {
         this.$el = $(element);
         this.$form = $(form);
-        this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
         var _this = this;
 

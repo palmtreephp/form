@@ -112,6 +112,10 @@ class GoogleRecaptcha implements CaptchaInterface
 
     public function getErrorMessage(): string
     {
+        if (empty($this->errors)) {
+            return '';
+        }
+
         $error = reset($this->errors);
 
         return self::ERROR_CODES[$error] ?? $error;
@@ -120,12 +124,11 @@ class GoogleRecaptcha implements CaptchaInterface
     /**
      * Returns the recaptcha API script source with an onload callback.
      */
-    protected function getScriptSrc(string $onloadCallbackName): string
+    private function getScriptSrc(string $onloadCallbackName): string
     {
         $url = self::SCRIPT_URL;
 
-        $queryArgs = [];
-        parse_str(parse_url($url, PHP_URL_QUERY), $queryArgs);
+        parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $queryArgs);
 
         $queryArgs['onload'] = $onloadCallbackName;
         $queryArgs['render'] = 'explicit';
@@ -135,10 +138,7 @@ class GoogleRecaptcha implements CaptchaInterface
         return $url;
     }
 
-    /**
-     * @param string $response
-     */
-    protected function getVerificationResult($response): array
+    private function getVerificationResult(string $response): array
     {
         if (!isset($this->verificationResult[$response])) {
             $postFields = [
