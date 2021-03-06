@@ -107,7 +107,7 @@ class GoogleRecaptcha implements CaptchaInterface
         $placeholder->attributes->setData('onload', $onloadCallback);
 
         if ($this->autoload) {
-            $placeholder->attributes->setData('autoload', 'true');
+            $placeholder->classes[] = 'g-recaptcha-autoload';
         }
 
         return [
