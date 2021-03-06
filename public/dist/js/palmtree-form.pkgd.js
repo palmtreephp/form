@@ -171,11 +171,7 @@
 
     $(function () {
         $('.palmtree-form').each(function () {
-            var $recaptcha = $(this).find('.g-recaptcha');
-
-            if ($recaptcha.length) {
-                $recaptcha.palmtreeRecaptcha(this);
-            }
+            $(this).find('.g-recaptcha').palmtreeRecaptcha(this);
         });
     });
 

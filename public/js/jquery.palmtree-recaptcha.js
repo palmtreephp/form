@@ -13,7 +13,7 @@
 
     $(function () {
         $('.palmtree-form').each(function () {
-            $(this).find('.g-recaptcha').palmtreeForm(this);
+            $(this).find('.g-recaptcha').palmtreeRecaptcha(this);
         });
     });
 
