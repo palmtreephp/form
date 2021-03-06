@@ -70,7 +70,7 @@ Constraints allow you to validate a field type. The current built in constraints
 | [Email](src/Constraint/Email.php)        | Ensures the field is a valid email address
 | [Number](src/Constraint/Number.php)      | Ensures the field is numeric and optionally between a range
 | [Length](src/Constraint/Length.php)      | Ensures the field has a minimum and/or maximum length of characters
-| [Match](src/Constraint/Match.php)        | Ensures the field matches another fields value. Useful for password confirmations
+| [Matching](src/Constraint/Matching.php)  | Ensures the field matches another fields value. Useful for password confirmations
 
 By default, all required fields have a NotBlank constraint.
 Email fields have an email constraint and number fields a Number constraint.
