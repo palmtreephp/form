@@ -129,10 +129,11 @@ For example:
 
 ## Examples
 
-The simplest way to run the examples is to use PHP's built-in web server through a Docker container:
+The simplest way to run the examples is run the serve.sh script. This script starts a small PHP Docker container
+and serves the examples using PHP's built-in web server.
 
 ```sh
-docker run --rm -v $PWD/:/app -v $PWD/public:/app/examples/public -p 8080:8080 php:7.4-cli-alpine php -S 0.0.0.0:8080 -t /app/examples
+./examples/serve.sh
 ```
 
 ## License
