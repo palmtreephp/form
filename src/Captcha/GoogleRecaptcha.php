@@ -12,8 +12,8 @@ class GoogleRecaptcha implements CaptchaInterface
     private const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
 
     private const ERROR_CODES = [
-        'missing-input-secret'   => 'The secret parameter is missing.',
-        'invalid-input-secret'   => 'The secret parameter is invalid or malformed.',
+        'missing-input-secret' => 'The secret parameter is missing.',
+        'invalid-input-secret' => 'The secret parameter is invalid or malformed.',
         'missing-input-response' => 'The response parameter is missing.',
         'invalid-input-response' => 'The response parameter is invalid or malformed.',
     ];
@@ -28,15 +28,17 @@ class GoogleRecaptcha implements CaptchaInterface
     private $errors = [];
     /** @var array */
     private $verificationResult = [];
+    /** @var bool */
+    private $autoload = true;
 
     /**
-     * @param string      $siteKey   Site key obtained from Google Recaptcha admin
-     * @param string      $secretKey Secret key obtained from Google Recaptcha admin
-     * @param bool|string $ip        Client's IP address. Setting to true uses $_SERVER['REMOTE_ADDR']
+     * @param string $siteKey Site key obtained from Google Recaptcha admin
+     * @param string $secretKey Secret key obtained from Google Recaptcha admin
+     * @param bool|string $ip Client's IP address. Setting to true uses $_SERVER['REMOTE_ADDR']
      */
     public function __construct(string $siteKey, string $secretKey, $ip = true)
     {
-        $this->siteKey   = $siteKey;
+        $this->siteKey = $siteKey;
         $this->secretKey = $secretKey;
 
         if ($ip === true) {
@@ -104,6 +106,10 @@ class GoogleRecaptcha implements CaptchaInterface
         $placeholder->attributes->setData('script_url', $this->getScriptSrc($onloadCallback));
         $placeholder->attributes->setData('onload', $onloadCallback);
 
+        if ($this->autoload) {
+            $placeholder->attributes->setData('autoload', 'true');
+        }
+
         return [
             $placeholder,
             $element,
@@ -142,7 +148,7 @@ class GoogleRecaptcha implements CaptchaInterface
     {
         if (!isset($this->verificationResult[$response])) {
             $postFields = [
-                'secret'   => $this->secretKey,
+                'secret' => $this->secretKey,
                 'response' => $response,
             ];
 
@@ -166,5 +172,17 @@ class GoogleRecaptcha implements CaptchaInterface
         }
 
         return $this->verificationResult[$response];
+    }
+
+    public function setAutoload(bool $autoload): self
+    {
+        $this->autoload = $autoload;
+
+        return $this;
+    }
+
+    public function isAutoload(): bool
+    {
+        return $this->autoload;
     }
 }

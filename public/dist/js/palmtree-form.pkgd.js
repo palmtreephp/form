@@ -206,7 +206,9 @@
             });
         };
 
-        $.getScript(this.$el.data('script_url'));
+        if (this.$el.data('autoload')) {
+            $.getScript(this.$el.data('script_url'));
+        }
     }
 
     $.fn[pluginName] = function (form) {
