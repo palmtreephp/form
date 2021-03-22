@@ -18,7 +18,7 @@ class TypeLocator
     public function __construct()
     {
         if (empty(self::$types)) {
-            foreach (glob(__DIR__ . '/Type/*Type.php', GLOB_NOSORT) ?: [] as $file) {
+            foreach (glob(__DIR__ . '/Type/*Type.php', \GLOB_NOSORT) ?: [] as $file) {
                 self::$types[strtolower(basename($file, 'Type.php'))] = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');
             }
         }

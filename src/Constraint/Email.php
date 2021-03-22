@@ -14,6 +14,6 @@ class Email extends AbstractConstraint implements ConstraintInterface
 
     private function doValidate(string $input): bool
     {
-        return filter_var($input, FILTER_VALIDATE_EMAIL) !== false;
+        return filter_var($input, \FILTER_VALIDATE_EMAIL) !== false;
     }
 }

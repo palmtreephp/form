@@ -12,8 +12,8 @@ class GoogleRecaptcha implements CaptchaInterface
     private const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
 
     private const ERROR_CODES = [
-        'missing-input-secret' => 'The secret parameter is missing.',
-        'invalid-input-secret' => 'The secret parameter is invalid or malformed.',
+        'missing-input-secret'   => 'The secret parameter is missing.',
+        'invalid-input-secret'   => 'The secret parameter is invalid or malformed.',
         'missing-input-response' => 'The response parameter is missing.',
         'invalid-input-response' => 'The response parameter is invalid or malformed.',
     ];
@@ -32,13 +32,13 @@ class GoogleRecaptcha implements CaptchaInterface
     private $autoload = true;
 
     /**
-     * @param string $siteKey Site key obtained from Google Recaptcha admin
-     * @param string $secretKey Secret key obtained from Google Recaptcha admin
-     * @param bool|string $ip Client's IP address. Setting to true uses $_SERVER['REMOTE_ADDR']
+     * @param string      $siteKey   Site key obtained from Google Recaptcha admin
+     * @param string      $secretKey Secret key obtained from Google Recaptcha admin
+     * @param bool|string $ip        Client's IP address. Setting to true uses $_SERVER['REMOTE_ADDR']
      */
     public function __construct(string $siteKey, string $secretKey, $ip = true)
     {
-        $this->siteKey = $siteKey;
+        $this->siteKey   = $siteKey;
         $this->secretKey = $secretKey;
 
         if ($ip === true) {
@@ -134,7 +134,7 @@ class GoogleRecaptcha implements CaptchaInterface
     {
         $url = self::SCRIPT_URL;
 
-        parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $queryArgs);
+        parse_str(parse_url($url, \PHP_URL_QUERY) ?? '', $queryArgs);
 
         $queryArgs['onload'] = $onloadCallbackName;
         $queryArgs['render'] = 'explicit';
@@ -148,7 +148,7 @@ class GoogleRecaptcha implements CaptchaInterface
     {
         if (!isset($this->verificationResult[$response])) {
             $postFields = [
-                'secret' => $this->secretKey,
+                'secret'   => $this->secretKey,
                 'response' => $response,
             ];
 
@@ -158,9 +158,9 @@ class GoogleRecaptcha implements CaptchaInterface
 
             $handle = curl_init(self::VERIFY_URL);
 
-            curl_setopt($handle, CURLOPT_POST, \count($postFields));
-            curl_setopt($handle, CURLOPT_POSTFIELDS, http_build_query($postFields));
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($handle, \CURLOPT_POST, \count($postFields));
+            curl_setopt($handle, \CURLOPT_POSTFIELDS, http_build_query($postFields));
+            curl_setopt($handle, \CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($handle);
 
