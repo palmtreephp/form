@@ -17,8 +17,8 @@
     },
     "require": {
         "php": ">=7.1",
-        "palmtree/argparser": "~2.0",
-        "palmtree/nameconverter": "~2.0",
+        "palmtree/argparser": "^2.0",
+        "palmtree/nameconverter": "^2.0",
         "palmtree/html": "^3.0.3"
     },
     "require-dev": {
@@ -32,7 +32,7 @@
     },
     "scripts": {
         "fix": "vendor/bin/php-cs-fixer fix",
-        "lint": "vendor/bin/psalm",
+        "psalm": "vendor/bin/psalm",
         "yarn": "docker run --rm -v $PWD:/app -w=/app -u $(id -u):$(id -g) node:12-alpine yarn"
     }
 }
