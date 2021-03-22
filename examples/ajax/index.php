@@ -95,7 +95,7 @@ if ($form->isSubmitted() && Form::isAjaxRequest()) {
     }
 }
 
-$view = template('view.php', [
+$view = template('view.phtml', [
     'form'    => $form,
     'success' => (!empty($_GET['success'])),
 ]);

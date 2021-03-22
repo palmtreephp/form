@@ -37,7 +37,7 @@ if ($form->isSubmitted() && $form->isValid()) {
     redirect('?success=1');
 }
 
-$view = template('view.php', [
+$view = template('view.phtml', [
     'form'    => $form,
     'success' => (!empty($_GET['success'])),
 ]);
