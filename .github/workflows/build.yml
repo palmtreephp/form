@@ -29,7 +29,7 @@ jobs:
           key: composer
 
       - name: Lint PHP
-        run: find -L src -path src -prune -o -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+        run: find -L src -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-ansi
