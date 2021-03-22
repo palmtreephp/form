@@ -1,5 +1,8 @@
 # :palm_tree: Palmtree Form
 
+[![License](http://img.shields.io/packagist/l/palmtree/form.svg)](LICENSE)
+[![Build](https://img.shields.io/github/workflow/status/palmtreephp/form/Build.svg)](LICENSE)
+
 PHP Form builder with [Bootstrap](https://getbootstrap.com/) v4 classes, validation, [Google Recaptcha](https://www.google.com/recaptcha/intro/) support and other goodies
 
 ## Requirements
