@@ -23,7 +23,7 @@
                 <referencedProperty name="Palmtree\Form\Type\RepeatedType::$repeatableType"/>
                 <referencedProperty name="Palmtree\Form\Type\OptionType::$value"/>
                 <referencedProperty name="Palmtree\Form\Type\CollectionType::$entryType"/>
-                <referencedProperty name="Palmtree\Form\Constraint\Match::$matchField"/>
+                <referencedProperty name="Palmtree\Form\Constraint\Matching::$matchField"/>
             </errorLevel>
         </PropertyNotSetInConstructor>
     </issueHandlers>

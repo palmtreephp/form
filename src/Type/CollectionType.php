@@ -6,7 +6,7 @@ use Palmtree\Html\Element;
 
 class CollectionType extends AbstractType
 {
-    /** @var null */
+    /** @var string|null */
     protected $errorMessage;
     /** @var bool */
     protected $required = false;

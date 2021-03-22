@@ -19,7 +19,7 @@ abstract class AbstractType implements TypeInterface
     protected $type;
     /** @var string */
     protected $name;
-    /** @var mixed */
+
     protected $data;
     /** @var string|null */
     protected $label;
@@ -27,7 +27,7 @@ abstract class AbstractType implements TypeInterface
     protected $userInput = true;
     /** @var bool */
     protected $required = true;
-    /** @var string */
+    /** @var string|null */
     protected $errorMessage = 'Please fill in this field';
     /** @var Form */
     protected $form;

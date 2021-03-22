@@ -6,7 +6,7 @@ use Palmtree\Html\Element;
 
 abstract class AbstractGroupType extends AbstractType
 {
-    /** @var null */
+    /** @var string|null */
     protected $errorMessage = null;
     /** @var bool */
     protected $required = false;

@@ -59,7 +59,7 @@ class CheckboxType extends AbstractType
             $elements[] = $label;
         }
 
-        if (!$this->isValid()) {
+        if (!$this->isValid() && $this->errorMessage !== null) {
             $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
         }
 
@@ -82,7 +82,7 @@ class CheckboxType extends AbstractType
             return true;
         }
 
-        return $this->data && filter_var($this->data, FILTER_VALIDATE_BOOLEAN);
+        return $this->data && filter_var($this->data, \FILTER_VALIDATE_BOOLEAN);
     }
 
     public function setValue(string $value): self
