@@ -1,0 +1,44 @@
+name: Build
+
+on: push
+
+jobs:
+  run:
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        php-versions: [ '7.1', '7.2', '7.3', '7.4', '8.0' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+
+      - name: Declare variables
+        id: vars
+        run: |
+          echo ::set-output name=composer_cache_dir::$(composer config cache-dir)
+
+      - name: Cache composer downloads
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.vars.outputs.composer_cache_dir }}
+          key: composer
+
+      - name: Lint PHP
+        run: find -L src -path src -prune -o -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-ansi
+        if: matrix.php-versions == 8.0
+
+      - name: PHP-CS-Fixer
+        run: ./vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff --diff-format=udiff
+        if: matrix.php-versions == 8.0
+
+      - name: Psalm
+        run: ./vendor/bin/psalm --config=psalm.xml --no-cache
+        if: matrix.php-versions == 8.0
