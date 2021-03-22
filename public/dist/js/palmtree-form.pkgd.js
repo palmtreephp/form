@@ -171,7 +171,7 @@
 
     $(function () {
         $('.palmtree-form').each(function () {
-            $(this).find('.g-recaptcha').palmtreeRecaptcha(this);
+            $(this).find('.g-recaptcha-autoload').palmtreeRecaptcha(this);
         });
     });
 
@@ -206,9 +206,7 @@
             });
         };
 
-        if (this.$el.data('autoload')) {
-            $.getScript(this.$el.data('script_url'));
-        }
+        $.getScript(this.$el.data('script_url'));
     }
 
     $.fn[pluginName] = function (form) {
