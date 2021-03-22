@@ -68,7 +68,7 @@ class ChoiceType extends AbstractType
 
                 foreach ($label as $subValue => $subLabel) {
                     $args['label'] = $subLabel;
-                    $args['value'] = $subValue;
+                    $args['value'] = (string)$subValue;
 
                     $choice = new OptionType($args);
 
@@ -82,7 +82,7 @@ class ChoiceType extends AbstractType
                 $parent->addChild($optGroup);
             } else {
                 $args['label'] = $label;
-                $args['value'] = $value;
+                $args['value'] = (string)$value;
 
                 $choiceWrapper = null;
                 if ($this->expanded) {
