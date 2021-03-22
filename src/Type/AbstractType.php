@@ -19,7 +19,7 @@ abstract class AbstractType implements TypeInterface
     protected $type;
     /** @var string */
     protected $name;
-
+    /** @var mixed */
     protected $data;
     /** @var string|null */
     protected $label;
