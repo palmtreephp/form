@@ -17,13 +17,13 @@
     },
     "require": {
         "php": ">=7.1",
-        "palmtree/argparser": "^2.0",
+        "palmtree/argparser": "^2.1",
         "palmtree/nameconverter": "^2.0",
-        "palmtree/html": "^3.0.3"
+        "palmtree/html": "^3.0"
     },
     "require-dev": {
-        "palmtree/php-cs-fixer-config": "^1.0",
-        "vimeo/psalm": "^4.3"
+        "palmtree/php-cs-fixer-config": "^1.1",
+        "vimeo/psalm": "^4.6"
     },
     "suggest": {
         "ext-curl": "For Google Recaptcha support",
