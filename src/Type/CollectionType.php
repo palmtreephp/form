@@ -10,6 +10,8 @@ class CollectionType extends AbstractType
     protected $errorMessage;
     /** @var bool */
     protected $required = false;
+    /** @var string|null */
+    protected $label = '';
     /**
      * @var string
      * @psalm-var class-string<TypeInterface>
@@ -57,11 +59,17 @@ class CollectionType extends AbstractType
         return $this;
     }
 
+    /**
+     * @psalm-param class-string<TypeInterface> $entryType
+     */
     public function setEntryType(string $entryType): void
     {
         $this->entryType = $entryType;
     }
 
+    /**
+     * @psalm-return class-string<TypeInterface>
+     */
     public function getEntryType(): string
     {
         return $this->entryType;
@@ -100,6 +108,10 @@ class CollectionType extends AbstractType
             ->setName($this->name)
             ->setPosition($position)
         ;
+
+        if ($entry->getLabel() === null) {
+            $entry->setLabel($this->getHumanName());
+        }
 
         $entry->build();
 
