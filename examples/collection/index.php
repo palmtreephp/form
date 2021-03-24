@@ -10,7 +10,7 @@ require __DIR__ . '/../.bootstrap.php';
 require __DIR__ . '/PersonType.php';
 
 $builder = new FormBuilder([
-    'key'             => 'simple_example',
+    'key'             => 'collection_example',
     'method'          => 'POST',
     'html_validation' => false,
 ]);
