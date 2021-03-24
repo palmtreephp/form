@@ -41,7 +41,10 @@ class Form
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
-    public function __construct(array $args = [])
+    /**
+     * @param array|string $args
+     */
+    public function __construct($args = [])
     {
         $this->parseArgs($args);
     }

@@ -19,7 +19,10 @@ class FormBuilder
 
     private const FILE_UPLOAD_ENC_TYPE = 'multipart/form-data';
 
-    public function __construct(array $args = [])
+    /**
+     * @param array|string $args
+     */
+    public function __construct($args = [])
     {
         $this->form        = new Form($args);
         $this->typeLocator = new TypeLocator();
