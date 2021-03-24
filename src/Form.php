@@ -378,4 +378,9 @@ class Form
 
         $parser->parseSetters($this);
     }
+
+    public function __toString(): string
+    {
+        return $this->render();
+    }
 }
