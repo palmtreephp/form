@@ -305,7 +305,9 @@
             if (this.options.prototype) {
                 prototype = this.options.prototype;
             } else {
-                prototype = this.$collection.data('prototype').replace(/\[-1]/g, '[' + index + ']');
+                prototype = this.$collection.data('prototype')
+                    .replace(/\[-1]/g, '[' + index + ']')
+                    .replace(/(id|for)="([^\s]+)--1"/g, '$1="$2-' + index + '"');
             }
 
             var $entry = $(prototype);

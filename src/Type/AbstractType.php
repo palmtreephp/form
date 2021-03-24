@@ -238,7 +238,17 @@ abstract class AbstractType implements TypeInterface
 
     protected function getIdAttribute(): string
     {
-        return $this->form->getKey() . "-$this->name";
+        $value = $this->form->getKey();
+
+        if ($this->name) {
+            $value .= "-$this->name";
+        }
+
+        if ($this->parent) {
+            $value .= '-' . $this->parent->getPosition();
+        }
+
+        return $value;
     }
 
     public function getPlaceHolderAttribute(): string
@@ -362,6 +372,10 @@ abstract class AbstractType implements TypeInterface
         /** @var TypeInterface $type */
         $type = new $class($options);
         $type->setName($name);
+
+        if ($type->getLabel() === null) {
+            $type->setLabel($type->getHumanName());
+        }
 
         $this->addChild($type);
 

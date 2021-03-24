@@ -30,4 +30,19 @@ abstract class AbstractGroupType extends AbstractType
 
         return strtolower(basename($shortClass, 'Type'));
     }
+
+    protected function getIdAttribute(): string
+    {
+        $value = $this->form->getKey();
+
+        if ($this->name) {
+            $value .= "-$this->name";
+        }
+
+        if ($this->parent) {
+            $value .= '-' . $this->position;
+        }
+
+        return $value;
+    }
 }

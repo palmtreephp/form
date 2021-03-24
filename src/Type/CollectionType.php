@@ -10,7 +10,10 @@ class CollectionType extends AbstractType
     protected $errorMessage;
     /** @var bool */
     protected $required = false;
-    /** @var string */
+    /**
+     * @var string
+     * @psalm-var class-string<TypeInterface>
+     */
     private $entryType;
     /** @var array */
     private $entryOptions = [];
@@ -18,7 +21,10 @@ class CollectionType extends AbstractType
     public function getElement(): Element
     {
         $collectionWrapper = new Element('div.palmtree-form-collection');
-        $entriesWrapper    = new Element('div.palmtree-form-collection-entries');
+        $collectionWrapper->classes->add(...$this->args['classes'] ?? []);
+        $collectionWrapper->attributes['id'] = $this->getIdAttribute();
+
+        $entriesWrapper = new Element('div.palmtree-form-collection-entries');
 
         $collectionWrapper->addChild($entriesWrapper);
 
