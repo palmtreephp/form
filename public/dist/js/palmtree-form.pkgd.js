@@ -362,7 +362,7 @@
          * @returns {boolean}
          */
         hasMaxEntries: function () {
-            return this.options.maxEntries === -1 || this.getTotalEntries() >= this.options.maxEntries;
+            return this.options.maxEntries > -1 && this.getTotalEntries() >= this.options.maxEntries;
         }
     };
 
