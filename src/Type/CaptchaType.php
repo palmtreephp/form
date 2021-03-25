@@ -11,6 +11,8 @@ class CaptchaType extends AbstractType
     protected $errorMessage = 'Please confirm you\'re not a robot';
     /** @var CaptchaInterface */
     private $captcha;
+    /** @var bool Whether to display errors from the Captcha implementation */
+    private $captchaErrors = false;
 
     public function __construct(array $args = [])
     {
@@ -24,10 +26,6 @@ class CaptchaType extends AbstractType
         }
 
         $this->captcha = $captcha;
-
-        if ($errorMessage = $this->captcha->getErrorMessage()) {
-            $this->setErrorMessage($errorMessage);
-        }
     }
 
     public function isValid(): bool
@@ -36,7 +34,13 @@ class CaptchaType extends AbstractType
             return true;
         }
 
-        return $this->captcha->verify($this->data);
+        $result = $this->captcha->verify($this->data);
+
+        if ($this->captchaErrors && $errorMessage = $this->captcha->getErrorMessage()) {
+            $this->setErrorMessage($errorMessage);
+        }
+
+        return $result;
     }
 
     public function getElements()
@@ -51,5 +55,10 @@ class CaptchaType extends AbstractType
         }
 
         return $elements;
+    }
+
+    public function setCaptchaErrors(bool $captchaErrors): void
+    {
+        $this->captchaErrors = $captchaErrors;
     }
 }
