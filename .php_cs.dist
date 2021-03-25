@@ -8,7 +8,6 @@ $config
     ->setRules(array_merge($config->getRules(), ['no_superfluous_phpdoc_tags' => ['allow_mixed' => true]]))
     ->getFinder()
     ->in([__DIR__ . '/src'])
-    ->in(__DIR__ . '/examples')
     ->append([__FILE__]);
 
 return $config;
