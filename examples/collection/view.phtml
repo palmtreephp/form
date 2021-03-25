@@ -22,14 +22,12 @@
 <script src="/public/dist/js/palmtree-form.pkgd.js"></script>
 <script>
     $(function () {
-        $('.palmtree-form-collection').each(function () {
-            $(this).palmtreeFormCollection({
-                minEntries: 1,
-                maxEntries: 4,
-                labels: {
-                    add: 'Add person'
-                }
-            });
+        $('#form_collection_example-people').palmtreeFormCollection({
+            minEntries: 1,
+            maxEntries: 4,
+            labels: {
+                add: 'Add person'
+            }
         });
     });
 </script>
