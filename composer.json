@@ -1,6 +1,6 @@
 {
     "name": "palmtree/form",
-    "description": "Form component for Palmtree PHP",
+    "description": "Form builder with bootstrap classes, validation, Recaptcha support, AJAX submissions and more",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -30,9 +30,12 @@
         "ext-json": "For Google Recaptcha support",
         "ext-fileinfo": "For mime type upload validation"
     },
-    "scripts": {
-        "fix": "vendor/bin/php-cs-fixer fix",
-        "psalm": "vendor/bin/psalm --config=psalm.xml --no-cache",
-        "yarn": "docker run --rm -v $PWD:/app -w=/app -u $(id -u):$(id -g) node:12-alpine yarn"
-    }
+    "keywords": [
+        "form",
+        "form-builder",
+        "bootstrap",
+        "recaptcha",
+        "captcha",
+        "ajax"
+    ]
 }
