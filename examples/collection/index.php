@@ -27,6 +27,7 @@ $form = $builder->getForm();
 $form->handleRequest();
 
 if ($form->isSubmitted() && $form->isValid()) {
+    $data = $form->get('people')->getData();
     redirect('?success=1');
 }
 

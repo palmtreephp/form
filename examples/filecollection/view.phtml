@@ -5,13 +5,13 @@
     <title>Palmtree Form - Collection Example</title>
     <?= get_styles(); ?>
     <style>
-        .remove-entry-link {margin-bottom:1rem;}
+        .remove-entry-link {margin-top:1rem;margin-bottom:1rem;}
     </style>
 </head>
 <body>
 <main>
     <div class="container mt-3">
-        <h1>Palmtree Form - Collection Example</h1>
+        <h1>Palmtree Form - File Collection Example</h1>
         <?php if ($success): ?>
             <div class="alert alert-success">Form submitted successfully</div>
         <?php endif; ?>
@@ -22,11 +22,11 @@
 <script src="/public/dist/js/palmtree-form.pkgd.js"></script>
 <script>
     $(function () {
-        $('#form_collection_example-people').palmtreeFormCollection({
-            minEntries: 1,
+        $('#form_file_collection_example-files').palmtreeFormCollection({
+            //minEntries: 1,
             maxEntries: 4,
             labels: {
-                add: 'Add person'
+                add: 'Add file'
             }
         });
     });
