@@ -98,6 +98,16 @@ class CollectionType extends AbstractType
         return $this;
     }
 
+    public function getData(): array
+    {
+        $normData = [];
+        foreach ($this->all() as $child) {
+            $normData[] = $child->getData();
+        }
+
+        return $normData;
+    }
+
     private function buildEntry(int $position = 0, ?array $data = null): TypeInterface
     {
         $entryType = $this->entryType;

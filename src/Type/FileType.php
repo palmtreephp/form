@@ -108,9 +108,9 @@ class FileType extends AbstractType
         return true;
     }
 
-    public function getData(): UploadedFile
+    public function getData(): ?UploadedFile
     {
-        if ($this->normData === null) {
+        if ($this->normData === null && $this->data !== null) {
             $this->normData = new UploadedFile($this->data);
         }
 

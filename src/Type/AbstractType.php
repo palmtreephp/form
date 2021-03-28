@@ -224,13 +224,16 @@ abstract class AbstractType implements TypeInterface
         $formId = $this->form->getKey();
 
         if ($this->parent) {
-            return sprintf(
-                '%s[%s][%s][%s]',
-                $formId,
-                $this->parent->getName(),
-                $this->parent->getPosition(),
-                $this->name
-            );
+            $format = '%s[%s][%s]';
+            $args   = [$formId, $this->parent->getName(), $this->getPosition()];
+
+            if (!$this->parent instanceof CollectionType) {
+                $format .= '[%s]';
+                $args[2] = $this->parent->getPosition();
+                $args[]  = $this->name;
+            }
+
+            return vsprintf($format, $args);
         }
 
         return $this->form->getKey() . "[$this->name]";
