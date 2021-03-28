@@ -13,67 +13,65 @@
  * @author Andy Palmer
  */
 (function (factory) {
-    // Universal Module Definition
-    /* jshint strict: false */
-    if (typeof module === 'object' && module.exports) {
-        // Node/CommonJS (Browserify/Webpack)
-        module.exports = factory;
-    } else if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
+    'use strict';
+    /* global define:false */
+    if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory(require('jquery'));
     } else {
-        // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     var pluginName = 'palmtreeFormCollection';
 
+    /**
+     * @param {Element} element
+     * @param {{}} options
+     * @constructor
+     */
     function Plugin(element, options) {
         this.$collection = $(element);
+        this.$entriesWrapper = this.$collection.children('.palmtree-form-collection-entries');
         this.options = $.extend(true, {}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        this.$collection.data('index', this.$entriesWrapper.children().length);
+
+        this.$addEntryLink = $('<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>');
+        this.removeEntryLink = '<button type="button" class="remove-entry-link btn btn-sm btn-danger">' + this.options.labels.remove + '</button>';
+
+        var _this = this;
+
+        this.$entriesWrapper.children().each(function () {
+            _this.addRemoveLink($(this));
+        });
+
+        this.$collection.on('click', '.remove-entry-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            _this.removeEntry($(this).closest('.palmtree-form-collection-entry'));
+        });
+
+        this.$collection.after(this.$addEntryLink);
+
+        this.$addEntryLink.on('click', function (e) {
+            e.preventDefault();
+            _this.addEntry();
+        });
+
+        for (var i = this.getTotalEntries(); i < this.options.minEntries; i++) {
+            this.addEntry();
+        }
+
+        if (this.hasMaxEntries()) {
+            this.$addEntryLink.addClass('disabled');
+        }
     }
 
     Plugin.prototype = {
-        init: function () {
-            var _this = this;
-
-            this.$collection.data('index', this.$collection.find(this.options.entrySelector).length);
-
-            this.$collection.find(this.options.entrySelector).each(function () {
-                _this.addRemoveLink($(this));
-            });
-
-            this.$collection.on('click', '.remove-entry-link', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                _this.removeEntry($(this).closest('.palmtree-form-collection-entry'));
-            });
-
-            this.$addEntryLink = $('<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>');
-
-            this.$collection.after(this.$addEntryLink);
-
-            this.$addEntryLink.on('click', function (e) {
-                e.preventDefault();
-                _this.addEntry();
-            });
-
-            if (typeof this.options.minEntries === 'number') {
-                for (var i = 0; i <= this.options.minEntries; i++) {
-                    _this.addEntry();
-                }
-            }
-
-            if (this.hasMaxEntries()) {
-                this.$addEntryLink.addClass('disabled');
-            }
-        },
-
         addEntry: function () {
             if (this.hasMaxEntries()) {
                 return false;
@@ -85,8 +83,9 @@
             if (this.options.prototype) {
                 prototype = this.options.prototype;
             } else {
-                prototype = this.$collection.data('prototype');
-                prototype = prototype.replace(/__name__label__/g, index).replace(/__name__/g, index)
+                prototype = this.$collection.data('prototype')
+                    .replace(/\[-1]/g, '[' + index + ']')
+                    .replace(/(id|for)="([^\s]+)--1"/g, '$1="$2-' + index + '"');
             }
 
             var $entry = $(prototype);
@@ -95,20 +94,24 @@
 
             this.addRemoveLink($entry);
 
-            this.$collection.append($entry);
+            this.$entriesWrapper.append($entry);
 
             this.$collection.data('index', index + 1);
 
             this.$collection.trigger('addedEntry.palmtreeFormCollection', [$entry, this]);
 
             if (this.hasMaxEntries()) {
-                this.$addEntryLink.addClass('disabled')
+                this.$addEntryLink.addClass('disabled');
             }
         },
 
+        /**
+         *
+         * @param {jQuery} $entry
+         */
         removeEntry: function ($entry) {
-            if (typeof this.options.minEntries === 'number' && this.options.minEntries === this.getTotalEntries()) {
-                return false;
+            if (this.options.minEntries === this.getTotalEntries()) {
+                return;
             }
 
             this.$collection.triggerHandler('removeEntry.palmtreeFormCollection', [$entry, this]);
@@ -118,32 +121,30 @@
             this.$collection.triggerHandler('removedEntry.palmtreeFormCollection', [this]);
 
             if (!this.hasMaxEntries()) {
-                this.$addEntryLink.removeClass('disabled')
+                this.$addEntryLink.removeClass('disabled');
             }
         },
 
         addRemoveLink: function ($entry) {
-            $entry.append('<button type="button" class="remove-entry-link btn btn-sm btn-danger">' + this.options.labels.remove + '</button>');
+            $entry.append($(this.removeEntryLink));
         },
 
         /**
-         *
          * @returns {number}
          */
         getTotalEntries: function () {
-            return this.$collection.find(this.options.entrySelector).length;
+            return this.$entriesWrapper.children().length;
         },
 
         /**
-         *
          * @returns {boolean}
          */
         hasMaxEntries: function () {
-            return typeof this.options.maxEntries === 'number' && this.options.maxEntries === this.getTotalEntries();
+            return this.options.maxEntries > -1 && this.getTotalEntries() >= this.options.maxEntries;
         }
     };
 
-    $.fn[pluginName] = function (options) {
+    $.fn[pluginName] = function () {
         var args = arguments;
         return this.each(function () {
             var plugin = $(this).data(pluginName);
@@ -160,13 +161,12 @@
     };
 
     $.fn[pluginName].defaults = {
-        entrySelector: '> div > .palmtree-form-collection-entry',
         prototype: null,
         labels: {
             add: 'Add Entry',
             remove: 'Remove'
         },
-        minEntries: null,
-        maxEntries: null
+        minEntries: 0,
+        maxEntries: -1
     };
-}));
+});

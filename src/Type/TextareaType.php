@@ -1,17 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
+
+use Palmtree\Html\Element;
 
 class TextareaType extends AbstractType
 {
     protected $tag = 'textarea';
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
-        $element->removeAttribute('value');
-        $element->setInnerText($this->getData());
+        unset($element->attributes['value']);
+
+        if ($this->data) {
+            $element->setInnerText($this->data);
+        }
 
         return $element;
     }

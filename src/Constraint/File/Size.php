@@ -1,47 +1,50 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Constraint\File;
 
-use Palmtree\Form\Constraint;
 use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
+use Palmtree\Form\Constraint\Number as NumberConstraint;
+use Palmtree\Form\UploadedFile;
 
 class Size extends AbstractConstraint implements ConstraintInterface
 {
+    /** @var NumberConstraint */
     private $constraint;
 
-    public function __construct(array $args = [])
+    /**
+     * @param array|string $args
+     */
+    public function __construct($args = [])
     {
         parent::__construct($args);
 
-        $this->constraint = new Constraint\Number();
+        $this->constraint = new NumberConstraint();
 
-        $minBytes = isset($args['min_bytes']) ? $args['min_bytes'] : 1;
-
-        $this->constraint->setMin($minBytes);
+        $this->constraint->setMin($args['min_bytes'] ?? 1);
 
         if (isset($args['max_bytes'])) {
             $this->constraint->setMax($args['max_bytes']);
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function validate($uploadedFile)
+    public function validate($input): bool
     {
-        $size = (int)$uploadedFile['size'];
+        return $this->doValidate($input);
+    }
 
-        if ($this->constraint->validate($size)) {
+    private function doValidate(UploadedFile $input): bool
+    {
+        if ($this->constraint->validate($input->getSize())) {
             return true;
         }
 
-        $errorNo = $this->constraint->getErrorCode();
+        $errorCode = $this->constraint->getErrorCode();
 
-        if ($errorNo === Constraint\Number::ERROR_TOO_SMALL) {
-            $this->setErrorMessage(sprintf('File size must be greater than %d bytes', $this->constraint->getMin()));
-        } elseif ($errorNo === Constraint\Number::ERROR_TOO_LARGE) {
-            $this->setErrorMessage(sprintf('File size must be less than %d bytes', $this->constraint->getMax()));
+        if ($errorCode === NumberConstraint::ERROR_TOO_SMALL) {
+            $this->setErrorMessage('File size must be greater than ' . $this->constraint->getMin() . ' bytes');
+        } elseif ($errorCode === NumberConstraint::ERROR_TOO_LARGE) {
+            $this->setErrorMessage('File size must be less than ' . $this->constraint->getMax() . ' bytes');
         }
 
         return false;

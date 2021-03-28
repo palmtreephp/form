@@ -1,16 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Constraint;
 
 interface ConstraintInterface
 {
-    /**
-     * @param mixed $input
-     *
-     * @return bool
-     */
-    public function validate($input);
+    /** @param mixed $input */
+    public function validate($input): bool;
 
-    /** @return string */
-    public function getErrorMessage();
+    public function getErrorMessage(): string;
 }

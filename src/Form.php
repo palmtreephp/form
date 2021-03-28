@@ -1,90 +1,117 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form;
 
 use Palmtree\ArgParser\ArgParser;
-use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Exception\AlreadySubmittedException;
+use Palmtree\Form\Exception\NotSubmittedException;
+use Palmtree\Form\Exception\OutOfBoundsException;
+use Palmtree\Form\Type\CheckboxType;
+use Palmtree\Form\Type\HiddenType;
+use Palmtree\Form\Type\TypeInterface;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
 class Form
 {
+    /** @var string */
     protected $key;
-    /** @var AbstractType[] */
-    protected $fields    = [];
-    protected $ajax      = false;
+    /** @var array<string, TypeInterface> */
+    protected $fields = [];
+    /** @var bool */
+    protected $ajax = false;
+    /** @var bool */
     protected $submitted = false;
-    protected $method    = 'POST';
+    /** @var bool|null */
+    protected $valid;
+    /** @var string */
+    protected $method = 'POST';
+    /** @var string|null */
     protected $action;
-    protected $encType        = '';
-    protected $errors         = [];
-    protected $fieldWrapper   = 'div.form-group';
-    protected $invalidElement = 'div.invalid-feedback.small';
+    /** @var string|null */
+    protected $encType;
+    /** @var array<string, string> */
+    protected $errors = [];
+    /** @var string */
+    protected $fieldWrapper = 'div.form-group';
+    /** @var string */
+    protected $invalidElementSelector = 'div.invalid-feedback.small';
+    /** @var bool */
     protected $htmlValidation = true;
 
+    protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
+
+    /**
+     * @param array|string $args
+     */
     public function __construct($args = [])
     {
         $this->parseArgs($args);
     }
 
-    public function render()
+    public function render(): string
     {
-        $form = new Element('form');
+        $element = new Element('form.palmtree-form');
 
-        $form
-            ->addClass('palmtree-form')
-            ->setAttributes([
-                'method'  => $this->getMethod(),
-                'id'      => $this->getKey(),
-                'action'  => $this->getAction(),
-                'enctype' => $this->getEncType(),
-            ]);
+        $element->attributes->add([
+            'method' => $this->method,
+            'id'     => $this->key,
+        ]);
 
-        if (!$this->hasHtmlValidation()) {
-            $form->addAttribute('novalidate', true);
+        if ($this->encType !== null) {
+            $element->attributes->set('enctype', $this->encType);
         }
 
-        if ($this->isAjax()) {
-            $form->addClass('is-ajax');
+        if ($this->action !== null) {
+            $element->attributes->set('action', $this->action);
         }
 
-        if ($this->isSubmitted()) {
-            $form->addClass('is-submitted');
+        if (!$this->htmlValidation) {
+            $element->attributes->set('novalidate');
         }
 
-        $form->addDataAttribute('invalid_element', htmlentities($this->createInvalidElement()->render()));
+        if ($this->ajax) {
+            $element->classes[] = 'is-ajax';
+        }
 
-        $this->renderFields($form);
+        if ($this->submitted) {
+            $element->classes[] = 'is-submitted';
+        }
+
+        $element->attributes->setData('invalid_element', htmlentities($this->createInvalidElement()->render()));
+
+        $this->renderFields($element);
 
         if ($this->hasRequiredField()) {
             $info = (new Element('small'))->setInnerText('* required field');
 
-            $form->addChild($info);
+            $element->addChild($info);
         }
 
-        return $form->render();
+        return $element->render();
     }
 
-    /**
-     * @param Element $form
-     */
-    private function renderFields($form)
+    private function renderFields(Element $form): void
     {
-        foreach ($this->getFields() as $field) {
+        foreach ($this->fields as $field) {
             $fieldWrapper = null;
             $parent       = $form;
 
-            if ($this->fieldWrapper && !$field->isType('hidden')) {
+            if ($this->fieldWrapper && !$field instanceof HiddenType) {
                 $fieldWrapper = new Element($this->fieldWrapper);
 
                 if ($field->isRequired()) {
-                    $fieldWrapper->addClass('is-required');
+                    $fieldWrapper->classes[] = 'is-required';
                 }
 
                 $parent = $fieldWrapper;
             }
 
-            foreach ($field->getElements($parent) as $element) {
+            if ($field instanceof CheckboxType) {
+                $parent->classes[] = 'form-check';
+            }
+
+            foreach ($field->getElements() as $element) {
                 $parent->addChild($element);
             }
 
@@ -94,30 +121,39 @@ class Form
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isValid()
+    public function isValid(): bool
     {
-        foreach ($this->getFields() as $field) {
-            if (!$field->isValid()) {
-                $this->addError($field->getName(), $field->getErrorMessage());
+        if (!$this->submitted) {
+            throw new NotSubmittedException('Form must be submitted before calling ' . __METHOD__);
+        }
+
+        if ($this->valid === null) {
+            $this->valid = true;
+            foreach ($this->fields as $field) {
+                if (!$field->isValid()) {
+                    $this->valid = false;
+                    if ($errorMessage = $field->getErrorMessage()) {
+                        $this->addError($field->getName(), $errorMessage);
+                    }
+                }
             }
         }
 
-        return empty($this->errors);
+        return $this->valid;
     }
 
-    public function submit($data)
+    public function submit(array $data): void
     {
+        if ($this->submitted) {
+            throw new AlreadySubmittedException(__METHOD__ . ' can only be called once');
+        }
+
         $this->submitted = true;
 
-        foreach ($this->getFields() as $field) {
+        foreach ($this->fields as $field) {
             $key = $field->getName();
 
-            if ($field->isGlobal() && \array_key_exists($key, $data)) {
-                $field->setData($data[$key]);
-            } elseif (\array_key_exists($key, $data)) {
+            if (isset($data[$key]) || \array_key_exists($key, $data)) {
                 $field->setData($data[$key]);
             }
 
@@ -126,152 +162,83 @@ class Form
         }
     }
 
-    public function handleRequest()
+    public function handleRequest(): void
     {
-        $requestData = $this->getRequest();
-        if (!isset($requestData[$this->getKey()])) {
+        $requestData = $this->getRequestData();
+
+        if (!isset($requestData[$this->key])) {
             return;
         }
 
         $data = [];
 
-        foreach ($requestData[$this->getKey()] as $key => $value) {
+        foreach ($requestData[$this->key] ?? [] as $key => $value) {
             $data[$key] = $value;
         }
 
-        $data = $this->addFilesToData($data);
-
-        $this->submit($data);
-    }
-
-    /**
-     * @return array
-     */
-    public function getRequest()
-    {
-        switch ($this->getMethod()) {
-            case 'POST':
-                $data = $_POST;
-                break;
-            case 'GET':
-            default:
-                $data = $_GET;
-                break;
-        }
-
-        return $data;
-    }
-
-    protected function addFilesToData($data)
-    {
-        if (!isset($_FILES[$this->getKey()])) {
-            return $data;
-        }
-
-        foreach ($_FILES[$this->getKey()] as $key => $parts) {
+        foreach ($_FILES[$this->key] ?? [] as $key => $parts) {
             foreach ($parts as $name => $value) {
                 $data[$name][$key] = $value;
             }
         }
 
-        return $data;
+        $this->submit($data);
     }
 
-    /**
-     * @param mixed $key
-     *
-     * @return Form
-     */
-    public function setKey($key)
+    public function getRequestData(): array
+    {
+        return strtoupper($this->method) === 'POST' ? $_POST : $_GET;
+    }
+
+    public function setKey(string $key): self
     {
         $this->key = "form_$key";
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @param bool $ajax
-     *
-     * @return Form
-     */
-    public function setAjax($ajax)
+    public function setAjax(bool $ajax): self
     {
         $this->ajax = $ajax;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isAjax()
+    public function isAjax(): bool
     {
         return $this->ajax;
     }
 
-    public static function isAjaxRequest()
+    public static function isAjaxRequest(): bool
     {
-        $key = 'HTTP_X_REQUESTED_WITH';
-
-        return isset($_SERVER[$key]) && strtolower($_SERVER[$key]) === 'xmlhttprequest';
+        return strtolower($_SERVER[self::REQUESTED_WITH_HEADER] ?? '') === 'xmlhttprequest';
     }
 
-    /**
-     * @return bool
-     */
-    public function isSubmitted()
+    public function isSubmitted(): bool
     {
         return $this->submitted;
     }
 
-    /**
-     * @return Form
-     */
-    public function setSubmitted()
-    {
-        $this->submitted = true;
-
-        return $this;
-    }
-
-    /**
-     * @param string $method
-     *
-     * @return Form
-     */
-    public function setMethod($method)
+    public function setMethod(string $method): self
     {
         $this->method = strtoupper($method);
 
         return $this;
     }
 
-    /**
-     * @param string $action
-     *
-     * @return Form
-     */
-    public function setAction($action)
+    public function setAction(string $action): self
     {
         $this->action = $action;
 
         return $this;
     }
 
-    /**
-     * @param string $encType
-     *
-     * @return Form
-     */
-    public function setEncType($encType)
+    public function setEncType(string $encType): self
     {
         $this->encType = $encType;
 
@@ -279,32 +246,24 @@ class Form
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
     /**
-     * @param array $errors
-     *
-     * @return Form
+     * @param array<string, string> $errors
      */
-    public function setErrors($errors)
+    public function setErrors(array $errors): self
     {
         $this->errors = $errors;
 
         return $this;
     }
 
-    /**
-     * @param string $fieldName
-     * @param string $errorMessage
-     *
-     * @return Form
-     */
-    public function addError($fieldName, $errorMessage)
+    public function addError(string $fieldName, string $errorMessage): self
     {
         $this->errors[$fieldName] = $errorMessage;
 
@@ -312,103 +271,58 @@ class Form
     }
 
     /**
-     * @param array $args
-     *
-     * @return AbstractType[]
+     * @return array<string, TypeInterface>
      */
-    public function getFields(array $args = [])
+    public function all(): array
     {
-        if (empty($args)) {
-            return $this->fields;
-        }
-
-        return array_filter($this->fields, function (AbstractType $field) use ($args) {
-            return $field->filter($args);
-        });
+        return $this->fields;
     }
 
-    /**
-     * @param AbstractType[] $fields
-     */
-    public function setFields($fields)
+    public function has(string $name): bool
     {
-        $this->fields = [];
+        return isset($this->fields[$name]);
+    }
 
+    public function get(string $name): TypeInterface
+    {
+        if (!$this->has($name)) {
+            throw new OutOfBoundsException("Field with key '$name' does not exist");
+        }
+
+        return $this->fields[$name];
+    }
+
+    public function add(TypeInterface ...$fields): self
+    {
         foreach ($fields as $field) {
-            $this->add($field);
-        }
-    }
+            $field->setForm($this);
 
-    /**
-     * @param string $name
-     *
-     * @return AbstractType
-     */
-    public function get($name)
-    {
-        return isset($this->fields[$name]) ? $this->fields[$name] : null;
-    }
-
-    /**
-     * @param AbstractType $field
-     * @param int|null     $offset
-     *
-     * @return Form
-     */
-    public function add(AbstractType $field, $offset = null)
-    {
-        $field->setForm($this);
-
-        if ($offset === null) {
             $this->fields[$field->getName()] = $field;
-        } else {
-            if ($offset < 0) {
-                $totalFields = \count($this->fields);
-                $offset      = $totalFields - $offset + 1;
-            }
-
-            // Add the field at the specified offset
-            $this->fields = array_merge(
-                \array_slice($this->fields, 0, $offset, true),
-                [$field->getName() => $field],
-                \array_slice($this->fields, $offset, null, true)
-            );
         }
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasHtmlValidation()
+    public function hasHtmlValidation(): bool
     {
         return $this->htmlValidation;
     }
 
-    /**
-     * @param bool $htmlValidation
-     *
-     * @return Form
-     */
-    public function setHtmlValidation($htmlValidation)
+    public function setHtmlValidation(bool $htmlValidation): self
     {
         $this->htmlValidation = $htmlValidation;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getAction()
+    public function getAction(): ?string
     {
         return $this->action;
     }
 
-    public function hasRequiredField()
+    public function hasRequiredField(): bool
     {
-        foreach ($this->getFields() as $field) {
+        foreach ($this->fields as $field) {
             if ($field->isRequired()) {
                 return true;
             }
@@ -417,70 +331,59 @@ class Form
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
 
-    private function parseArgs($args)
-    {
-        $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
-
-        $parser->parseSetters($this);
-    }
-
-    /**
-     * @param string $fieldWrapper
-     *
-     * @return Form
-     */
-    public function setFieldWrapper($fieldWrapper)
+    public function setFieldWrapper(string $fieldWrapper): self
     {
         $this->fieldWrapper = $fieldWrapper;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFieldWrapper()
+    public function getFieldWrapper(): string
     {
         return $this->fieldWrapper;
     }
 
-    /**
-     * @return string
-     */
-    public function getEncType()
+    public function getEncType(): ?string
     {
         return $this->encType;
     }
 
-    /**
-     * @param string $invalidElement
-     */
-    public function setInvalidElement($invalidElement)
+    public function setInvalidElementSelector(string $invalidElementSelector): void
     {
-        $this->invalidElement = $invalidElement;
+        $this->invalidElementSelector = $invalidElementSelector;
     }
 
-    /**
-     * @return string
-     */
-    public function getInvalidElement()
+    public function getInvalidElementSelector(): string
     {
-        return $this->invalidElement;
+        return $this->invalidElementSelector;
     }
 
-    public function createInvalidElement()
+    public function createInvalidElement(): Element
     {
-        $element = new Element($this->getInvalidElement());
-        $element->addClass('palmtree-invalid-feedback');
+        $element = new Element($this->invalidElementSelector);
+
+        $element->classes[] = 'palmtree-invalid-feedback';
 
         return $element;
+    }
+
+    /**
+     * @param string|array $args
+     */
+    private function parseArgs($args): void
+    {
+        $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
+
+        $parser->parseSetters($this);
+    }
+
+    public function __toString(): string
+    {
+        return $this->render();
     }
 }

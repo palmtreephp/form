@@ -1,24 +1,32 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Constraint\File;
 
 use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
+use Palmtree\Form\UploadedFile;
 
 class MimeType extends AbstractConstraint implements ConstraintInterface
 {
+    /** @var array<int, string> */
     private $mimeTypes = [];
 
-    /**
-     * @inheritDoc
-     */
-    public function validate($uploadedFile)
+    public function validate($input): bool
     {
-        $mimeType = $this->getUploadedFileMimeType($uploadedFile);
-        if (!\in_array($this->getUploadedFileMimeType($uploadedFile), $this->getMimeTypes())) {
-            $this->setErrorMessage(
-                "Invalid mime type '$mimeType'. Only the following are allowed: " . implode(', ', $this->getMimeTypes())
-            );
+        return $this->doValidate($input);
+    }
+
+    private function doValidate(UploadedFile $input): bool
+    {
+        $mimeType = $this->getUploadedFileMimeType($input);
+        if ($mimeType === null) {
+            $this->setErrorMessage('Could not determine the uploaded file\'s mime type');
+
+            return false;
+        }
+
+        if (!\in_array($mimeType, $this->mimeTypes, true)) {
+            $this->setErrorMessage("Invalid mime type '$mimeType'. Only the following are allowed: " . implode(', ', $this->mimeTypes));
 
             return false;
         }
@@ -26,34 +34,32 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
         return true;
     }
 
-    /**
-     * @param array $mimeTypes
-     *
-     * @return MimeType
-     */
-    public function setMimeTypes(array $mimeTypes)
+    /** @param array<int, string> $mimeTypes */
+    public function setMimeTypes(array $mimeTypes): self
     {
         $this->mimeTypes = $mimeTypes;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getMimeTypes()
+    /** @return array<int, string> */
+    public function getMimeTypes(): array
     {
         return $this->mimeTypes;
     }
 
-    private function getUploadedFileMimeType($uploadedFile)
+    private function getUploadedFileMimeType(UploadedFile $uploadedFile): ?string
     {
-        if (class_exists('finfo') && \defined('FILEINFO_MIME_TYPE')) {
-            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        if (\extension_loaded('fileinfo')) {
+            $finfo = new \finfo(\FILEINFO_MIME_TYPE);
 
-            return $finfo->file($uploadedFile['tmp_name']);
+            return $finfo->file($uploadedFile->getTempName());
         }
 
-        return mime_content_type($uploadedFile['tmp_name']);
+        if (\function_exists('mime_content_type')) {
+            return mime_content_type($uploadedFile->getTempName());
+        }
+
+        return null;
     }
 }

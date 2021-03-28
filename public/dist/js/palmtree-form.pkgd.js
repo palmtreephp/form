@@ -1,5 +1,5 @@
 /**
- * jquery-bsalert v1.0.3
+ * jquery-bsalert v2.0.0
  *
  * @author Andy Palmer <andy@andypalmer.me>
  * @license MIT
@@ -12,7 +12,7 @@
         define(["jquery"], factory);
     } else if (typeof module === "object" && module.exports) {
         // Node/CommonJS
-        module.exports = factory;
+        module.exports = factory(require("jquery"));
     } else {
         // Browser globals
         factory(jQuery);
@@ -21,68 +21,47 @@
     /* jshint unused: vars */
     "use strict";
 
-    var instances = [];
-
     var pluginName = "bsAlert";
+
+    var instances = {};
+    var instanceIdCounter = -1;
 
     var publicAPI = {
         destroy: function () {
             this.clear();
+            var instanceId = this.$el.data(pluginName + ".id");
+            this.$el.removeData(pluginName + ".id");
+            delete instances[instanceId];
         },
 
         show: function () {
             if ($.isFunction(this.options.position)) {
                 this.options.position.call(this, this.getAlert());
+            } else if (this.options.position === "after") {
+                this.$el.after(this.getAlert());
             } else {
-                switch (this.options.position) {
-                    case "after":
-                        this.$el.after(this.getAlert());
-                        break;
-                    default:
-                        this.$el.before(this.getAlert());
-                        break;
-                }
+                this.$el.before(this.getAlert());
             }
         },
 
         clear: function () {
-            for (var i = 0; i < instances.length; i++) {
-                instances[i].$alert.remove();
-            }
+            instances[this.$el.data(pluginName + ".id")].$alert.remove();
         }
     };
 
     var privateAPI = {
-        init: function () {
-            if (this.options.clear) {
-                this.clear();
-            }
-
-            this.show();
-        },
-
         getAlert: function () {
-            var $alert = $("<div />");
-
-            $alert
+            var $alert = $("<div />")
                 .attr("role", "alert")
                 .addClass("alert alert-" + this.options.type)
-                .append(
-                    document.createTextNode(this.getContent(this.options.content))
-                );
+                .append(document.createTextNode(" " + this.getContent(this.options.content)));
 
             if (this.options.icons && this.options.icons[this.options.type]) {
-                var $icon = $("<span />").addClass(
-                    this.options.icons[this.options.type]
-                );
-
-                $alert.prepend($icon);
+                $alert.prepend($("<span />").addClass(this.options.icons[this.options.type]));
             }
 
             if (this.options.dismissible) {
-                $alert.addClass("alert-dismissible");
-
-                $alert.append(
+                $alert.addClass("alert-dismissible").append(
                     $("<button />")
                         .attr({
                             type: "button",
@@ -100,33 +79,17 @@
         },
 
         getContent: function (arg) {
-            var _this = this,
-                content = "";
-
-            switch (typeof arg) {
-                case "function":
-                    content = arg.call(_this);
-                    break;
-                case "object":
-                    $.each(arg, function (i, part) {
-                        content += this.getContent(part);
-                    });
-                    break;
-                default:
-                    content = arg;
-                    break;
-            }
-
-            return content;
+            return $.isFunction(arg) ? arg.call(this) : arg;
         }
     };
 
-    function Plugin(element, options) {
-        this.$el = $(element);
+    function Plugin($element, options, instanceId) {
+        $element.data(pluginName + ".id", instanceId);
+        this.$el = $element;
         this.$alert = null;
         this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        this.show();
     }
 
     Plugin.prototype = $.extend({}, publicAPI, privateAPI);
@@ -134,39 +97,32 @@
     $.fn[pluginName] = function () {
         var args = arguments;
 
-        return this.each(function (i) {
-            if (
-                args.length === 2 &&
-                typeof args[0] === "string" &&
-                typeof args[1] === "string"
-            ) {
-                args[0] = {
-                    type: args[0],
-                    content: args[1]
-                };
+        var instanceId = this.data(pluginName + ".id");
+
+        if (typeof instanceId === "undefined") {
+            instanceId = ++instanceIdCounter;
+        }
+
+        if (instances.hasOwnProperty(instanceId)) {
+            if (typeof args[0] === "string" && $.isFunction(publicAPI[args[0]])) {
+                return publicAPI[args[0]].apply(instances[instanceId], Array.prototype.slice.call(args, 1));
             }
 
-            if (
-                instances[i] &&
-                typeof args[0] === "string" &&
-                $.isFunction(publicAPI[args[0]])
-            ) {
-                publicAPI[args[0]].apply(
-                    instances[i],
-                    Array.prototype.slice.call(args, 1)
-                );
-            } else {
-                instances[i] = new Plugin(this, args[0]);
-            }
-        });
+            instances[instanceId].destroy();
+        }
+
+        if (typeof args[0] !== "object") {
+            args[0] = { type: args[0], content: args[1] };
+        }
+
+        instances[instanceId] = new Plugin(this, args[0], instanceId);
     };
 
     $.fn[pluginName].defaults = {
-        type: "danger", // danger, warning, info, success
+        type: "danger", // one of danger, warning, info or success
         content: "",
-        clear: true,
         dismissible: false,
-        position: "default",
+        position: "before",
         icons: {
             danger: "fa fa-exclamation-circle",
             warning: "fa fa-question-circle",
@@ -175,7 +131,7 @@
         }
     };
 
-    //noinspection JSAnnotator
+    // noinspection JSAnnotator
     return $.fn[pluginName];
 
 });
@@ -186,21 +142,19 @@
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
+        module.exports = factory(require('jquery'));
     } else {
         factory(window.jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     $(function () {
         $('.palmtree-form').on('change', '.custom-file-input', function () {
-            $(this)
-                .next('.custom-file-label')
-                .html(this.files[0].name);
+            $(this).next('.custom-file-label').html(this.files[0].name);
         });
     });
-}));
+});
 
 (function (factory) {
     'use strict';
@@ -208,83 +162,63 @@
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
+        module.exports = factory(require('jquery'));
     } else {
         factory(window.jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     $(function () {
         $('.palmtree-form').each(function () {
-            var $recaptcha = $(this).find('.g-recaptcha');
-
-            if ($recaptcha && $.isFunction($.fn.palmtreeRecaptcha)) {
-                $recaptcha.palmtreeRecaptcha(this);
-            }
+            $(this).find('.g-recaptcha-autoload').palmtreeRecaptcha(this);
         });
     });
 
     var pluginName = 'palmtreeRecaptcha';
 
-    function Plugin(element, form, options) {
+    /**
+     *
+     * @param {HTMLElement} element
+     * @param {HTMLElement} form
+     * @constructor
+     */
+    function Plugin(element, form) {
         this.$el = $(element);
         this.$form = $(form);
-        this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        var _this = this;
+
+        window[this.$el.data('onload')] = function () {
+            var widgetId = window.grecaptcha.render(_this.$el.attr('id'), {
+                sitekey: _this.$el.data('site_key'),
+                callback: function (response) {
+                    var $formControl = $('#' + _this.$el.data('form_control'));
+                    $formControl.val(response);
+                    if (_this.$form.palmtreeForm('isInitialized')) {
+                        _this.$form.palmtreeForm('clearState', $formControl);
+                    }
+                }
+            });
+
+            _this.$form.on('error.palmtreeForm success.palmtreeForm', function () {
+                window.grecaptcha.reset(widgetId);
+            });
+        };
+
+        $.getScript(this.$el.data('script_url'));
     }
 
-    var publicAPI = {};
-
-    var privateAPI = {
-        init: function () {
-            var _this = this;
-
-            window[this.$el.data('onload')] = function () {
-                var widgetId = window.grecaptcha.render(_this.$el.attr('id'), {
-                    sitekey: _this.$el.data('site_key'),
-                    callback: function (response) {
-                        var $formControl = $('#' + _this.$el.data('form_control'));
-                        $formControl.val(response);
-                        if (_this.$form.palmtreeForm('isInitialized')) {
-                            _this.$form.palmtreeForm('clearState', $formControl);
-                        }
-                    }
-                });
-
-                _this.$form.on('error.palmtreeForm success.palmtreeForm', function () {
-                    window.grecaptcha.reset(widgetId);
-                });
-            };
-
-            $.getScript(this.$el.data('script_url'));
-        }
-    };
-
-    Plugin.prototype = $.extend({}, publicAPI, privateAPI);
-
-    $.fn[pluginName] = function () {
-        var args = arguments;
-
+    $.fn[pluginName] = function (form) {
         return this.each(function () {
-                var plugin = $(this).data(pluginName);
-                if (!plugin) {
-                    plugin = new Plugin(this, args[0]);
-                    $(this).data(pluginName, plugin);
-                }
-
-                if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
-                    plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
-                }
+            if (!$(this).data(pluginName)) {
+                $(this).data(pluginName, new Plugin(this, form));
             }
-        );
+        });
     };
-
-    $.fn[pluginName].defaults = {};
 
     return $.fn[pluginName];
-}));
+});
 
 /**
  * jQuery plugin to assist with adding/removing of entries
@@ -301,67 +235,65 @@
  * @author Andy Palmer
  */
 (function (factory) {
-    // Universal Module Definition
-    /* jshint strict: false */
-    if (typeof module === 'object' && module.exports) {
-        // Node/CommonJS (Browserify/Webpack)
-        module.exports = factory;
-    } else if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
+    'use strict';
+    /* global define:false */
+    if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory(require('jquery'));
     } else {
-        // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     var pluginName = 'palmtreeFormCollection';
 
+    /**
+     * @param {Element} element
+     * @param {{}} options
+     * @constructor
+     */
     function Plugin(element, options) {
         this.$collection = $(element);
+        this.$entriesWrapper = this.$collection.children('.palmtree-form-collection-entries');
         this.options = $.extend(true, {}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        this.$collection.data('index', this.$entriesWrapper.children().length);
+
+        this.$addEntryLink = $('<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>');
+        this.removeEntryLink = '<button type="button" class="remove-entry-link btn btn-sm btn-danger">' + this.options.labels.remove + '</button>';
+
+        var _this = this;
+
+        this.$entriesWrapper.children().each(function () {
+            _this.addRemoveLink($(this));
+        });
+
+        this.$collection.on('click', '.remove-entry-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            _this.removeEntry($(this).closest('.palmtree-form-collection-entry'));
+        });
+
+        this.$collection.after(this.$addEntryLink);
+
+        this.$addEntryLink.on('click', function (e) {
+            e.preventDefault();
+            _this.addEntry();
+        });
+
+        for (var i = this.getTotalEntries(); i < this.options.minEntries; i++) {
+            this.addEntry();
+        }
+
+        if (this.hasMaxEntries()) {
+            this.$addEntryLink.addClass('disabled');
+        }
     }
 
     Plugin.prototype = {
-        init: function () {
-            var _this = this;
-
-            this.$collection.data('index', this.$collection.find(this.options.entrySelector).length);
-
-            this.$collection.find(this.options.entrySelector).each(function () {
-                _this.addRemoveLink($(this));
-            });
-
-            this.$collection.on('click', '.remove-entry-link', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                _this.removeEntry($(this).closest('.palmtree-form-collection-entry'));
-            });
-
-            this.$addEntryLink = $('<button type="button" class="add-entry-link btn btn-primary">' + this.options.labels.add + '</button>');
-
-            this.$collection.after(this.$addEntryLink);
-
-            this.$addEntryLink.on('click', function (e) {
-                e.preventDefault();
-                _this.addEntry();
-            });
-
-            if (typeof this.options.minEntries === 'number') {
-                for (var i = 0; i <= this.options.minEntries; i++) {
-                    _this.addEntry();
-                }
-            }
-
-            if (this.hasMaxEntries()) {
-                this.$addEntryLink.addClass('disabled');
-            }
-        },
-
         addEntry: function () {
             if (this.hasMaxEntries()) {
                 return false;
@@ -373,8 +305,9 @@
             if (this.options.prototype) {
                 prototype = this.options.prototype;
             } else {
-                prototype = this.$collection.data('prototype');
-                prototype = prototype.replace(/__name__label__/g, index).replace(/__name__/g, index)
+                prototype = this.$collection.data('prototype')
+                    .replace(/\[-1]/g, '[' + index + ']')
+                    .replace(/(id|for)="([^\s]+)--1"/g, '$1="$2-' + index + '"');
             }
 
             var $entry = $(prototype);
@@ -383,20 +316,24 @@
 
             this.addRemoveLink($entry);
 
-            this.$collection.append($entry);
+            this.$entriesWrapper.append($entry);
 
             this.$collection.data('index', index + 1);
 
             this.$collection.trigger('addedEntry.palmtreeFormCollection', [$entry, this]);
 
             if (this.hasMaxEntries()) {
-                this.$addEntryLink.addClass('disabled')
+                this.$addEntryLink.addClass('disabled');
             }
         },
 
+        /**
+         *
+         * @param {jQuery} $entry
+         */
         removeEntry: function ($entry) {
-            if (typeof this.options.minEntries === 'number' && this.options.minEntries === this.getTotalEntries()) {
-                return false;
+            if (this.options.minEntries === this.getTotalEntries()) {
+                return;
             }
 
             this.$collection.triggerHandler('removeEntry.palmtreeFormCollection', [$entry, this]);
@@ -406,32 +343,30 @@
             this.$collection.triggerHandler('removedEntry.palmtreeFormCollection', [this]);
 
             if (!this.hasMaxEntries()) {
-                this.$addEntryLink.removeClass('disabled')
+                this.$addEntryLink.removeClass('disabled');
             }
         },
 
         addRemoveLink: function ($entry) {
-            $entry.append('<button type="button" class="remove-entry-link btn btn-sm btn-danger">' + this.options.labels.remove + '</button>');
+            $entry.append($(this.removeEntryLink));
         },
 
         /**
-         *
          * @returns {number}
          */
         getTotalEntries: function () {
-            return this.$collection.find(this.options.entrySelector).length;
+            return this.$entriesWrapper.children().length;
         },
 
         /**
-         *
          * @returns {boolean}
          */
         hasMaxEntries: function () {
-            return typeof this.options.maxEntries === 'number' && this.options.maxEntries === this.getTotalEntries();
+            return this.options.maxEntries > -1 && this.getTotalEntries() >= this.options.maxEntries;
         }
     };
 
-    $.fn[pluginName] = function (options) {
+    $.fn[pluginName] = function () {
         var args = arguments;
         return this.each(function () {
             var plugin = $(this).data(pluginName);
@@ -448,16 +383,15 @@
     };
 
     $.fn[pluginName].defaults = {
-        entrySelector: '> div > .palmtree-form-collection-entry',
         prototype: null,
         labels: {
             add: 'Add Entry',
             remove: 'Remove'
         },
-        minEntries: null,
-        maxEntries: null
+        minEntries: 0,
+        maxEntries: -1
     };
-}));
+});
 
 (function (factory) {
     'use strict';
@@ -469,7 +403,7 @@
     } else {
         factory(jQuery);
     }
-}(function ($) {
+})(function ($) {
     'use strict';
 
     $(function () {
@@ -482,24 +416,41 @@
 
     var pluginName = 'palmtreeForm';
 
+    /**
+     * @param {Element} element
+     * @param {{}} options
+     * @constructor
+     */
     function Plugin(element, options) {
         this.$form = $(element);
         this.$submitButton = this.$form.find('[type=submit]').last();
         this.options = $.extend({}, $.fn[pluginName].defaults, options);
 
-        this.init();
+        var _this = this;
+
+        this.$form.on('submit.palmtreeForm', function (event) {
+            event.preventDefault();
+            _this.onSubmit();
+        });
     }
 
     var publicAPI = {
+        /**
+         * @param {jQuery} $formControls
+         */
         clearState: function ($formControls) {
             this.setState($formControls, '');
         },
+        /**
+         * @param {jQuery} $formControls
+         * @param {string} state
+         */
         setState: function ($formControls, state) {
             var _this = this;
             $formControls.each(function () {
                 var $formControl = $(this),
-                    $formGroup   = $(this).closest('.form-group'),
-                    $feedback    = $formGroup.find('.palmtree-invalid-feedback');
+                    $formGroup = $(this).closest('.form-group'),
+                    $feedback = $formGroup.find('.palmtree-invalid-feedback');
 
                 // Remove all states first.
                 for (var i = 0; i < _this.options.controlStates.length; i++) {
@@ -508,13 +459,13 @@
 
                 if (!state) {
                     $feedback.hide();
-                } else if ($.inArray(state, _this.options.controlStates) > -1) {
+                } else if (_this.options.controlStates.indexOf(state) > -1) {
                     $formControl.addClass('is-' + state);
                     $feedback.show();
                 }
 
                 _this.$form.trigger(_this.getEvent('statechange'), {
-                    '$formControl': $formControl,
+                    $formControl: $formControl,
                     state: state
                 });
             });
@@ -523,23 +474,11 @@
 
     var privateAPI = {
         /**
-         * Initialises the plugin instance.
-         */
-        init: function () {
-            var _this = this;
-
-            this.$form.on('submit.palmtreeForm', function (event) {
-                event.preventDefault();
-                _this.onSubmit();
-            });
-        },
-
-        /**
          * Handler for the form element's submit event.
          */
         onSubmit: function () {
-            var _this         = this,
-                $form         = this.$form,
+            var _this = this,
+                $form = this.$form,
                 $submitButton = this.$submitButton;
 
             $form.addClass('is-submitting');
@@ -555,12 +494,10 @@
                 context: _this
             });
 
-            promise
-                .done(_this.handleResponse)
-                .always(function () {
-                    $form.removeClass('is-submitting');
-                    $submitButton.removeClass('disabled').prop('disabled', false);
-                });
+            promise.done(_this.handleResponse).always(function () {
+                $form.removeClass('is-submitting');
+                $submitButton.removeClass('disabled').prop('disabled', false);
+            });
 
             $form.trigger(this.getEvent('promise'), {
                 promise: promise
@@ -568,14 +505,7 @@
         },
 
         /**
-         *
-         * @param {object} response
-         *
-         * @param {boolean} response.success
-         *
-         * @param {object} response.data
-         * @param {string} response.data.message
-         * @param {object} response.data.errors
+         * @param {{data: {}, message: string, errors: {}, success: boolean}} response
          *
          * @returns {boolean}
          */
@@ -627,14 +557,18 @@
             return true;
         },
 
+        /**
+         * @param {jQuery} $formControls
+         * @param {{}} errors
+         */
         setControlStates: function ($formControls, errors) {
             var _this = this;
 
             $formControls.each(function () {
                 var $formControl = $(this),
-                    errorKey     = $formControl.data('name'),
-                    $formGroup   = $formControl.closest('.form-group'),
-                    $feedback    = $formGroup.find('.palmtree-invalid-feedback');
+                    errorKey = $formControl.data('name'),
+                    $formGroup = $formControl.closest('.form-group'),
+                    $feedback = $formGroup.find('.palmtree-invalid-feedback');
 
                 if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
                     if (!$feedback.length) {
@@ -649,10 +583,9 @@
                     $(this)
                         .off('input.palmtreeForm change.palmtreeForm')
                         .on('input.palmtreeForm change.palmtreeForm', function () {
-                            var state = ( $(this).val().length ) ? '' : 'invalid';
+                            var state = $(this).val().length ? '' : 'invalid';
                             _this.setState($formControl, state);
                         });
-
                 } else {
                     _this.clearState($formControl);
                 }
@@ -663,7 +596,7 @@
          * Returns a new jQuery event object with the plugin's namespace.
          *
          * @param {string} eventType The type of event e.g 'click'.
-         * @param {...object} props Optional properties to add to the event object.
+         * @param {...{}} props Optional properties to add to the event object.
          * @returns {jQuery.Event}
          */
         getEvent: function (eventType, props) {
@@ -674,6 +607,10 @@
             return event;
         },
 
+        /**
+         * @param {string} content
+         * @param {string} type
+         */
         showAlert: function (content, type) {
             var _this = this;
             this.$form.bsAlert({
@@ -696,17 +633,16 @@
         }
 
         return this.each(function () {
-                var plugin = $(this).data(pluginName);
-                if (!plugin) {
-                    plugin = new Plugin(this, args[0]);
-                    $(this).data(pluginName, plugin);
-                }
-
-                if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
-                    plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
-                }
+            var plugin = $(this).data(pluginName);
+            if (!plugin) {
+                plugin = new Plugin(this, args[0]);
+                $(this).data(pluginName, plugin);
             }
-        );
+
+            if (typeof args[0] === 'string' && $.isFunction(publicAPI[args[0]])) {
+                plugin[args[0]].apply(plugin, Array.prototype.slice.call(args, 1));
+            }
+        });
     };
 
     $.fn[pluginName].defaults = {
@@ -718,4 +654,4 @@
     };
 
     return $.fn[pluginName];
-}));
+});

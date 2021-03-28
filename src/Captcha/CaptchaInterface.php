@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Captcha;
 
@@ -7,33 +7,11 @@ use Palmtree\Html\Element;
 
 interface CaptchaInterface
 {
-    /**
-     * @param mixed $answer
-     *
-     * @return bool
-     */
-    public function verify($answer);
+    /** @param mixed $input */
+    public function verify($input): bool;
 
-    /**
-     * @return string
-     */
-    public function getErrorMessage();
+    public function getErrorMessage(): string;
 
-    /**
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * @return string
-     */
-    public function getSlug();
-
-    /**
-     * @param Element $element
-     * @param Form    $form
-     *
-     * @return array
-     */
-    public function getElements(Element $element, Form $form);
+    /** @return array<int, Element> */
+    public function getElements(Element $element, Form $form): array;
 }

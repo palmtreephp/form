@@ -1,6 +1,6 @@
 {
     "name": "palmtree/form",
-    "description": "Form component for Palmtree PHP",
+    "description": "Form builder with bootstrap classes, validation, Recaptcha support, AJAX submissions and more",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -10,23 +10,32 @@
             "homepage": "https://andypalmer.me"
         }
     ],
-    "require": {
-        "php": ">=5.6",
-        "palmtree/argparser": "~1.2",
-        "palmtree/nameconverter": "~1.0",
-        "palmtree/html": "^1.0.4"
-    },
     "autoload": {
         "psr-4": {
             "Palmtree\\Form\\": "src"
         }
     },
-    "require-dev": {
-        "palmtree/php-cs-fixer-config": "^1.0"
+    "require": {
+        "php": ">=7.1",
+        "palmtree/argparser": "^2.1",
+        "palmtree/nameconverter": "^2.0",
+        "palmtree/html": "^3.0"
     },
-    "scripts": {
-        "sniff": "vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff --diff-format=udiff",
-        "fix": "vendor/bin/php-cs-fixer fix --diff",
-        "lint": "find -L .  -path ./vendor -prune -o -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l"
-    }
+    "require-dev": {
+        "palmtree/php-cs-fixer-config": "^1.1",
+        "vimeo/psalm": "^4.6"
+    },
+    "suggest": {
+        "ext-curl": "For Google Recaptcha support",
+        "ext-json": "For Google Recaptcha support",
+        "ext-fileinfo": "For mime type upload validation"
+    },
+    "keywords": [
+        "form",
+        "form-builder",
+        "bootstrap",
+        "recaptcha",
+        "captcha",
+        "ajax"
+    ]
 }

@@ -1,31 +1,28 @@
-<?php
+<?php declare(strict_types=1);
 
-use Palmtree\Form\Constraint\File\Extension;
-use Palmtree\Form\Constraint\File\MimeType;
-use Palmtree\Form\Constraint\File\Size;
+use Palmtree\Form\Constraint\File as FileConstraint;
 use Palmtree\Form\FormBuilder;
 
 require __DIR__ . '/../../vendor/autoload.php';
-require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/../.bootstrap.php';
 
 $builder = new FormBuilder([
     'key'             => 'fileupload_example',
     'action'          => 'index.php',
     'ajax'            => false,
     'html_validation' => false,
-    'enc_type'        => 'multipart/form-data',
 ]);
 
 $builder->add('file', 'file', [
     'constraints' => [
-        new Size([
+        new FileConstraint\Size([
             'max' => 1024 * 100,
         ]),
-        new Extension([
-            'extensions' => ['jpg', 'gif'],
+        new FileConstraint\Extension([
+            'extensions' => ['jpg', 'gif', 'png'],
         ]),
-        new MimeType([
-            'mime_types' => ['image/jpeg', 'image/gif'],
+        new FileConstraint\MimeType([
+            'mime_types' => ['image/jpeg', 'image/gif', 'image/png'],
         ]),
     ],
 ]);
@@ -40,7 +37,7 @@ if ($form->isSubmitted() && $form->isValid()) {
     redirect('?success=1');
 }
 
-$view = template('view.php', [
+$view = template('view.phtml', [
     'form'    => $form,
     'success' => (!empty($_GET['success'])),
 ]);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -12,6 +12,8 @@ class EmailType extends TextType
     {
         parent::__construct($args);
 
-        $this->addConstraint(new Email());
+        if ($this->required) {
+            $this->addConstraint(new Email());
+        }
     }
 }

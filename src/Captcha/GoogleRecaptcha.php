@@ -1,17 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Captcha;
 
+use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 
-class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
+class GoogleRecaptcha implements CaptchaInterface
 {
-    const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
-    const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
+    private const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
+    private const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
 
-    /** @var array */
-    private static $errorCodes = [
+    private const ERROR_CODES = [
         'missing-input-secret'   => 'The secret parameter is missing.',
         'invalid-input-secret'   => 'The secret parameter is invalid or malformed.',
         'missing-input-response' => 'The response parameter is missing.',
@@ -26,17 +26,17 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
     private $ip;
     /** @var array */
     private $errors = [];
-    /** @var mixed */
+    /** @var array */
     private $verificationResult = [];
+    /** @var bool */
+    private $autoload = true;
 
     /**
-     * GoogleRecaptcha constructor.
-     *
      * @param string      $siteKey   Site key obtained from Google Recaptcha admin
      * @param string      $secretKey Secret key obtained from Google Recaptcha admin
      * @param bool|string $ip        Client's IP address. Setting to true uses $_SERVER['REMOTE_ADDR']
      */
-    public function __construct($siteKey, $secretKey, $ip = true)
+    public function __construct(string $siteKey, string $secretKey, $ip = true)
     {
         $this->siteKey   = $siteKey;
         $this->secretKey = $secretKey;
@@ -48,16 +48,17 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         $this->ip = $ip;
     }
 
-    /**
-     * Returns whether the given response was successful.
-     *
-     * @param string $response The form's 'g-recaptcha-response' field value.
-     *
-     * @return bool
-     */
-    public function verify($response)
+    public function verify($input): bool
     {
-        $result = $this->getVerificationResult($response);
+        return $this->doVerify($input);
+    }
+
+    /**
+     * @param string $input The form's 'g-recaptcha-response' field value.
+     */
+    protected function doVerify(string $input): bool
+    {
+        $result = $this->getVerificationResult($input);
 
         if ($result['success']) {
             return true;
@@ -70,49 +71,70 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         return false;
     }
 
-    public function getElements(Element $formControl, Form $form)
+    /** {@inheritDoc} */
+    public function getElements(Element $element, Form $form): array
     {
-        $controlId = $formControl->getAttribute('id');
+        if (!$element->attributes['id']) {
+            $element->attributes['id'] = 'g-recaptcha-' . uniqid();
+        }
 
-        $formControl->removeClass('palmtree-form-control');
-        $formControl->addAttribute('hidden');
+        $controlId = $element->attributes['id'];
+
+        unset($element->classes['palmtree-form-control']);
+
+        $element->attributes->set('hidden');
 
         // Placeholder Element that actually displays the captcha
         $placeholderId = sprintf('%s_placeholder', $controlId);
 
         $placeholder = new Element('div.palmtree-form-control.g-recaptcha');
-        $placeholder->addAttribute('id', $placeholderId);
-        $placeholder->addDataAttribute('name', $formControl->getAttribute('data-name'));
-        $formControl->removeAttribute('data-name');
 
-        $placeholder->addDataAttribute('site_key', $this->siteKey);
-        $placeholder->addDataAttribute('form_control', $controlId);
+        $placeholder->attributes['id'] = $placeholderId;
+
+        if (!$element->attributes['data-name']) {
+            throw new OutOfBoundsException('Required data-name attribute missing from recaptcha element');
+        }
+
+        $placeholder->attributes->setData('name', $element->attributes['data-name']);
+
+        unset($element->attributes['data-name']);
+
+        $placeholder->attributes->setData('site_key', $this->siteKey);
+        $placeholder->attributes->setData('form_control', $controlId);
 
         $onloadCallback = sprintf('%s_onload', str_replace('-', '_', $controlId));
-        $placeholder->addDataAttribute('script_url', $this->getScriptSrc($onloadCallback));
-        $placeholder->addDataAttribute('onload', $onloadCallback);
+        $placeholder->attributes->setData('script_url', $this->getScriptSrc($onloadCallback));
+        $placeholder->attributes->setData('onload', $onloadCallback);
 
-        $elements = [
+        if ($this->autoload) {
+            $placeholder->classes[] = 'g-recaptcha-autoload';
+        }
+
+        return [
             $placeholder,
-            $formControl,
+            $element,
         ];
+    }
 
-        return $elements;
+    public function getErrorMessage(): string
+    {
+        if (empty($this->errors)) {
+            return '';
+        }
+
+        $error = reset($this->errors);
+
+        return self::ERROR_CODES[$error] ?? $error;
     }
 
     /**
      * Returns the recaptcha API script source with an onload callback.
-     *
-     * @param string $onloadCallbackName
-     *
-     * @return string
      */
-    protected function getScriptSrc($onloadCallbackName)
+    private function getScriptSrc(string $onloadCallbackName): string
     {
-        $url = static::SCRIPT_URL;
+        $url = self::SCRIPT_URL;
 
-        $queryArgs = [];
-        parse_str(parse_url($url, PHP_URL_QUERY), $queryArgs);
+        parse_str(parse_url($url, \PHP_URL_QUERY) ?? '', $queryArgs);
 
         $queryArgs['onload'] = $onloadCallbackName;
         $queryArgs['render'] = 'explicit';
@@ -122,17 +144,7 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         return $url;
     }
 
-    public function getErrorMessage()
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @param string $response
-     *
-     * @return array
-     */
-    protected function getVerificationResult($response)
+    private function getVerificationResult(string $response): array
     {
         if (!isset($this->verificationResult[$response])) {
             $postFields = [
@@ -146,12 +158,9 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
 
             $handle = curl_init(self::VERIFY_URL);
 
-            curl_setopt($handle, CURLOPT_POST, \count($postFields));
-            curl_setopt($handle, CURLOPT_POSTFIELDS, http_build_query($postFields));
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-
-            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($handle, \CURLOPT_POST, \count($postFields));
+            curl_setopt($handle, \CURLOPT_POSTFIELDS, http_build_query($postFields));
+            curl_setopt($handle, \CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($handle);
 
@@ -163,5 +172,17 @@ class GoogleRecaptcha extends AbstractCaptcha implements CaptchaInterface
         }
 
         return $this->verificationResult[$response];
+    }
+
+    public function setAutoload(bool $autoload): self
+    {
+        $this->autoload = $autoload;
+
+        return $this;
+    }
+
+    public function isAutoload(): bool
+    {
+        return $this->autoload;
     }
 }

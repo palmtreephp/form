@@ -1,42 +1,41 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
-use Palmtree\Html\Element;
-
 class OptionType extends AbstractType
 {
+    /** @var string */
     protected $tag = 'option';
+    /** @var string */
     protected $value;
 
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
         $elements = [];
 
-        $element = parent::getElement();
+        $element = $this->getElement();
 
-        $element
-            ->setAttributes([
-                'value' => $this->getValue(),
-            ], true)
-            ->setClasses([])
-            ->setInnerText($this->getLabelElement()->getInnerText());
+        $element->attributes->clear();
+        $element->attributes['value'] = $this->value;
 
-        $data    = $this->getData();
-        $compare = true;
+        $element->classes->clear();
+
+        if ($labelElement = $this->getLabelElement()) {
+            $element->setInnerText($labelElement->getInnerText());
+        }
+
+        $data = $this->data;
 
         if (\is_array($data)) {
-            $key = array_search($this->getValue(), $data);
+            $key = array_search($this->value, $data, false);
 
             if ($key !== false) {
                 $data = $data[$key];
-            } else {
-                $compare = false;
             }
         }
 
-        if ($compare && strcmp($data, $this->getValue()) === 0) {
-            $element->addAttribute('selected');
+        if (is_scalar($data) && (string)$data === $this->value) {
+            $element->attributes->set('selected');
         }
 
         $elements[] = $element;
@@ -44,23 +43,20 @@ class OptionType extends AbstractType
         return $elements;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return OptionType
-     */
-    public function setValue($value)
+    public function setValue(string $value): self
     {
         $this->value = $value;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getPlaceHolderAttribute(): string
+    {
+        return '';
     }
 }

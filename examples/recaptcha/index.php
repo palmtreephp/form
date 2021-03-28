@@ -1,15 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 use Palmtree\Form\Captcha\GoogleRecaptcha;
 use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Type\TextType;
 
 require __DIR__ . '/../../vendor/autoload.php';
-require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/../.bootstrap.php';
 
 $builder = new FormBuilder([
     'key'             => 'recaptcha',
-    'method'          => 'POST',
     'html_validation' => false,
 ]);
 
@@ -31,7 +30,7 @@ if ($form->isSubmitted() && $form->isValid()) {
     redirect('?success=1');
 }
 
-$view = template('view.php', [
+$view = template('view.phtml', [
     'form'    => $form,
     'success' => (!empty($_GET['success'])),
 ]);

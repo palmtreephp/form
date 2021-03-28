@@ -1,6 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
+
+use Palmtree\Html\Element;
 
 class ButtonType extends AbstractType
 {
@@ -14,20 +16,21 @@ class ButtonType extends AbstractType
         'classes'     => [],
     ];
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
-        $element->addAttribute('type', $this->getType());
-        $element->setInnerText($this->getLabel());
+        $element->attributes['type'] = $this->type;
 
-        $element->removeClass('form-control');
+        $element->setInnerText($this->label ?? '');
+
+        unset($element->classes['form-control']);
 
         return $element;
     }
 
-    public function getLabelElement()
+    public function getLabelElement(): ?Element
     {
-        return false;
+        return null;
     }
 }

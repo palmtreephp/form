@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -10,64 +10,45 @@ class SelectType extends AbstractType
     /** @var bool */
     protected $multiple = false;
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
-        $element->removeAttribute('type');
+        unset($element->attributes['type']);
 
-        if ($this->isMultiple()) {
-            $element->addAttribute('multiple');
-        } else {
-            if ($placeholder = $element->getAttribute('placeholder')) {
-                $element->removeAttribute('placeholder');
+        if ($this->multiple) {
+            $element->attributes->set('multiple');
+        } elseif ($placeholder = $element->attributes['placeholder']) {
+            unset($element->attributes['placeholder']);
 
-                $option = new Element('option');
-                $option
-                    ->setInnerText($placeholder)
-                    ->addAttribute('value', '');
+            $option = Element::create('option')->setInnerText($placeholder);
 
-                $element->addChild($option);
-            }
+            $option->attributes['value'] = '';
+
+            $element->addChild($option);
         }
 
         return $element;
     }
 
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
-        $formId = $this->getForm()->getKey();
-        $name   = $this->getName();
-
-        if ($this->isGlobal()) {
-            return $name;
+        $value = $this->form->getKey() . "[$this->name]";
+        if ($this->multiple) {
+            $value .= '[]';
         }
 
-        $format = '%s[%s]';
-
-        if ($this->isMultiple()) {
-            $format .= '[]';
-        }
-
-        return sprintf($format, $formId, $name);
+        return $value;
     }
 
-    /**
-     * @param bool $multiple
-     *
-     * @return SelectType
-     */
-    public function setMultiple($multiple)
+    public function setMultiple(bool $multiple): self
     {
         $this->multiple = $multiple;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMultiple()
+    public function isMultiple(): bool
     {
         return $this->multiple;
     }

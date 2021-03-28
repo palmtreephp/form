@@ -1,61 +1,52 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
 use Palmtree\Html\Element;
-use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 class CheckboxType extends AbstractType
 {
-    protected $type  = 'checkbox';
+    /** @var string */
+    protected $type = 'checkbox';
+    /** @var string */
     protected $value = '1';
-
+    /** @var bool */
     protected $siblings = false;
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
-        $element
-            ->removeClass('form-control')
-            ->addClass('form-check-input')
-            ->addAttribute('value', $this->getValue());
+        unset($element->classes['form-control']);
+        $element->classes[] = 'form-check-input';
 
-        $data    = $this->getData();
-        $compare = true;
+        $element->attributes['value'] = $this->value;
+
+        $data = $this->data;
 
         if (\is_array($data)) {
-            $key = array_search($this->getValue(), $data);
+            $key = array_search($this->value, $data, false);
 
             if ($key !== false) {
                 $data = $data[$key];
-            } else {
-                $compare = false;
             }
         }
 
-        if ($compare && strcmp($data, $this->getValue()) === 0) {
-            $element->addAttribute('checked');
+        if (is_scalar($data) && (string)$data === $this->value) {
+            $element->attributes->set('checked');
         }
 
         return $element;
     }
 
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
-        if ($wrapper instanceof Element) {
-            $wrapper->addClass('form-check');
-        }
-
-        $formId   = $this->form->getKey();
         $elements = [];
 
         $element = $this->getElement();
 
-        $name = $this->getName();
-
-        if (!$element->getAttribute('id')) {
-            $element->addAttribute('id', "$formId-$name");
+        if (!$element->attributes['id']) {
+            $element->attributes['id'] = $this->form->getKey() . "-$this->name";
         }
 
         $elements[] = $element;
@@ -63,97 +54,67 @@ class CheckboxType extends AbstractType
         $label = $this->getLabelElement();
 
         if ($label instanceof Element) {
-            $label->addClass('form-check-label');
+            $label->classes[] = 'form-check-label';
 
             $elements[] = $label;
         }
 
-        if (!$this->isValid()) {
-            $error = $this->getForm()->createInvalidElement();
-            $error->setInnerText($this->getErrorMessage());
-            $elements[] = $error;
+        if (!$this->isValid() && $this->errorMessage !== null) {
+            $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
         }
 
         return $elements;
     }
 
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
-        $formId = $this->getForm()->getKey();
-        $name   = $this->getName();
-
-        if ($this->isGlobal()) {
-            return $name;
+        $value = $this->form->getKey() . "[$this->name]";
+        if ($this->siblings) {
+            $value .= '[]';
         }
 
-        $format = '%s[%s]';
-
-        if ($this->hasSiblings()) {
-            $format .= '[]';
-        }
-
-        return sprintf($format, $formId, $name);
+        return $value;
     }
 
-    public function isValid()
+    public function isValid(): bool
     {
-        if (!$this->getForm()->isSubmitted() || !$this->isRequired()) {
+        if (!$this->required || !$this->form->isSubmitted()) {
             return true;
         }
 
-        return $this->getData() && filter_var($this->getData(), FILTER_VALIDATE_BOOLEAN);
+        return $this->data && filter_var($this->data, \FILTER_VALIDATE_BOOLEAN);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return CheckboxType
-     */
-    public function setValue($value)
+    public function setValue(string $value): self
     {
         $this->value = $value;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
 
-    /**
-     * @param bool $siblings
-     *
-     * @return CheckboxType
-     */
-    public function setSiblings($siblings)
+    public function setSiblings(bool $siblings): self
     {
         $this->siblings = $siblings;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSiblings()
+    public function hasSiblings(): bool
     {
-        return (bool)$this->siblings;
+        return $this->siblings;
     }
 
-    /**
-     * @return mixed|string
-     */
-    protected function getIdAttribute()
+    protected function getIdAttribute(): string
     {
         $attribute = parent::getIdAttribute();
 
-        if ($this->getParent()) {
-            $converter = new SnakeCaseToHumanNameConverter();
-            $attribute .= '-' . $converter->denormalize($this->getValue());
+        if ($this->parent) {
+            $attribute .= '-' . $this->nameConverter->denormalize($this->value);
         }
 
         return $attribute;

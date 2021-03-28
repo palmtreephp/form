@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use Palmtree\Form\Constraint\Number;
 use Palmtree\Form\Form;
@@ -6,7 +6,7 @@ use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Type\TextType;
 
 require __DIR__ . '/../../vendor/autoload.php';
-require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/../.bootstrap.php';
 
 $builder = new FormBuilder([
     'key'             => 'ajax_example',
@@ -42,6 +42,16 @@ $builder
         'choices'       => [
             '1' => 'Yes',
             '2' => 'No',
+        ],
+    ])
+    ->add('preferences', 'choice', [
+        'expanded'      => true,
+        'multiple'      => true,
+        'error_message' => 'Please select preferences',
+        'choices'       => [
+            '1' => 'Yes',
+            '2' => 'No',
+            '3' => 'Maybe',
         ],
     ])
     ->add('age', 'choice', [
@@ -85,7 +95,7 @@ if ($form->isSubmitted() && Form::isAjaxRequest()) {
     }
 }
 
-$view = template('view.php', [
+$view = template('view.phtml', [
     'form'    => $form,
     'success' => (!empty($_GET['success'])),
 ]);

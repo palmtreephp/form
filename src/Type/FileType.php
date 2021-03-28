@@ -1,55 +1,60 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
+use Palmtree\Form\UploadedFile;
 use Palmtree\Html\Element;
 
 class FileType extends AbstractType
 {
-    private $custom     = true;
-    private $browseText = 'Browse';
-
+    /** @var string */
     protected $type = 'file';
+    /** @var bool */
+    private $custom = true;
+    /** @var string */
+    private $browseText = 'Browse';
+    /** @var UploadedFile|null */
+    private $normData = null;
 
     public function __construct(array $args = [])
     {
         parent::__construct($args);
 
-        if ($this->isCustom() && !$this->getLabel()) {
-            $this->setLabel('Choose file...');
+        if ($this->custom && !$this->label) {
+            $this->label = 'Choose file...';
         }
     }
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
-        $element->removeAttribute('value');
+        unset($element->attributes['value']);
 
-        if ($this->isCustom()) {
-            $element->addClass('custom-file-input');
+        if ($this->custom) {
+            $element->classes[] = 'custom-file-input';
         }
 
         return $element;
     }
 
-    public function getLabelElement()
+    public function getLabelElement(): ?Element
     {
         $element = parent::getLabelElement();
 
-        if ($element && $this->isCustom()) {
-            $element->addClass('custom-file-label');
-            $element->addDataAttribute('browse', $this->getBrowseText());
+        if ($element && $this->custom) {
+            $element->classes[] = 'custom-file-label';
+            $element->attributes->setData('browse', $this->browseText);
         }
 
         return $element;
     }
 
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
-        $elements = parent::getElements($wrapper);
+        $elements = parent::getElements();
 
-        if (!$this->isCustom()) {
+        if (!$this->custom) {
             return $elements;
         }
 
@@ -59,42 +64,56 @@ class FileType extends AbstractType
         $customFileWrapper->addChild($elements[1]);
         unset($elements[1]);
 
-        foreach ($elements as $element) {
-            $customFileWrapper->addChild($element);
-        }
+        $customFileWrapper->addChild(...$elements);
 
         return [$customFileWrapper];
     }
 
-    /**
-     * @param bool $custom
-     */
-    public function setCustom($custom)
+    public function setCustom(bool $custom): void
     {
         $this->custom = $custom;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCustom()
+    public function isCustom(): bool
     {
         return $this->custom;
     }
 
-    /**
-     * @param string $browseText
-     */
-    public function setBrowseText($browseText)
+    public function setBrowseText(string $browseText): void
     {
         $this->browseText = $browseText;
     }
 
-    /**
-     * @return string
-     */
-    public function getBrowseText()
+    public function getBrowseText(): string
     {
         return $this->browseText;
+    }
+
+    public function isValid(): bool
+    {
+        if (!$this->form->isSubmitted()) {
+            return true;
+        }
+
+        if (!parent::isValid()) {
+            return false;
+        }
+
+        if (($uploadedFile = $this->getData()) && $uploadedFile->getErrorCode() > 0) {
+            $this->setErrorMessage($uploadedFile->getErrorMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getData(): ?UploadedFile
+    {
+        if ($this->normData === null && $this->data !== null) {
+            $this->normData = new UploadedFile($this->data);
+        }
+
+        return $this->normData;
     }
 }

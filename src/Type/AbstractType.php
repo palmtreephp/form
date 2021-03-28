@@ -1,40 +1,49 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Constraint\ConstraintInterface;
 use Palmtree\Form\Constraint\NotBlank;
+use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
-abstract class AbstractType
+abstract class AbstractType implements TypeInterface
 {
+    /** @var string */
     protected $tag = 'input';
+    /** @var string */
     protected $type;
+    /** @var string */
     protected $name;
+    /** @var mixed */
     protected $data;
+    /** @var string|null */
     protected $label;
-    protected $userInput    = true;
-    protected $global       = false;
-    protected $required     = true;
+    /** @var bool */
+    protected $userInput = true;
+    /** @var bool */
+    protected $required = true;
+    /** @var string|null */
     protected $errorMessage = 'Please fill in this field';
     /** @var Form */
     protected $form;
-    /** @var AbstractType|null */
+    /** @var TypeInterface|null */
     protected $parent;
-    /** @var AbstractType[] */
+    /** @var array<string|int, TypeInterface> */
     protected $children = [];
+    /** @var int */
     protected $position = 0;
     /** @var array */
     protected $args = [];
-    /** @var ConstraintInterface[] */
+    /** @var array<int, ConstraintInterface> */
     protected $constraints = [];
     /** @var SnakeCaseToHumanNameConverter */
     protected $nameConverter;
-
+    /** @var array */
     public static $defaultArgs = [
         'placeholder' => true,
         'classes'     => [],
@@ -46,12 +55,12 @@ abstract class AbstractType
 
         $this->args = $this->parseArgs($args);
 
-        if ($this->isRequired()) {
+        if ($this->required && $this->errorMessage) {
             $this->addConstraint(new NotBlank($this->errorMessage));
         }
     }
 
-    protected function parseArgs($args)
+    protected function parseArgs(array $args): array
     {
         $parser = new ArgParser($args, '', new SnakeCaseToCamelCaseNameConverter());
 
@@ -60,75 +69,53 @@ abstract class AbstractType
         return $parser->resolveOptions(static::$defaultArgs);
     }
 
-    public function build()
+    public function build(): void
     {
-        foreach ($this->getChildren() as $child) {
+        foreach ($this->children as $child) {
             $child->build();
         }
     }
 
-    /**
-     * @param string $type
-     *
-     * @return self
-     */
-    public function setType($type)
+    public function setType(string $type): TypeInterface
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @param mixed $name
-     *
-     * @return self
-     */
-    public function setName($name)
+    public function setName(string $name): TypeInterface
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @param mixed $label
-     *
-     * @return self
-     */
-    public function setLabel($label)
+    public function setLabel(?string $label): TypeInterface
     {
         $this->label = $label;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLabel()
+    public function getLabel(): ?string
     {
         return $this->label;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return bool
-     */
-    public function isValid()
+    public function isValid(): bool
     {
-        if (!$this->getForm()->isSubmitted()) {
+        if (!$this->form->isSubmitted()) {
             return true;
         }
 
-        foreach ($this->getConstraints() as $constraint) {
+        foreach ($this->constraints as $constraint) {
+            // We use $this->getData() instead of $this->data here so that the
+            // data can be normalized by its type class before validation
             if (!$constraint->validate($this->getData())) {
                 $this->setErrorMessage($constraint->getErrorMessage());
 
@@ -136,7 +123,7 @@ abstract class AbstractType
             }
         }
 
-        foreach ($this->getChildren() as $child) {
+        foreach ($this->children as $child) {
             if (!$child->isValid()) {
                 return false;
             }
@@ -145,81 +132,58 @@ abstract class AbstractType
         return true;
     }
 
-    /**
-     * @return bool|Element
-     */
-    public function getLabelElement()
+    public function getLabelElement(): ?Element
     {
-        $label = $this->getLabel();
-
-        if (!$label) {
-            return false;
+        if (!$this->label) {
+            return null;
         }
 
-        $element = new Element('label');
+        $element = Element::create('label[for="' . $this->getIdAttribute() . '"]')->setInnerText($this->label);
 
-        $element->addAttribute('for', $this->getIdAttribute())->setInnerText($label);
-
-        if ($this->isRequired() && !$this->getParent()) {
-            $abbr = new Element('abbr');
-
-            $abbr->setInnerText('*')->addAttribute('title', 'Required Field');
-
-            $element->addChild($abbr);
+        if ($this->required && !$this->parent) {
+            $element->addChild(Element::create('abbr[title="Required Field"]')->setInnerText('*'));
         }
 
         return $element;
     }
 
-    /**
-     * @return Element
-     */
-    public function getElement()
+    public function getElement(): Element
     {
-        $args        = $this->args;
-        $args['tag'] = $this->getTag();
-        $element     = new Element($args);
+        $element = new Element($this->tag);
+        $element->classes->add(...$this->args['classes'] ?? []);
 
-        $attributes = [
-            'type'  => $this->getType(),
-            'id'    => $this->getIdAttribute(),
-            'name'  => $this->getNameAttribute(),
-            'value' => $this->getData(),
-        ];
+        $element->attributes->add([
+            'type' => $this->type,
+            'id'   => $this->getIdAttribute(),
+            'name' => $this->getNameAttribute(),
+        ]);
 
-        if ($attributes['type'] === 'hidden') {
-            unset($attributes['placeholder']);
-        } else {
-            if ($placeholder = $this->getPlaceHolderAttribute()) {
-                $attributes['placeholder'] = $placeholder;
-            }
+        if ($placeholder = $this->getPlaceHolderAttribute()) {
+            $element->attributes['placeholder'] = $placeholder;
         }
 
-        if ($this->isRequired() && $this->getForm()->hasHtmlValidation()) {
-            $attributes['required'] = true;
+        if ($this->required && $this->form->hasHtmlValidation()) {
+            $element->attributes['required'] = true;
         }
 
-        $element->setAttributes($attributes);
-
-        $element->addDataAttribute('name', $this->getName());
-
-        if ($this->form->hasHtmlValidation() && $this->isRequired()) {
-            $element->addAttribute('required');
+        if (!\is_array($this->data)) {
+            $element->attributes['value'] = $this->data;
         }
 
-        $element
-            ->addClass('palmtree-form-control')
-            ->addClass('form-control');
+        if ($this->name) {
+            $element->attributes->setData('name', $this->name);
+        }
+
+        if ($this->required && $this->form->hasHtmlValidation()) {
+            $element->attributes->set('required');
+        }
+
+        $element->classes->add('palmtree-form-control', 'form-control');
 
         return $element;
     }
 
-    /**
-     * @param Element|null $wrapper
-     *
-     * @return Element[]
-     */
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
         $elements = [];
 
@@ -231,70 +195,66 @@ abstract class AbstractType
 
         $element = $this->getElement();
 
-        if (!$element->getAttribute('id')) {
-            $element->addAttribute('id', $this->getIdAttribute());
+        if (!$element->attributes['id']) {
+            $element->attributes['id'] = $this->getIdAttribute();
         }
 
-        if (!$this->isValid()) {
-            $element->addClass('is-invalid');
+        $isValid = $this->isValid();
+
+        if (!$isValid) {
+            $element->classes[] = 'is-invalid';
         }
 
         $elements[] = $element;
 
-        if (!$this->isValid()) {
-            $error = $this->getForm()->createInvalidElement();
-            $error->setInnerText($this->getErrorMessage());
-            $elements[] = $error;
+        if (!$isValid && $this->errorMessage) {
+            $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
         }
 
         return $elements;
     }
 
-    /**
-     * @return string
-     */
-    public function getHumanName()
+    public function getHumanName(): string
     {
-        return $this->nameConverter->normalize($this->getName());
+        return $this->nameConverter->normalize($this->name);
     }
 
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
         $formId = $this->form->getKey();
-        $name   = $this->getName();
 
-        if ($this->isGlobal()) {
-            return $name;
+        if ($this->parent) {
+            $format = '%s[%s][%s]';
+            $args   = [$formId, $this->parent->getName(), $this->getPosition()];
+
+            if (!$this->parent instanceof CollectionType) {
+                $format .= '[%s]';
+                $args[2] = $this->parent->getPosition();
+                $args[]  = $this->name;
+            }
+
+            return vsprintf($format, $args);
         }
 
-        if ($this->getParent()) {
-            return sprintf(
-                '%s[%s][%s][%s]',
-                $formId, $this->getParent()->getName(),
-                $this->getParent()->getPosition(),
-                $name
-            );
-        }
-
-        return sprintf('%s[%s]', $formId, $name);
+        return $this->form->getKey() . "[$this->name]";
     }
 
-    protected function getIdAttribute()
+    protected function getIdAttribute(): string
     {
-        $formId = $this->form->getKey();
-        $name   = $this->getName();
+        $value = $this->form->getKey();
 
-        if ($this->isGlobal()) {
-            return $name;
+        if ($this->name) {
+            $value .= "-$this->name";
         }
 
-        return "$formId-$name";
+        if ($this->parent) {
+            $value .= '-' . $this->parent->getPosition();
+        }
+
+        return $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getPlaceHolderAttribute()
+    public function getPlaceHolderAttribute(): string
     {
         $placeholder = '';
 
@@ -307,31 +267,25 @@ abstract class AbstractType
         return $placeholder;
     }
 
-    /**
-     * @return string|array|mixed
-     */
     public function getData()
     {
         return $this->data;
     }
 
-    /**
-     * @param string|array|mixed $data
-     *
-     * @return self
-     */
-    public function setData($data)
+    public function setData($data): TypeInterface
     {
         $this->data = $data;
 
         return $this;
     }
 
-    public function mapData()
+    public function mapData(): void
     {
         if (\is_array($this->data)) {
             foreach ($this->data as $key => $value) {
-                if ($child = $this->getChild($key)) {
+                $key = (string)$key;
+                if ($this->has($key)) {
+                    $child = $this->get($key);
                     $child->setData($value);
                     $child->mapData();
                 }
@@ -339,126 +293,73 @@ abstract class AbstractType
         }
     }
 
-    /**
-     * @return mixed
-     */
-    public function getErrorMessage()
+    public function getErrorMessage(): ?string
     {
         return $this->errorMessage;
     }
 
-    /**
-     * @param mixed $errorMessage
-     *
-     * @return self
-     */
-    public function setErrorMessage($errorMessage)
+    public function setErrorMessage(string $errorMessage): TypeInterface
     {
         $this->errorMessage = $errorMessage;
 
         return $this;
     }
 
-    /**
-     * @param string $tag
-     *
-     * @return self
-     */
-    public function setTag($tag)
+    public function setTag(string $tag): TypeInterface
     {
         $this->tag = $tag;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTag()
+    public function getTag(): string
     {
         return $this->tag;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function isType($type)
-    {
-        return (string)$type === (string)$this->getType();
-    }
-
-    /**
-     * @param bool $required
-     *
-     * @return self
-     */
-    public function setRequired($required)
+    public function setRequired(bool $required): TypeInterface
     {
         $this->required = $required;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return $this->required;
     }
 
-    /**
-     * @return Form
-     */
-    public function getForm()
+    public function getForm(): Form
     {
         return $this->form;
     }
 
-    /**
-     * @param Form $form
-     *
-     * @return self
-     */
-    public function setForm(Form $form)
+    public function setForm(Form $form): TypeInterface
     {
         $this->form = $form;
 
         return $this;
     }
 
-    /**
-     * @return self|null
-     */
-    public function getParent()
+    public function getParent(): ?TypeInterface
     {
         return $this->parent;
     }
 
-    /**
-     * @param self $parent
-     *
-     * @return self
-     */
-    public function setParent(self $parent)
+    public function setParent(TypeInterface $parent): TypeInterface
     {
         $this->parent = $parent;
-        $this->setForm($parent->getForm());
+        $this->form   = $parent->getForm();
 
         return $this;
     }
 
-    /**
-     * @param self $child
-     *
-     * @return self
-     */
-    public function addChild(self $child)
+    public function addChild(TypeInterface $child): TypeInterface
     {
         if ($child->getParent() !== $this) {
             $child->setParent($this);
@@ -469,132 +370,83 @@ abstract class AbstractType
         return $this;
     }
 
-    public function add($name, $fqcn, array $options = [])
+    public function add(string $name, string $class, array $options = []): TypeInterface
     {
-        /** @var self $type */
-        $type = new $fqcn($options);
+        /** @var TypeInterface $type */
+        $type = new $class($options);
         $type->setName($name);
+
+        if ($type->getLabel() === null) {
+            $type->setLabel($type->getHumanName());
+        }
 
         $this->addChild($type);
 
         return $this;
     }
 
-    /**
-     * @return AbstractType[]
-     */
-    public function getChildren()
+    public function all(): array
     {
         return $this->children;
     }
 
-    public function getChild($name)
+    public function get(string $name): TypeInterface
     {
-        return isset($this->children[$name]) ? $this->children[$name] : null;
+        if (!$this->has($name)) {
+            throw new OutOfBoundsException("Key '$name' does not exist as a child of this field");
+        }
+
+        return $this->children[$name];
     }
 
-    /**
-     * @param mixed $position
-     */
-    public function setPosition($position)
+    public function has(string $name): bool
+    {
+        return isset($this->children[$name]);
+    }
+
+    public function setPosition(int $position): TypeInterface
     {
         $this->position = $position;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPosition()
-    {
-        return $this->position;
-    }
-
-    /**
-     * @param bool $global
-     *
-     * @return self
-     */
-    public function setGlobal($global)
-    {
-        $this->global = $global;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isGlobal()
+    public function getPosition(): int
     {
-        return $this->global;
+        return $this->position;
     }
 
-    /**
-     * @return bool
-     */
-    public function isUserInput()
+    public function isUserInput(): bool
     {
         return $this->userInput;
     }
 
-    /**
-     * @param bool $userInput
-     *
-     * @return self
-     */
-    public function setUserInput($userInput)
+    public function setUserInput(bool $userInput): TypeInterface
     {
         $this->userInput = $userInput;
 
         return $this;
     }
 
-    public function filter(array $args = [])
+    public function addConstraint(ConstraintInterface ...$constraints): TypeInterface
     {
-        foreach ($args as $key => $value) {
-            if (property_exists($this, $key)) {
-                if ($this->$key !== $value) {
-                    return false;
-                }
-            }
+        foreach ($constraints as $constraint) {
+            $this->constraints[] = $constraint;
         }
-
-        return true;
-    }
-
-    /**
-     * @param ConstraintInterface $constraint
-     *
-     * @return self
-     */
-    public function addConstraint(ConstraintInterface $constraint)
-    {
-        $this->constraints[] = $constraint;
 
         return $this;
     }
 
-    /**
-     * @param ConstraintInterface[] $constraints
-     *
-     * @return self
-     */
-    public function setConstraints($constraints)
+    /** @return array<int, ConstraintInterface> */
+    public function getConstraints(): array
+    {
+        return $this->constraints;
+    }
+
+    public function clearConstraints(): TypeInterface
     {
         $this->constraints = [];
 
-        foreach ($constraints as $constraint) {
-            $this->addConstraint($constraint);
-        }
-
         return $this;
-    }
-
-    /**
-     * @return ConstraintInterface[]
-     */
-    public function getConstraints()
-    {
-        return $this->constraints;
     }
 }

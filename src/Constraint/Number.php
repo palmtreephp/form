@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Constraint;
 
 class Number extends AbstractConstraint implements ConstraintInterface
 {
-    const ERROR_NOT_NUMERIC = 1;
-    const ERROR_TOO_SMALL   = 2;
-    const ERROR_TOO_LARGE   = 4;
+    public const ERROR_NOT_NUMERIC = 1;
+    public const ERROR_TOO_SMALL   = 2;
+    public const ERROR_TOO_LARGE   = 4;
 
     /** @var int|null */
     private $errorCode;
@@ -15,10 +15,7 @@ class Number extends AbstractConstraint implements ConstraintInterface
     /** @var int|null */
     private $max;
 
-    /**
-     * @inheritDoc
-     */
-    public function validate($input)
+    public function validate($input): bool
     {
         if (!is_numeric($input)) {
             $this->errorCode = self::ERROR_NOT_NUMERIC;
@@ -26,13 +23,13 @@ class Number extends AbstractConstraint implements ConstraintInterface
             return false;
         }
 
-        if ($this->getMin() !== null && $input < $this->getMin()) {
+        if ($this->min !== null && $input < $this->min) {
             $this->errorCode = self::ERROR_TOO_SMALL;
 
             return false;
         }
 
-        if ($this->getMax() !== null && $input > $this->getMax()) {
+        if ($this->max !== null && $input > $this->max) {
             $this->errorCode = self::ERROR_TOO_LARGE;
 
             return false;
@@ -41,65 +38,43 @@ class Number extends AbstractConstraint implements ConstraintInterface
         return true;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMin()
+    public function getMin(): ?int
     {
         return $this->min;
     }
 
-    /**
-     * @param int $min
-     *
-     * @return Number
-     */
-    public function setMin($min)
+    public function setMin(?int $min): self
     {
         $this->min = $min;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMax()
+    public function getMax(): ?int
     {
         return $this->max;
     }
 
-    /**
-     * @param int $max
-     *
-     * @return Number
-     */
-    public function setMax($max)
+    public function setMax(?int $max): self
     {
         $this->max = $max;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getErrorCode()
+    public function getErrorCode(): ?int
     {
         return $this->errorCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
-        switch ($this->getErrorCode()) {
+        switch ($this->errorCode) {
             case self::ERROR_TOO_SMALL:
-                $errorMessage = 'This value must be greater than or equal to ' . $this->getMin();
+                $errorMessage = "This value must be greater than or equal to $this->min";
                 break;
             case self::ERROR_TOO_LARGE:
-                $errorMessage = 'This value must be less than ' . $this->getMax();
+                $errorMessage = "'This value must be less than $this->max";
                 break;
             default:
                 $errorMessage = 'This value must be a number';

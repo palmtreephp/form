@@ -1,39 +1,29 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Constraint;
 
 use Palmtree\ArgParser\ArgParser;
 
-abstract class AbstractConstraint
+abstract class AbstractConstraint implements ConstraintInterface
 {
     /** @var string */
     protected $errorMessage = 'Invalid value';
 
+    /**
+     * @param array|string $args
+     */
     public function __construct($args = [])
     {
         $parser = new ArgParser($args, 'error_message');
         $parser->parseSetters($this);
     }
 
-    public static function create($args = [])
-    {
-        return new static($args);
-    }
-
-    /**
-     * @return string
-     */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return $this->errorMessage;
     }
 
-    /**
-     * @param string $message
-     *
-     * @return AbstractConstraint
-     */
-    public function setErrorMessage($message)
+    public function setErrorMessage(string $message): self
     {
         $this->errorMessage = $message;
 

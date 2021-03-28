@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -12,15 +12,17 @@ class ChoiceType extends AbstractType
     protected $expanded = false;
     /** @var bool Whether expanded choices should display inline. Has no effect if expanded is false */
     protected $inline  = true;
+    /** @var array */
     protected $choices = [];
+    /** @var string */
     protected $choiceClass;
 
     public function __construct(array $args = [])
     {
         parent::__construct($args);
 
-        if ($this->isExpanded()) {
-            if ($this->isMultiple()) {
+        if ($this->expanded) {
+            if ($this->multiple) {
                 $this->choiceClass = CheckboxType::class;
             } else {
                 $this->choiceClass = RadioType::class;
@@ -30,47 +32,47 @@ class ChoiceType extends AbstractType
         }
     }
 
-    public function getElement()
+    public function getElement(): Element
     {
         $wrapper = new Element('div');
-
-        if ($this->isExpanded()) {
+        if ($this->expanded) {
             $parent = $wrapper;
         } else {
             $select = new SelectType([
-                'name'        => $this->getName(),
-                'multiple'    => $this->isMultiple(),
+                'name'        => $this->name,
+                'multiple'    => $this->multiple,
                 'placeholder' => $this->args['placeholder'],
             ]);
 
-            $select->setForm($this->getForm());
+            $select->setForm($this->form);
 
             $parent = $select->getElement();
         }
 
         $choiceClass = $this->choiceClass;
 
-        foreach ($this->getChoices() as $value => $label) {
+        foreach ($this->choices as $value => $label) {
             $args = [
-                'data'   => $this->getData(),
+                'data'   => $this->data,
                 'parent' => $this,
             ];
 
-            if ($this->isMultiple()) {
+            if ($this->multiple) {
                 $args['siblings'] = true;
             }
 
             if (\is_array($label)) {
                 $optGroup = new Element('optgroup');
-                $optGroup->addAttribute('label', $value);
+
+                $optGroup->attributes['label'] = $value;
 
                 foreach ($label as $subValue => $subLabel) {
                     $args['label'] = $subLabel;
-                    $args['value'] = $subValue;
+                    $args['value'] = (string)$subValue;
 
                     $choice = new OptionType($args);
 
-                    $choice->setForm($this->getForm());
+                    $choice->setForm($this->form);
 
                     foreach ($choice->getElements() as $element) {
                         $optGroup->addChild($element);
@@ -80,26 +82,27 @@ class ChoiceType extends AbstractType
                 $parent->addChild($optGroup);
             } else {
                 $args['label'] = $label;
-                $args['value'] = $value;
+                $args['value'] = (string)$value;
 
                 $choiceWrapper = null;
-                if ($this->isExpanded()) {
-                    $args['name'] = $this->getName();
+                if ($this->expanded) {
+                    $args['name'] = $this->name;
 
-                    $choiceWrapper = new Element($this->isInline() ? 'div.form-check-inline' : 'div.form-check');
+                    $choiceWrapper = new Element($this->inline ? 'div.form-check-inline' : 'div.form-check');
                 }
 
-                /** @var AbstractType $choice */
+                /** @var TypeInterface $choice */
                 $choice = new $choiceClass($args);
 
-                $choice->setForm($this->getForm());
+                $choice->setForm($this->form);
 
                 foreach ($choice->getElements() as $child) {
                     // Don't add child feedback as we already display our own.
-                    if (!$child->hasClass('palmtree-invalid-feedback')) {
-                        if ($child->hasClass('palmtree-form-control') && !$this->isValid()) {
-                            $child->addClass('is-invalid');
+                    if (!$child->classes->has('palmtree-invalid-feedback')) {
+                        if ($child->classes->has('palmtree-form-control') && !$this->isValid()) {
+                            $child->classes->add('is-invalid');
                         }
+
                         if ($choiceWrapper) {
                             $choiceWrapper->addChild($child);
                         } else {
@@ -121,61 +124,31 @@ class ChoiceType extends AbstractType
         return $parent;
     }
 
-    public function getElements(Element $wrapper = null)
-    {
-        $elements = parent::getElements($wrapper);
-
-        foreach ($elements as $element) {
-            if ($element->hasClass('palmtree-invalid-feedback')) {
-                $element->addClass('d-block');
-                break;
-            }
-        }
-
-        return $elements;
-    }
-
-    public function setChoices(array $choices)
+    public function setChoices(array $choices): self
     {
         $this->choices = $choices;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getChoices()
+    public function getChoices(): array
     {
         return $this->choices;
     }
 
-    /**
-     * @param bool $multiple
-     *
-     * @return ChoiceType
-     */
-    public function setMultiple($multiple)
+    public function setMultiple(bool $multiple): self
     {
         $this->multiple = $multiple;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMultiple()
+    public function isMultiple(): bool
     {
         return $this->multiple;
     }
 
-    /**
-     * @param bool $expanded
-     *
-     * @return ChoiceType
-     */
-    public function setExpanded($expanded)
+    public function setExpanded(bool $expanded): self
     {
         $this->expanded = $expanded;
 
@@ -184,28 +157,18 @@ class ChoiceType extends AbstractType
 
     /**
      * Returns whether this choice type is expanded i.e not a select box.
-     *
-     * @return bool
      */
-    public function isExpanded()
+    public function isExpanded(): bool
     {
         return $this->expanded;
     }
 
-    /**
-     * @return bool
-     */
-    public function isInline()
+    public function isInline(): bool
     {
         return $this->inline;
     }
 
-    /**
-     * @param bool $inline
-     *
-     * @return ChoiceType
-     */
-    public function setInline($inline)
+    public function setInline(bool $inline): self
     {
         $this->inline = $inline;
 

@@ -1,25 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Constraint\File;
 
 use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
+use Palmtree\Form\UploadedFile;
 
 class Extension extends AbstractConstraint implements ConstraintInterface
 {
+    /** @var array<int, string> */
     private $extensions = [];
 
-    /**
-     * @inheritDoc
-     */
-    public function validate($uploadedFile)
+    public function validate($input): bool
     {
-        $extension = pathinfo($uploadedFile['name'], PATHINFO_EXTENSION);
+        return $this->doValidate($input);
+    }
 
-        if (!\in_array($extension, $this->getExtensions())) {
-            $this->setErrorMessage(
-                'Only the following file extensions are allowed: ' . implode(', ', $this->getExtensions())
-            );
+    private function doValidate(UploadedFile $input): bool
+    {
+        $extension = pathinfo($input->getName(), \PATHINFO_EXTENSION);
+
+        if (!\in_array($extension, $this->extensions, true)) {
+            $this->setErrorMessage('Only the following file extensions are allowed: ' . implode(', ', $this->extensions));
 
             return false;
         }
@@ -28,11 +30,9 @@ class Extension extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @param array $extensions
-     *
-     * @return Extension
+     * @param array<int, string> $extensions
      */
-    public function setExtensions(array $extensions)
+    public function setExtensions(array $extensions): self
     {
         $this->extensions = $extensions;
 
@@ -40,9 +40,9 @@ class Extension extends AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @return array
+     * @return array<int, string>
      */
-    public function getExtensions()
+    public function getExtensions(): array
     {
         return $this->extensions;
     }

@@ -1,171 +1,111 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form;
 
-use Palmtree\Form\Constraint\Match;
-use Palmtree\Form\Type\AbstractType;
+use Palmtree\Form\Type\CollectionType;
+use Palmtree\Form\Type\FileType;
 use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
+use Palmtree\Form\Type\TypeInterface;
 
 class FormBuilder
 {
     /** @var Form */
     private $form;
-    /** @var array */
-    private $types;
+    /** @var TypeLocator */
+    private $typeLocator;
+    /** @var RepeatedTypeBuilder|null */
+    private $repeatedTypeBuilder = null;
 
-    public function __construct(array $args = [])
+    private const FILE_UPLOAD_ENC_TYPE = 'multipart/form-data';
+
+    /**
+     * @param array|string $args
+     */
+    public function __construct($args = [])
     {
-        $this->findTypeClasses();
-        $this->form = new Form($args);
+        $this->form        = new Form($args);
+        $this->typeLocator = new TypeLocator();
     }
 
     /**
-     * @param string $name
-     * @param string $type
-     * @param array  $args
+     * Creates a form field and returns the current instance of the FormBuilder for chaining.
      *
-     * @return FormBuilder
+     * @param string|object $type
      */
-    public function add($name, $type = TextType::class, $args = [])
+    public function add(string $name, $type = TextType::class, array $args = []): self
     {
-        if ($this->getTypeClass($type) === RepeatedType::class || $type instanceof RepeatedType) {
-            return $this->addRepeatedType($name, $type, $args);
-        }
-
-        $formControl = $this->getTypeObject($type, $args);
-
-        if (!isset($args['name'])) {
-            $formControl->setName($name);
-        }
-
-        if ($formControl->getLabel() === null) {
-            $formControl->setLabel($formControl->getHumanName());
-        }
-
-        $this->getForm()->add($formControl);
+        $this->create($name, $type, $args);
 
         return $this;
     }
 
     /**
-     * @param string $name
+     * Creates and returns a form field.
      *
-     * @return AbstractType
+     * @param string|object $type
      */
-    public function get($name)
+    public function create(string $name, $type = TextType::class, array $args = []): TypeInterface
     {
-        return $this->getForm()->get($name);
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return string|null
-     */
-    public function getTypeClass($type)
-    {
-        if (isset($this->types[$type])) {
-            return $this->types[$type];
+        if ((\is_object($type) && $type instanceof RepeatedType) || (\is_string($type) && $this->typeLocator->getTypeClass($type) === RepeatedType::class)) {
+            return $this->getRepeatedTypeBuilder()->build($name, $args);
         }
 
-        if (class_exists($type)) {
-            return $type;
+        $fieldType = $this->typeLocator->getTypeObject($type, $args);
+
+        if (!isset($args['name'])) {
+            $fieldType->setName($name);
         }
 
-        return null;
+        if ($fieldType->getLabel() === null) {
+            $fieldType->setLabel($fieldType->getHumanName());
+        }
+
+        $this->form->add($fieldType);
+
+        if ($fieldType instanceof FileType || ($fieldType instanceof CollectionType && $fieldType->getEntryType() === FileType::class)) {
+            $this->form->setEncType(self::FILE_UPLOAD_ENC_TYPE);
+        } else {
+            $this->recursiveEncTypeCheck($fieldType->all());
+        }
+
+        return $fieldType;
     }
 
-    /**
-     * @return Form
-     */
-    public function getForm()
+    public function get(string $name): TypeInterface
+    {
+        return $this->form->get($name);
+    }
+
+    public function getForm(): Form
     {
         return $this->form;
     }
 
-    private function addRepeatedType($name, $type, $args)
+    private function getRepeatedTypeBuilder(): RepeatedTypeBuilder
     {
-        /** @var RepeatedType $typeObject */
-        $typeObject = $this->getTypeObject($type, $args);
-
-        $this->add($name, $typeObject->getRepeatableType(), $args);
-
-        $firstOfType = $this->get($name);
-
-        $secondArgs = $args;
-
-        if (!isset($secondArgs['name'])) {
-            $secondArgs['name'] = $firstOfType->getName() . '_2';
+        if ($this->repeatedTypeBuilder === null) {
+            $this->repeatedTypeBuilder = new RepeatedTypeBuilder($this);
         }
 
-        if (!isset($secondArgs['label'])) {
-            $secondArgs['label'] = 'Confirm ' . $firstOfType->getLabel();
-        }
-
-        if (!isset($secondArgs['placeholder'])) {
-            $secondArgs['placeholder'] = $firstOfType->getPlaceHolderAttribute() . ' again';
-        }
-
-        $this->add($secondArgs['name'], $typeObject->getRepeatableType(), $secondArgs);
-
-        $secondOfType = $this->get($secondArgs['name']);
-
-        $matchConstraint = new Match([
-            'match_field'   => $secondOfType,
-            'error_message' => $firstOfType->getHumanName() . 's do not match',
-        ]);
-
-        $firstOfType->addConstraint($matchConstraint);
-
-        $secondMatchConstraint = clone $matchConstraint;
-        $secondMatchConstraint->setMatchField($firstOfType);
-
-        $secondOfType->addConstraint($secondMatchConstraint);
-
-        return $this;
+        return $this->repeatedTypeBuilder;
     }
 
-    /**
-     * Returns a new instance of the given form type.
-     *
-     * @param string $type FQCN of the form type or short hand e.g 'text', 'email'.
-     * @param array  $args Arguments to pass to the type class constructor.
-     *
-     * @return AbstractType
-     */
-    private function getTypeObject($type, $args)
+    /** @param array<TypeInterface> $fieldTypes */
+    private function recursiveEncTypeCheck(array $fieldTypes): void
     {
-        /* @var AbstractType $object */
-        if ($type instanceof AbstractType) {
-            $object = $type;
-        } else {
-            $class = $this->getTypeClass($type);
-
-            if (!class_exists($class)) {
-                $class = TextType::class;
-            }
-
-            $object = new $class($args, $this);
+        if ($this->form->getEncType() === self::FILE_UPLOAD_ENC_TYPE) {
+            return;
         }
 
-        return $object;
-    }
+        foreach ($fieldTypes as $fieldType) {
+            if ($fieldType instanceof FileType) {
+                $this->form->setEncType(self::FILE_UPLOAD_ENC_TYPE);
 
-    private function findTypeClasses()
-    {
-        if ($this->types === null) {
-            $this->types = [];
-            $namespace   = __NAMESPACE__ . '\\Type';
-
-            $files = new \GlobIterator(__DIR__ . '/Type/*Type.php');
-
-            foreach ($files as $file) {
-                $class = basename($file, '.php');
-                $type  = basename($file, 'Type.php');
-
-                $this->types[strtolower($type)] = $namespace . '\\' . $class;
+                return;
             }
+
+            $this->recursiveEncTypeCheck($fieldType->all());
         }
     }
 }

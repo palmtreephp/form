@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Palmtree Form - Recaptcha Example</title>
-    <?php include '../shared/styles.php'; ?>
+    <?= get_styles(); ?>
 </head>
 <body>
 <main>
@@ -12,10 +12,10 @@
         <?php if ($success): ?>
             <div class="alert alert-success">Form submitted successfully</div>
         <?php endif; ?>
-        <?php echo $form->render(); ?>
+        <?= $form->render(); ?>
     </div>
 </main>
-<?php include '../shared/scripts.php'; ?>
-<script src="../../public/dist/js/palmtree-form.pkgd.js"></script>
+<?= get_scripts(); ?>
+<script src="/public/dist/js/palmtree-form.pkgd.js"></script>
 </body>
 </html>

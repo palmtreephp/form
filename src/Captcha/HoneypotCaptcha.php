@@ -1,31 +1,39 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Captcha;
 
 use Palmtree\Form\Form;
 use Palmtree\Html\Element;
 
-class HoneypotCaptcha extends AbstractCaptcha implements CaptchaInterface
+class HoneypotCaptcha implements CaptchaInterface
 {
-    public function verify($response)
+    public function verify($input): bool
     {
-        return empty($response);
+        return $this->doVerify($input);
     }
 
-    public function getErrorMessage()
+    protected function doVerify(string $input): bool
+    {
+        return $input === '';
+    }
+
+    public function getErrorMessage(): string
     {
         return 'This is a honeypot field and should be left blank.';
     }
 
-    public function getElements(Element $element, Form $form)
+    /** {@inheritDoc} */
+    public function getElements(Element $element, Form $form): array
     {
         $elements = [];
 
-        $element
-            ->addAttribute('type', 'text')
-            ->addAttribute('style', 'display: none;')
-            ->addAttribute('autocomplete', 'off')
-            ->removeAttribute('placeholder');
+        unset($element->attributes['placeholder']);
+
+        $element->attributes->add([
+            'type'         => 'text',
+            'style'        => 'display: none;',
+            'autocomplete' => 'off',
+        ]);
 
         $elements[] = $element;
 

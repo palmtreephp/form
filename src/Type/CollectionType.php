@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -6,89 +6,49 @@ use Palmtree\Html\Element;
 
 class CollectionType extends AbstractType
 {
-    /** @var string */
+    /** @var string|null */
+    protected $errorMessage;
+    /** @var bool */
+    protected $required = false;
+    /** @var string|null */
+    protected $label = '';
+    /**
+     * @var string
+     * @psalm-var class-string<TypeInterface>
+     */
     private $entryType;
     /** @var array */
     private $entryOptions = [];
 
-    public function getElement()
+    public function getElement(): Element
     {
         $collectionWrapper = new Element('div.palmtree-form-collection');
+        $collectionWrapper->classes->add(...$this->args['classes'] ?? []);
+        $collectionWrapper->attributes['id'] = $this->getIdAttribute();
 
         $entriesWrapper = new Element('div.palmtree-form-collection-entries');
 
         $collectionWrapper->addChild($entriesWrapper);
 
-        if ($entries = $this->getChildren()) {
-            foreach ($entries as $entry) {
-                $entriesWrapper->addChild($this->buildEntryElement($entry));
-            }
-        } else {
-            $entriesWrapper->addChild($this->buildEntryElement($this->buildEntry()));
+        foreach ($this->children as $entry) {
+            $entriesWrapper->addChild($this->buildEntryElement($entry));
         }
 
-        $prototypeEntry = $this->buildEntry('__name__');
-
-        $this->clearPrototypeEntryConstraints($prototypeEntry);
-
-        $prototype = $this->buildEntryElement($prototypeEntry);
-
-        $collectionWrapper->addDataAttribute('prototype', htmlentities($prototype->render()));
+        $collectionWrapper->attributes->setData('prototype', $this->generatePrototype());
 
         return $collectionWrapper;
     }
 
-    public function build()
+    public function build(): void
     {
-        if ($data = $this->getData()) {
-            foreach ($data as $key => $value) {
+        if (\is_array($this->data)) {
+            foreach ($this->data as $key => $value) {
                 $this->addChild($this->buildEntry($key, $value));
             }
         }
     }
 
-    private function buildEntry($position = 0, $data = null)
-    {
-        $entryType = $this->entryType;
-        /** @var AbstractType $entry */
-        $entry = new $entryType($this->getEntryOptions());
-        $entry
-            ->setParent($this)
-            ->setName($this->getName())
-            ->setPosition($position);
-
-        $entry->build();
-
-        if (\func_num_args() > 0) {
-            $entry->setData($data);
-        }
-
-        return $entry;
-    }
-
-    private function buildEntryElement(AbstractType $entry)
-    {
-        $entryWrapper = new Element('div.palmtree-form-collection-entry');
-        foreach ($entry->getElements() as $element) {
-            $entryWrapper->addChild($element);
-        }
-
-        return $entryWrapper;
-    }
-
-    private function clearPrototypeEntryConstraints(AbstractType $entry)
-    {
-        $entry->setConstraints([]);
-
-        foreach ($entry->getChildren() as $child) {
-            $this->clearPrototypeEntryConstraints($child);
-        }
-    }
-
-    /**
-     * @return self
-     */
-    public function addChild(AbstractType $child)
+    public function addChild(TypeInterface $child): TypeInterface
     {
         if ($child->getParent() !== $this) {
             $child->setParent($this);
@@ -100,45 +60,36 @@ class CollectionType extends AbstractType
     }
 
     /**
-     * @param string $entryType
+     * @psalm-param class-string<TypeInterface> $entryType
      */
-    public function setEntryType($entryType)
+    public function setEntryType(string $entryType): void
     {
         $this->entryType = $entryType;
     }
 
     /**
-     * @return string
+     * @psalm-return class-string<TypeInterface>
      */
-    public function getEntryType()
+    public function getEntryType(): string
     {
         return $this->entryType;
     }
 
-    /**
-     * @param array $entryOptions
-     */
-    public function setEntryOptions($entryOptions)
+    public function setEntryOptions(array $entryOptions): void
     {
         $this->entryOptions = $entryOptions;
     }
 
-    /**
-     * @return array
-     */
-    public function getEntryOptions()
+    public function getEntryOptions(): array
     {
         return $this->entryOptions;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return AbstractType
-     */
-    public function setData($data)
+    public function setData($data): TypeInterface
     {
-        if ($this->getEntryType() === FileType::class) {
+        $data = (array)$data;
+
+        if ($this->entryType === FileType::class) {
             $data = self::normalizeFilesArray($data);
         }
 
@@ -147,7 +98,72 @@ class CollectionType extends AbstractType
         return $this;
     }
 
-    private static function normalizeFilesArray($data)
+    public function getData(): array
+    {
+        $normData = [];
+        foreach ($this->all() as $child) {
+            $normData[] = $child->getData();
+        }
+
+        return $normData;
+    }
+
+    private function buildEntry(int $position = 0, ?array $data = null): TypeInterface
+    {
+        $entryType = $this->entryType;
+        /** @var TypeInterface $entry */
+        $entry = new $entryType($this->entryOptions);
+        $entry
+            ->setParent($this)
+            ->setName($this->name)
+            ->setPosition($position)
+        ;
+
+        if ($entry->getLabel() === null) {
+            $entry->setLabel($this->getHumanName());
+        }
+
+        $entry->build();
+
+        if (\func_num_args() > 0) {
+            $entry->setData($data);
+        }
+
+        return $entry;
+    }
+
+    private function buildEntryElement(TypeInterface $entry): Element
+    {
+        $entryWrapper = new Element('div.palmtree-form-collection-entry');
+        foreach ($entry->getElements() as $element) {
+            $entryWrapper->addChild($element);
+        }
+
+        return $entryWrapper;
+    }
+
+    private function generatePrototype(): string
+    {
+        $entry = $this->buildEntry(-1);
+        self::clearPrototypeEntryConstraints($entry);
+
+        $prototype = $this->buildEntryElement($entry);
+
+        $html = trim(preg_replace('/>\s+</', '><', $prototype->render()));
+
+        return htmlentities($html);
+    }
+
+    private static function clearPrototypeEntryConstraints(TypeInterface $entry): void
+    {
+        $entry->clearConstraints();
+
+        foreach ($entry->all() as $child) {
+            self::clearPrototypeEntryConstraints($child);
+        }
+    }
+
+    private static function normalizeFilesArray(array $data): array
     {
         $normalized = [];
         $keys       = array_keys($data);

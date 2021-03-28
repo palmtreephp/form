@@ -1,29 +1,32 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
 use Palmtree\Form\Constraint\Number;
+use Palmtree\Html\Element;
 
 class NumberType extends AbstractType
 {
     protected $type = 'number';
 
-    public function getElement()
+    public function getElement(): Element
     {
         $element = parent::getElement();
 
-        foreach ($this->getConstraints() as $constraint) {
+        foreach ($this->constraints as $constraint) {
             if ($constraint instanceof Number) {
                 $min = $constraint->getMin();
                 $max = $constraint->getMax();
 
-                if (null !== $min) {
-                    $element->addAttribute('min', $min);
+                if ($min !== null) {
+                    $element->attributes['min'] = $min;
                 }
 
-                if (null !== $max) {
-                    $element->addAttribute('max', $max);
+                if ($max !== null) {
+                    $element->attributes['max'] = $max;
                 }
+
+                break;
             }
         }
 

@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
 use Palmtree\Form\Captcha\CaptchaInterface;
-use Palmtree\Html\Element;
 
 class CaptchaType extends AbstractType
 {
@@ -12,6 +11,8 @@ class CaptchaType extends AbstractType
     protected $errorMessage = 'Please confirm you\'re not a robot';
     /** @var CaptchaInterface */
     private $captcha;
+    /** @var bool Whether to display errors from the Captcha implementation */
+    private $captchaErrors = false;
 
     public function __construct(array $args = [])
     {
@@ -20,37 +21,44 @@ class CaptchaType extends AbstractType
         $captcha = $args['captcha'];
 
         if (!$captcha instanceof CaptchaInterface) {
+            /** @var CaptchaInterface $captcha */
             $captcha = new $captcha();
         }
 
         $this->captcha = $captcha;
-
-        if ($errorMessage = $this->captcha->getErrorMessage()) {
-            $this->setErrorMessage($errorMessage);
-        }
     }
 
-    public function isValid()
+    public function isValid(): bool
     {
-        if (!$this->getForm()->isSubmitted()) {
+        if (!$this->form->isSubmitted()) {
             return true;
         }
 
-        return $this->captcha->verify($this->getData());
+        $result = $this->captcha->verify($this->data);
+
+        if ($this->captchaErrors && $errorMessage = $this->captcha->getErrorMessage()) {
+            $this->setErrorMessage($errorMessage);
+        }
+
+        return $result;
     }
 
-    public function getElements(Element $wrapper = null)
+    public function getElements()
     {
         $element  = $this->getElement();
-        $elements = $this->captcha->getElements($element, $this->getForm());
+        $elements = $this->captcha->getElements($element, $this->form);
 
         if (!$this->isValid()) {
-            $element->addClass('is-invalid');
-            $error = $this->getForm()->createInvalidElement();
-            $error->setInnerText($this->getErrorMessage());
-            $elements[] = $error;
+            $element->classes[] = 'is-invalid';
+
+            $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
         }
 
         return $elements;
+    }
+
+    public function setCaptchaErrors(bool $captchaErrors): void
+    {
+        $this->captchaErrors = $captchaErrors;
     }
 }
