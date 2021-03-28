@@ -124,20 +124,6 @@ class ChoiceType extends AbstractType
         return $parent;
     }
 
-    public function getElements()
-    {
-        $elements = parent::getElements();
-
-        foreach ($elements as $element) {
-            if ($element->classes->has('palmtree-invalid-feedback')) {
-                $element->classes->add('d-block');
-                break;
-            }
-        }
-
-        return $elements;
-    }
-
     public function setChoices(array $choices): self
     {
         $this->choices = $choices;
