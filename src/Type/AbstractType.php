@@ -158,6 +158,8 @@ abstract class AbstractType implements TypeInterface
             'name' => $this->getNameAttribute(),
         ]);
 
+        $element->attributes->add($this->args['attr'] ?? []);
+
         if ($placeholder = $this->getPlaceHolderAttribute()) {
             $element->attributes['placeholder'] = $placeholder;
         }
