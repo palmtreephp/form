@@ -43,7 +43,7 @@ class CaptchaType extends AbstractType
         return $result;
     }
 
-    public function getElements()
+    public function getElements(): array
     {
         $element  = $this->getElement();
         $elements = $this->captcha->getElements($element, $this->form);

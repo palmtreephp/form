@@ -29,7 +29,7 @@ interface TypeInterface
     /**
      * @return array<int, Element>
      */
-    public function getElements();
+    public function getElements(): array;
 
     public function getHumanName(): string;
 

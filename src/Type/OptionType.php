@@ -9,7 +9,7 @@ class OptionType extends AbstractType
     /** @var string */
     protected $value;
 
-    public function getElements()
+    public function getElements(): array
     {
         $elements = [];
 

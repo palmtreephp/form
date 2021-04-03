@@ -181,7 +181,7 @@ abstract class AbstractType implements TypeInterface
         return $element;
     }
 
-    public function getElements()
+    public function getElements(): array
     {
         $elements = [];
 

@@ -39,7 +39,7 @@ class CheckboxType extends AbstractType
         return $element;
     }
 
-    public function getElements()
+    public function getElements(): array
     {
         $elements = [];
 
