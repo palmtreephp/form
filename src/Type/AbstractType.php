@@ -164,10 +164,6 @@ abstract class AbstractType implements TypeInterface
             $element->attributes['placeholder'] = $placeholder;
         }
 
-        if ($this->required && $this->form->hasHtmlValidation()) {
-            $element->attributes['required'] = true;
-        }
-
         if (!\is_array($this->data)) {
             $element->attributes['value'] = $this->data;
         }
