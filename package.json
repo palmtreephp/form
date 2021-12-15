@@ -1,13 +1,23 @@
 {
     "private": true,
     "dependencies": {
-        "grunt": "^1.3.0",
-        "grunt-contrib-concat": "^1.0.1",
-        "grunt-contrib-uglify": "^5.0.0",
         "jquery": "^3.5.1",
         "jquery-bsalert": "^2.0.0"
     },
+    "devDependencies": {
+        "uglify-js": "^3.14.5"
+    },
     "scripts": {
-        "build": "grunt"
-    }
+        "build": "yarn run concat && yarn run minify && yarn run copy-bsalert",
+        "concat": "cat $(node -p -e \"require('./package.json').pkgFiles.join(' ')\") > public/dist/js/palmtree-form.pkgd.js",
+        "minify": "uglifyjs --compress --mangle -- public/dist/js/palmtree-form.pkgd.js > public/dist/js/palmtree-form.pkgd.min.js",
+        "copy-bsalert": "cp node_modules/jquery-bsalert/dist/jquery.bsAlert.js public/js/jquery.bsAlert.js"
+    },
+    "pkgFiles": [
+        "node_modules/jquery-bsalert/dist/jquery.bsAlert.js",
+        "public/js/jquery.palmtree-custom-file.js",
+        "public/js/jquery.palmtree-recaptcha.js",
+        "public/js/jquery.palmtree-form-collection.js",
+        "public/js/jquery.palmtree-form.js"
+    ]
 }

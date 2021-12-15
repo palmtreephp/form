@@ -135,7 +135,6 @@
     return $.fn[pluginName];
 
 });
-
 (function (factory) {
     'use strict';
     /* global define:false */
@@ -155,7 +154,6 @@
         });
     });
 });
-
 (function (factory) {
     'use strict';
     /* global define:false */
@@ -219,7 +217,6 @@
 
     return $.fn[pluginName];
 });
-
 /**
  * jQuery plugin to assist with adding/removing of entries
  * from a Palmtree Form CollectionType form field.
@@ -392,7 +389,6 @@
         maxEntries: -1
     };
 });
-
 (function (factory) {
     'use strict';
     /* global define:false */
