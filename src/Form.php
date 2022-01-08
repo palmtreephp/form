@@ -33,7 +33,7 @@ class Form
     /** @var array<string, string> */
     protected $errors = [];
     /** @var string */
-    protected $fieldWrapper = 'div.form-group';
+    protected $fieldWrapper = 'div.form-group.mb-3';
     /** @var string */
     protected $invalidElementSelector = 'div.invalid-feedback.small';
     /** @var bool */

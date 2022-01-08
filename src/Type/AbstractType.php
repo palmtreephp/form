@@ -138,7 +138,7 @@ abstract class AbstractType implements TypeInterface
             return null;
         }
 
-        $element = Element::create('label[for="' . $this->getIdAttribute() . '"]')->setInnerText($this->label);
+        $element = Element::create('label[for="' . $this->getIdAttribute() . '"].form-label')->setInnerText($this->label);
 
         if ($this->required && !$this->parent) {
             $element->addChild(Element::create('abbr[title="Required Field"]')->setInnerText('*'));
