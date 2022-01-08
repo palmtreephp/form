@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form\Captcha;
 
@@ -30,8 +32,8 @@ class HoneypotCaptcha implements CaptchaInterface
         unset($element->attributes['placeholder']);
 
         $element->attributes->add([
-            'type'         => 'text',
-            'style'        => 'display: none;',
+            'type' => 'text',
+            'style' => 'display: none;',
             'autocomplete' => 'off',
         ]);
 

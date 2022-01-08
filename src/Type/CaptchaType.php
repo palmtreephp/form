@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -6,8 +8,8 @@ use Palmtree\Form\Captcha\CaptchaInterface;
 
 class CaptchaType extends AbstractType
 {
-    protected $type         = 'text';
-    protected $userInput    = false;
+    protected $type = 'text';
+    protected $userInput = false;
     protected $errorMessage = 'Please confirm you\'re not a robot';
     /** @var CaptchaInterface */
     private $captcha;
@@ -45,7 +47,7 @@ class CaptchaType extends AbstractType
 
     public function getElements(): array
     {
-        $element  = $this->getElement();
+        $element = $this->getElement();
         $elements = $this->captcha->getElements($element, $this->form);
 
         if (!$this->isValid()) {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form;
 
@@ -24,7 +26,7 @@ class FormBuilder
      */
     public function __construct($args = [])
     {
-        $this->form        = new Form($args);
+        $this->form = new Form($args);
         $this->typeLocator = new TypeLocator();
     }
 

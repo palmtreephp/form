@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form;
 
@@ -22,18 +24,18 @@ class RepeatedTypeBuilder
 
         $firstOfType = $this->formBuilder->create($name, $repeatedType->getRepeatableType(), $args);
 
-        $secondArgs   = self::buildSecondArgs($firstOfType, $args);
+        $secondArgs = self::buildSecondArgs($firstOfType, $args);
         $secondOfType = $this->formBuilder->create($secondArgs['name'], $repeatedType->getRepeatableType(), $secondArgs);
 
         $matchError = $firstOfType->getHumanName() . 's do not match';
 
         $firstOfType->addConstraint(new Matching([
-            'match_field'   => $secondOfType,
+            'match_field' => $secondOfType,
             'error_message' => $matchError,
         ]));
 
         $secondOfType->addConstraint(new Matching([
-            'match_field'   => $firstOfType,
+            'match_field' => $firstOfType,
             'error_message' => $matchError,
         ]));
 

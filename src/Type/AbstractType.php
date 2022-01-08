@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -46,7 +48,7 @@ abstract class AbstractType implements TypeInterface
     /** @var array */
     public static $defaultArgs = [
         'placeholder' => true,
-        'classes'     => [],
+        'classes' => [],
     ];
 
     public function __construct(array $args = [])
@@ -154,7 +156,7 @@ abstract class AbstractType implements TypeInterface
 
         $element->attributes->add([
             'type' => $this->type,
-            'id'   => $this->getIdAttribute(),
+            'id' => $this->getIdAttribute(),
             'name' => $this->getNameAttribute(),
         ]);
 
@@ -223,12 +225,12 @@ abstract class AbstractType implements TypeInterface
 
         if ($this->parent) {
             $format = '%s[%s][%s]';
-            $args   = [$formId, $this->parent->getName(), $this->getPosition()];
+            $args = [$formId, $this->parent->getName(), $this->getPosition()];
 
             if (!$this->parent instanceof CollectionType) {
                 $format .= '[%s]';
                 $args[2] = $this->parent->getPosition();
-                $args[]  = $this->name;
+                $args[] = $this->name;
             }
 
             return vsprintf($format, $args);
@@ -352,7 +354,7 @@ abstract class AbstractType implements TypeInterface
     public function setParent(TypeInterface $parent): TypeInterface
     {
         $this->parent = $parent;
-        $this->form   = $parent->getForm();
+        $this->form = $parent->getForm();
 
         return $this;
     }

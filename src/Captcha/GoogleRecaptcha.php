@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form\Captcha;
 
@@ -12,8 +14,8 @@ class GoogleRecaptcha implements CaptchaInterface
     private const SCRIPT_URL = 'https://www.google.com/recaptcha/api.js';
 
     private const ERROR_CODES = [
-        'missing-input-secret'   => 'The secret parameter is missing.',
-        'invalid-input-secret'   => 'The secret parameter is invalid or malformed.',
+        'missing-input-secret' => 'The secret parameter is missing.',
+        'invalid-input-secret' => 'The secret parameter is invalid or malformed.',
         'missing-input-response' => 'The response parameter is missing.',
         'invalid-input-response' => 'The response parameter is invalid or malformed.',
     ];
@@ -38,7 +40,7 @@ class GoogleRecaptcha implements CaptchaInterface
      */
     public function __construct(string $siteKey, string $secretKey, $ip = true)
     {
-        $this->siteKey   = $siteKey;
+        $this->siteKey = $siteKey;
         $this->secretKey = $secretKey;
 
         if ($ip === true) {
@@ -148,7 +150,7 @@ class GoogleRecaptcha implements CaptchaInterface
     {
         if (!isset($this->verificationResult[$response])) {
             $postFields = [
-                'secret'   => $this->secretKey,
+                'secret' => $this->secretKey,
                 'response' => $response,
             ];
 

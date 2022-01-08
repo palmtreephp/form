@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -166,7 +168,7 @@ class CollectionType extends AbstractType
     private static function normalizeFilesArray(array $data): array
     {
         $normalized = [];
-        $keys       = array_keys($data);
+        $keys = array_keys($data);
 
         for ($i = 0, $total = \count($data['name']); $i < $total; ++$i) {
             foreach ($keys as $key) {

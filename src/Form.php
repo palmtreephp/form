@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form;
 
@@ -55,7 +57,7 @@ class Form
 
         $element->attributes->add([
             'method' => $this->method,
-            'id'     => $this->key,
+            'id' => $this->key,
         ]);
 
         if ($this->encType !== null) {
@@ -95,7 +97,7 @@ class Form
     {
         foreach ($this->fields as $field) {
             $fieldWrapper = null;
-            $parent       = $form;
+            $parent = $form;
 
             if ($this->fieldWrapper && !$field instanceof HiddenType) {
                 $fieldWrapper = new Element($this->fieldWrapper);

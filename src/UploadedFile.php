@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form;
 
@@ -28,10 +30,10 @@ class UploadedFile
 
     public function __construct(array $uploadedFile)
     {
-        $this->name      = $uploadedFile['name'];
-        $this->type      = $uploadedFile['type'] ?? null;
-        $this->size      = (int)$uploadedFile['size'];
-        $this->tempName  = $uploadedFile['tmp_name'];
+        $this->name = $uploadedFile['name'];
+        $this->type = $uploadedFile['type'] ?? null;
+        $this->size = (int)$uploadedFile['size'];
+        $this->tempName = $uploadedFile['tmp_name'];
         $this->errorCode = (int)$uploadedFile['error'];
     }
 

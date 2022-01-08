@@ -1,6 +1,6 @@
 {
     "name": "palmtree/form",
-    "description": "Form builder with bootstrap classes, validation, Recaptcha support, AJAX submissions and more",
+    "description": "Form builder with Bootstrap v4/v5 styling, validation, Recaptcha support, AJAX submissions and more",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -22,7 +22,7 @@
         "palmtree/html": "^3.0"
     },
     "require-dev": {
-        "palmtree/php-cs-fixer-config": "^1.1",
+        "palmtree/php-cs-fixer-config": "^2.0",
         "vimeo/psalm": "^4.6"
     },
     "suggest": {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -8,7 +10,7 @@ class SubmitType extends ButtonType
 
     public static $defaultArgs = [
         'placeholder' => false,
-        'classes'     => [
+        'classes' => [
             'btn',
             'btn-primary',
         ],

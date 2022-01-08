@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
@@ -11,7 +13,7 @@ class ChoiceType extends AbstractType
     /** @var bool If true, use radio buttons/checkboxes. Otherwise use a select box */
     protected $expanded = false;
     /** @var bool Whether expanded choices should display inline. Has no effect if expanded is false */
-    protected $inline  = true;
+    protected $inline = true;
     /** @var array */
     protected $choices = [];
     /** @var string */
@@ -39,8 +41,8 @@ class ChoiceType extends AbstractType
             $parent = $wrapper;
         } else {
             $select = new SelectType([
-                'name'        => $this->name,
-                'multiple'    => $this->multiple,
+                'name' => $this->name,
+                'multiple' => $this->multiple,
                 'placeholder' => $this->args['placeholder'],
             ]);
 
@@ -53,7 +55,7 @@ class ChoiceType extends AbstractType
 
         foreach ($this->choices as $value => $label) {
             $args = [
-                'data'   => $this->data,
+                'data' => $this->data,
                 'parent' => $this,
             ];
 
