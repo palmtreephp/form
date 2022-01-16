@@ -2,6 +2,7 @@
 
 [![License](http://img.shields.io/packagist/l/palmtree/form.svg)](LICENSE)
 [![Build](https://img.shields.io/github/workflow/status/palmtreephp/form/Build.svg)](https://github.com/palmtreephp/form/actions/workflows/build.yml)
+[![Packagist Version](https://img.shields.io/packagist/v/palmtree/form)](https://packagist.org/packages/palmtree/form)
 
 PHP Form builder with [Bootstrap](https://getbootstrap.com/) v4 and v5 classes, validation, [Google Recaptcha](https://www.google.com/recaptcha/intro/) support and other goodies
 
