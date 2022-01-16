@@ -36,7 +36,7 @@ jobs:
         if: matrix.php-versions == 8.0
 
       - name: PHP-CS-Fixer
-        run: ./vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff --diff-format=udiff
+        run: ./vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff
         if: matrix.php-versions == 8.0
 
       - name: Psalm
