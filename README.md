@@ -97,13 +97,13 @@ See the [collection example](examples/collection) for a more advanced use-case.
 
 Constraints allow you to validate a field type. The current built in constraints are:
 
-| Constraint       | Description |
-| ------------- |-------------|
-| [NotBlank](src/Constraint/NotBlank.php)  | Ensures the field is not empty. Allows values of '0'
-| [Email](src/Constraint/Email.php)        | Ensures the field is a valid email address
-| [Number](src/Constraint/Number.php)      | Ensures the field is numeric and optionally between a range
-| [Length](src/Constraint/Length.php)      | Ensures the field has a minimum and/or maximum length of characters
-| [Matching](src/Constraint/Matching.php)  | Ensures the field matches another fields value. Useful for password confirmations
+| Constraint                              | Description                                                                       |
+|-----------------------------------------|-----------------------------------------------------------------------------------|
+| [NotBlank](src/Constraint/NotBlank.php) | Ensures the field is not empty. Allows values of '0'                              |
+| [Email](src/Constraint/Email.php)       | Ensures the field is a valid email address                                        |
+| [Number](src/Constraint/Number.php)     | Ensures the field is numeric and optionally between a range                       |
+| [Length](src/Constraint/Length.php)     | Ensures the field has a minimum and/or maximum length of characters               |
+| [Matching](src/Constraint/Matching.php) | Ensures the field matches another fields value. Useful for password confirmations |
 
 By default, all required fields have a NotBlank constraint.
 Email fields have an email constraint and number fields a Number constraint.
@@ -140,25 +140,25 @@ This is a small wrapper object around PHP's native uploaded file array.
 
 The following constraints can be used on the FileType field:
 
-| Constraint       | Description |
-| ------------- |-------------|
-| [Extension](src/Constraint/File/Extension.php)  | Ensures the file has an allowed extension
-| [MimeType](src/Constraint/File/MimeType.php)  | Ensures the file has an allowed mime type
-| [Size](src/Constraint/File/MimeType.php)  | Ensures the file size is between an allowed range
+| Constraint                                     | Description                                       |
+|------------------------------------------------|---------------------------------------------------|
+| [Extension](src/Constraint/File/Extension.php) | Ensures the file has an allowed extension         |
+| [MimeType](src/Constraint/File/MimeType.php)   | Ensures the file has an allowed mime type         |
+| [Size](src/Constraint/File/MimeType.php)       | Ensures the file size is between an allowed range |
 
 See the [file upload example](examples/fileupload/index.php) for usage examples of these constraints
 
 ## Shorthand Type Values
 
-Shorthand values for [built in types](src/Type) are determined by lower-casing the class name and removing the "Type" suffix.
+Shorthand values for [built-in types](src/Type) are determined by lower-casing the class name and removing the "Type" suffix.
 For example:
 
-| Class          | Shorthand Value
-| -------------  |-------------|
-| TextType       | text        |
-| NumberType     | number      |
-| EmailType      | email       |
-| CollectionType | collection  |
+| Class          | Shorthand Value |
+|----------------|-----------------|
+| TextType       | text            |
+| NumberType     | number          |
+| EmailType      | email           |
+| CollectionType | collection      |
 
 ## Examples
 
