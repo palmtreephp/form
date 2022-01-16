@@ -100,9 +100,9 @@ class ChoiceType extends AbstractType
 
                 foreach ($choice->getElements() as $child) {
                     // Don't add child feedback as we already display our own.
-                    if (!$child->classes->has('palmtree-invalid-feedback')) {
-                        if ($child->classes->has('palmtree-form-control') && !$this->isValid()) {
-                            $child->classes->add('is-invalid');
+                    if (!$child->classes->contains('palmtree-invalid-feedback')) {
+                        if ($child->classes->contains('palmtree-form-control') && !$this->isValid()) {
+                            $child->classes[] = 'is-invalid';
                         }
 
                         if ($choiceWrapper) {

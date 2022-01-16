@@ -166,7 +166,7 @@ abstract class AbstractType implements TypeInterface
             $element->attributes['placeholder'] = $placeholder;
         }
 
-        if (!\is_array($this->data)) {
+        if (!\is_array($this->data) && $this->data !== null) {
             $element->attributes['value'] = $this->data;
         }
 

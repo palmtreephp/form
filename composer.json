@@ -19,11 +19,11 @@
         "php": ">=7.1",
         "palmtree/argparser": "^2.1",
         "palmtree/nameconverter": "^2.0",
-        "palmtree/html": "^3.0"
+        "palmtree/html": "^4.0.1"
     },
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^2.0",
-        "vimeo/psalm": "^4.6"
+        "vimeo/psalm": "^4.18"
     },
     "suggest": {
         "ext-curl": "For Google Recaptcha support",
@@ -37,5 +37,10 @@
         "recaptcha",
         "captcha",
         "ajax"
-    ]
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    }
 }

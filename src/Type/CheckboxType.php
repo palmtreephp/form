@@ -19,7 +19,7 @@ class CheckboxType extends AbstractType
     {
         $element = parent::getElement();
 
-        unset($element->classes['form-control']);
+        $element->classes->remove('form-control');
         $element->classes[] = 'form-check-input';
 
         $element->attributes['value'] = $this->value;

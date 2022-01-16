@@ -82,7 +82,7 @@ class GoogleRecaptcha implements CaptchaInterface
 
         $controlId = $element->attributes['id'];
 
-        unset($element->classes['palmtree-form-control']);
+        $element->classes->remove('palmtree-form-control');
 
         $element->attributes->set('hidden');
 
