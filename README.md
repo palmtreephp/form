@@ -81,6 +81,12 @@ Use the `renderStart`, `renderEnd` and `renderField` methods for more fine-grain
 </div>
 ```
 
+By default, `renderEnd` will render all remaining un-rendered fields before rendering the closing </form> tag. To prevent this, pass `false` as the first argument:
+
+```php
+<?= $form->renderEnd(false); ?>
+```
+
 ## Collections
 
 The `CollectionType` can be used to add/remove multiple entries of the same field or set of fields:
