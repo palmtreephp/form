@@ -62,6 +62,31 @@ if ($form->isSubmitted() && $form->isValid()) {
 
 See the [examples](examples) directory for examples using AJAX, file uploads, collections and more.
 
+## Rendering Individual Fields
+
+Use the `renderStart`, `renderEnd` and `renderField` methods for more fine-grained control over how fields are rendered, such as using Bootstrap's grid system:
+
+```php
+<div class="container">
+    <?= $form->renderStart(); ?>
+    <div class="row">
+        <div class="col-6">
+            <?= $form->renderField('first_name'); ?>
+        </div>
+        <div class="col-6">
+            <?= $form->renderField('last_name'); ?>
+        </div>
+    </div>
+    <?= $form->renderEnd(); ?>
+</div>
+```
+
+By default, `renderEnd` will render all remaining un-rendered fields before rendering the closing </form> tag. To prevent this, pass `false` as the first argument:
+
+```php
+<?= $form->renderEnd(false); ?>
+```
+
 ## Collections
 
 The `CollectionType` can be used to add/remove multiple entries of the same field or set of fields:

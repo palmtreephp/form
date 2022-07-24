@@ -19,7 +19,7 @@
         "php": ">=7.1",
         "palmtree/argparser": "^2.1",
         "palmtree/nameconverter": "^2.0",
-        "palmtree/html": "^4.0.1"
+        "palmtree/html": "^4.0.2"
     },
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^2.0",

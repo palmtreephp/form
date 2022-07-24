@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "52e7dd3094ebba34f071b4c8f89705e0",
+    "content-hash": "b0839bfc05783a06ad100436f44cea46",
     "packages": [
         {
             "name": "palmtree/argparser",
@@ -52,16 +52,16 @@
         },
         {
             "name": "palmtree/html",
-            "version": "v4.0.1",
+            "version": "v4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/palmtreephp/html.git",
-                "reference": "4adecc1e56f1c7395440d301fa0c320c4c28d41a"
+                "reference": "f308352f4e227d01b6e142aa38ed9ae17ce5db07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/palmtreephp/html/zipball/4adecc1e56f1c7395440d301fa0c320c4c28d41a",
-                "reference": "4adecc1e56f1c7395440d301fa0c320c4c28d41a",
+                "url": "https://api.github.com/repos/palmtreephp/html/zipball/f308352f4e227d01b6e142aa38ed9ae17ce5db07",
+                "reference": "f308352f4e227d01b6e142aa38ed9ae17ce5db07",
                 "shasum": ""
             },
             "require": {
@@ -92,9 +92,9 @@
             "description": "HTML component for Palmtree PHP",
             "support": {
                 "issues": "https://github.com/palmtreephp/html/issues",
-                "source": "https://github.com/palmtreephp/html/tree/v4.0.1"
+                "source": "https://github.com/palmtreephp/html/tree/v4.0.2"
             },
-            "time": "2022-01-16T13:32:32+00:00"
+            "time": "2022-07-12T11:41:05+00:00"
         },
         {
             "name": "palmtree/nameconverter",
@@ -3177,5 +3177,5 @@
         "php": ">=7.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }

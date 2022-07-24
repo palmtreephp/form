@@ -8,8 +8,6 @@ use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Exception\AlreadySubmittedException;
 use Palmtree\Form\Exception\NotSubmittedException;
 use Palmtree\Form\Exception\OutOfBoundsException;
-use Palmtree\Form\Type\CheckboxType;
-use Palmtree\Form\Type\HiddenType;
 use Palmtree\Form\Type\TypeInterface;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
@@ -40,6 +38,8 @@ class Form
     protected $invalidElementSelector = 'div.invalid-feedback.small';
     /** @var bool */
     protected $htmlValidation = true;
+    /** @var FormRenderer */
+    protected $renderer;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
@@ -49,78 +49,27 @@ class Form
     public function __construct($args = [])
     {
         $this->parseArgs($args);
+        $this->renderer = new FormRenderer($this);
+    }
+
+    public function renderStart(): string
+    {
+        return $this->renderer->renderStart();
+    }
+
+    public function renderEnd(bool $renderRest = true): string
+    {
+        return $this->renderer->renderEnd($renderRest);
     }
 
     public function render(): string
     {
-        $element = new Element('form.palmtree-form');
-
-        $element->attributes->add([
-            'method' => $this->method,
-            'id' => $this->key,
-        ]);
-
-        if ($this->encType !== null) {
-            $element->attributes->set('enctype', $this->encType);
-        }
-
-        if ($this->action !== null) {
-            $element->attributes->set('action', $this->action);
-        }
-
-        if (!$this->htmlValidation) {
-            $element->attributes->set('novalidate');
-        }
-
-        if ($this->ajax) {
-            $element->classes[] = 'is-ajax';
-        }
-
-        if ($this->submitted) {
-            $element->classes[] = 'is-submitted';
-        }
-
-        $element->attributes->setData('invalid_element', htmlentities($this->createInvalidElement()->render()));
-
-        $this->renderFields($element);
-
-        if ($this->hasRequiredField()) {
-            $info = (new Element('small'))->setInnerText('* required field');
-
-            $element->addChild($info);
-        }
-
-        return $element->render();
+        return $this->renderer->render();
     }
 
-    private function renderFields(Element $form): void
+    public function renderField(string $name): string
     {
-        foreach ($this->fields as $field) {
-            $fieldWrapper = null;
-            $parent = $form;
-
-            if ($this->fieldWrapper && !$field instanceof HiddenType) {
-                $fieldWrapper = new Element($this->fieldWrapper);
-
-                if ($field->isRequired()) {
-                    $fieldWrapper->classes[] = 'is-required';
-                }
-
-                $parent = $fieldWrapper;
-            }
-
-            if ($field instanceof CheckboxType) {
-                $parent->classes[] = 'form-check';
-            }
-
-            foreach ($field->getElements() as $element) {
-                $parent->addChild($element);
-            }
-
-            if ($fieldWrapper instanceof Element) {
-                $form->addChild($fieldWrapper);
-            }
-        }
+        return $this->renderer->renderField($name);
     }
 
     public function isValid(): bool
@@ -372,6 +321,14 @@ class Form
         $element->classes[] = 'palmtree-invalid-feedback';
 
         return $element;
+    }
+
+    /**
+     * @return array<string, TypeInterface>
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
     }
 
     /**
