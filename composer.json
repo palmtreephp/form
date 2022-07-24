@@ -1,6 +1,6 @@
 {
     "name": "palmtree/form",
-    "description": "Form builder with Bootstrap v4/v5 styling, validation, Recaptcha support, AJAX submissions and more",
+    "description": "Form builder with Bootstrap v5/v4 classes, validation, Recaptcha support, AJAX submissions and more",
     "type": "library",
     "license": "MIT",
     "authors": [

@@ -4,7 +4,7 @@
 [![Build](https://img.shields.io/github/workflow/status/palmtreephp/form/Build.svg)](https://github.com/palmtreephp/form/actions/workflows/build.yml)
 [![Packagist Version](https://img.shields.io/packagist/v/palmtree/form)](https://packagist.org/packages/palmtree/form)
 
-PHP Form builder with [Bootstrap](https://getbootstrap.com/) v4 and v5 classes, validation, [Google Recaptcha](https://www.google.com/recaptcha/intro/) support and other goodies
+PHP Form builder with [Bootstrap](https://getbootstrap.com/) v5 and v4 classes, validation, [Google Recaptcha](https://www.google.com/recaptcha/intro/) support and other goodies
 
 ## Requirements
 * PHP >= 7.1
@@ -66,7 +66,7 @@ See the [examples](examples) directory for examples using AJAX, file uploads, co
 
 Use the `renderStart`, `renderEnd` and `renderField` methods for more fine-grained control over how fields are rendered, such as using Bootstrap's grid system:
 
-```php
+```html
 <div class="container">
     <?= $form->renderStart(); ?>
     <div class="row">
