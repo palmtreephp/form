@@ -17,6 +17,8 @@ class FormRenderer
     private $form;
     /** @var array<string, list<Element>> */
     private $fields = [];
+    /** @var list<Element> */
+    private $csrfTokenField = [];
     /** @var list<string> */
     private $renderedFields = [];
     /** @var bool */
@@ -62,6 +64,12 @@ class FormRenderer
 
         if ($renderRest) {
             $html .= $this->renderRest();
+
+            if (\count($this->csrfTokenField) > 0) {
+                foreach ($this->csrfTokenField as $csrfTokenFieldElement) {
+                    $html .= $csrfTokenFieldElement->render();
+                }
+            }
         }
 
         $html .= $this->element->renderEnd();
@@ -78,8 +86,8 @@ class FormRenderer
         }
 
         $html = '';
-        foreach ($this->fields[$name] as $field) {
-            $html .= $field->render();
+        foreach ($this->fields[$name] as $element) {
+            $html .= $element->render();
         }
 
         $this->renderedFields[] = $name;
@@ -120,14 +128,16 @@ class FormRenderer
 
         $this->element->attributes->setData('invalid_element', htmlentities($this->form->createInvalidElement()->render()));
 
-        $this->addFieldsToElement();
+        $this->createFieldsElements();
 
         $this->built = true;
     }
 
-    private function addFieldsToElement(): void
+    private function createFieldsElements(): void
     {
         foreach ($this->form->getFields() as $field) {
+            $fieldElements = [];
+
             $fieldWrapper = null;
             $parent = $this->element;
 
@@ -149,13 +159,21 @@ class FormRenderer
                 $parent->addChild($element);
 
                 if (!$fieldWrapper instanceof Element) {
-                    $this->fields[$field->getName()][] = $element;
+                    $fieldElements[] = $element;
+                    //$this->fields[$field->getName()][] = $element;
                 }
             }
 
             if ($fieldWrapper instanceof Element) {
                 $this->element->addChild($fieldWrapper);
-                $this->fields[$field->getName()] = [$fieldWrapper];
+                $fieldElements = [$fieldWrapper];
+                //$this->fields[$field->getName()] = [$fieldWrapper];
+            }
+
+            if ($this->form->hasCsrfProtection() && $field->getName() === '_csrf_token') {
+                $this->csrfTokenField = $fieldElements;
+            } else {
+                $this->fields[$field->getName()] = $fieldElements;
             }
         }
     }

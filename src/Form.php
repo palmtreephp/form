@@ -6,6 +6,7 @@ namespace Palmtree\Form;
 
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Exception\AlreadySubmittedException;
+use Palmtree\Form\Exception\InvalidCsrfTokenException;
 use Palmtree\Form\Exception\NotSubmittedException;
 use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Type\TypeInterface;
@@ -40,6 +41,8 @@ class Form
     protected $htmlValidation = true;
     /** @var FormRenderer */
     protected $renderer;
+    /** @var bool */
+    protected $csrfProtection = false;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
@@ -77,6 +80,9 @@ class Form
         return $this->renderer->renderField($name);
     }
 
+    /**
+     * @throws InvalidCsrfTokenException
+     */
     public function isValid(): bool
     {
         if (!$this->submitted) {
@@ -84,6 +90,13 @@ class Form
         }
 
         if ($this->valid === null) {
+            if ($this->hasCsrfProtection()) {
+                $csrfHandler = new CsrfProtectionHandler();
+                if (!$csrfHandler->validateToken($this->getKey(), $this->get('_csrf_token')->getData())) {
+                    throw new InvalidCsrfTokenException();
+                }
+            }
+
             $this->valid = true;
             foreach ($this->fields as $field) {
                 if (!$field->isValid()) {
@@ -334,6 +347,16 @@ class Form
     public function getFields(): array
     {
         return $this->fields;
+    }
+
+    public function setCsrfProtection(bool $csrfProtection): void
+    {
+        $this->csrfProtection = $csrfProtection;
+    }
+
+    public function hasCsrfProtection(): bool
+    {
+        return $this->csrfProtection;
     }
 
     /**
