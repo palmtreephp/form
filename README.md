@@ -64,7 +64,7 @@ See the [examples](examples) directory for examples using AJAX, file uploads, co
 
 ## Rendering Individual Fields
 
-Use the `renderStart`, `renderEnd` and `renderField` methods for more fine-grained control over how fields are rendered, such as using Bootstrap's grid system:
+Use the `renderStart`, `renderEnd`, `renderField` and `renderRest` methods for more fine-grained control over how fields are rendered, such as using Bootstrap's grid system:
 
 ```html
 <div class="container">
@@ -81,7 +81,7 @@ Use the `renderStart`, `renderEnd` and `renderField` methods for more fine-grain
 </div>
 ```
 
-By default, `renderEnd` will render all remaining un-rendered fields before rendering the closing </form> tag. To prevent this, pass `false` as the first argument:
+By default, `renderEnd` will render all remaining unrendered fields before rendering the closing </form> tag. To prevent this, pass `false` as the first argument:
 
 ```php
 <?= $form->renderEnd(false); ?>
