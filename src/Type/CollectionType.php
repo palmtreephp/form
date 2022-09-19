@@ -16,6 +16,7 @@ class CollectionType extends AbstractType
     protected $label = '';
     /**
      * @var string
+     *
      * @psalm-var class-string<TypeInterface>
      */
     private $entryType;

@@ -36,7 +36,7 @@ class OptionType extends AbstractType
             }
         }
 
-        if (is_scalar($data) && (string)$data === $this->value) {
+        if (\is_scalar($data) && (string)$data === $this->value) {
             $element->attributes->set('selected');
         }
 
