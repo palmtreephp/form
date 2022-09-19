@@ -29,16 +29,16 @@ jobs:
           key: composer
 
       - name: Lint PHP
-        run: find -L src -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+        run: find -L src -type f -name '*.php' -print0 | xargs -0 -n 1 -P $(nproc) php -l
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-ansi
-        if: matrix.php-versions == 8.0
+        if: matrix.php-versions == 8.1
 
       - name: PHP-CS-Fixer
         run: ./vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff
-        if: matrix.php-versions == 8.0
+        if: matrix.php-versions == 8.1
 
       - name: Psalm
         run: ./vendor/bin/psalm --config=psalm.xml --no-cache
-        if: matrix.php-versions == 8.0
+        if: matrix.php-versions == 8.1
