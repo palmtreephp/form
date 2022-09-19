@@ -42,6 +42,18 @@ class FormRenderer
         return $this->element->render();
     }
 
+    public function renderRest(): string
+    {
+        $html = '';
+        foreach ($this->fields as $name => $field) {
+            if (!\in_array($name, $this->renderedFields)) {
+                $html .= $this->renderField($name);
+            }
+        }
+
+        return $html;
+    }
+
     public function renderEnd(bool $renderRest = true): string
     {
         $this->buildElement();
@@ -49,11 +61,7 @@ class FormRenderer
         $html = '';
 
         if ($renderRest) {
-            foreach ($this->fields as $name => $field) {
-                if (!\in_array($name, $this->renderedFields)) {
-                    $html .= $this->renderField($name);
-                }
-            }
+            $html .= $this->renderRest();
         }
 
         $html .= $this->element->renderEnd();

@@ -62,6 +62,11 @@ class Form
         return $this->renderer->renderEnd($renderRest);
     }
 
+    public function renderRest(): string
+    {
+        return $this->renderer->renderRest();
+    }
+
     public function render(): string
     {
         return $this->renderer->render();
