@@ -43,6 +43,8 @@ class Form
     protected $renderer;
     /** @var bool */
     protected $csrfProtection = false;
+    /** @var CsrfProtectionHandler */
+    private $csrfHandler;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
@@ -53,6 +55,7 @@ class Form
     {
         $this->parseArgs($args);
         $this->renderer = new FormRenderer($this);
+        $this->csrfHandler = new CsrfProtectionHandler();
     }
 
     public function renderStart(): string
@@ -91,8 +94,7 @@ class Form
 
         if ($this->valid === null) {
             if ($this->hasCsrfProtection()) {
-                $csrfHandler = new CsrfProtectionHandler();
-                if (!$csrfHandler->validateToken($this->getKey(), $this->get('_csrf_token')->getData())) {
+                if (!$this->csrfHandler->validateToken($this->getKey(), $this->get('_csrf_token')->getData())) {
                     throw new InvalidCsrfTokenException();
                 }
             }
@@ -106,6 +108,10 @@ class Form
                     }
                 }
             }
+        }
+
+        if ($this->valid) {
+            $this->csrfHandler->clearToken($this->getKey());
         }
 
         return $this->valid;
@@ -357,6 +363,11 @@ class Form
     public function hasCsrfProtection(): bool
     {
         return $this->csrfProtection;
+    }
+
+    public function generateCsrfToken(): string
+    {
+        return $this->csrfHandler->getToken($this->getKey());
     }
 
     /**

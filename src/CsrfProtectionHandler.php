@@ -29,25 +29,33 @@ class CsrfProtectionHandler
         return true;
     }
 
-    public function generateToken(string $identifier): string
+    public function getToken(string $identifier): string
     {
         $this->ensureSessionStarted();
 
-        $token = $this->generateRandom();
+        $sessionKey = $this->getSessionKey($identifier);
+
+        if (isset($_SESSION[$sessionKey])) {
+            return $_SESSION[$sessionKey];
+        }
+
+        $token = bin2hex(random_bytes(16));
 
         $_SESSION[$this->getSessionKey($identifier)] = $token;
 
         return $token;
     }
 
+    public function clearToken(string $identifier): void
+    {
+        $this->ensureSessionStarted();
+
+        unset($_SESSION[$this->getSessionKey($identifier)]);
+    }
+
     private function getSessionKey(string $identifier): string
     {
         return sprintf(self::SESSION_KEY_FORMAT, $identifier);
-    }
-
-    private function generateRandom(): string
-    {
-        return bin2hex(random_bytes(16));
     }
 
     private function ensureSessionStarted(): void

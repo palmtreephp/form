@@ -141,6 +141,10 @@ class FormRenderer
             $fieldWrapper = null;
             $parent = $this->element;
 
+            if ($this->form->hasCsrfProtection() && $field->getName() === '_csrf_token') {
+                $field->setData($this->form->generateCsrfToken());
+            }
+
             if ($this->form->getFieldWrapper() && !$field instanceof HiddenType) {
                 $fieldWrapper = new Element($this->form->getFieldWrapper());
 
@@ -160,14 +164,14 @@ class FormRenderer
 
                 if (!$fieldWrapper instanceof Element) {
                     $fieldElements[] = $element;
-                    //$this->fields[$field->getName()][] = $element;
+                    // $this->fields[$field->getName()][] = $element;
                 }
             }
 
             if ($fieldWrapper instanceof Element) {
                 $this->element->addChild($fieldWrapper);
                 $fieldElements = [$fieldWrapper];
-                //$this->fields[$field->getName()] = [$fieldWrapper];
+                // $this->fields[$field->getName()] = [$fieldWrapper];
             }
 
             if ($this->form->hasCsrfProtection() && $field->getName() === '_csrf_token') {

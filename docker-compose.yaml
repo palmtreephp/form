@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+    nginx:
+        image: wearedestination/nginx:1.0.9
+        volumes:
+            - .:/var/www/app:delegated
+        ports:
+            - '80:80'
+        depends_on:
+            - php
+            - php_xdebug
+        environment:
+            - DOCUMENT_ROOT=/var/www/app/examples
+
+    php: &php
+        image: wearedestination/php81-fpm:1.0.2
+        working_dir: /var/www/app
+        volumes:
+            - .:/var/www/app:delegated
+        user: 1000:1000
+        depends_on:
+            - redis
+
+    php_xdebug:
+        <<: *php
+        command: ["php-fpm81", "-dzend_extension=xdebug.so"]
