@@ -272,6 +272,11 @@ abstract class AbstractType implements TypeInterface
         return $this->data;
     }
 
+    public function getNormData()
+    {
+        return $this->data;
+    }
+
     public function setData($data): TypeInterface
     {
         $this->data = $data;

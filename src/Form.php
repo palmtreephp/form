@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Palmtree\Form;
 
 use Palmtree\ArgParser\ArgParser;
+use Palmtree\Form\DataMapper\DataMapperInterface;
 use Palmtree\Form\Exception\AlreadySubmittedException;
 use Palmtree\Form\Exception\NotSubmittedException;
 use Palmtree\Form\Exception\OutOfBoundsException;
@@ -40,16 +41,19 @@ class Form
     protected $htmlValidation = true;
     /** @var FormRenderer */
     protected $renderer;
+    /** @var DataMapperInterface|null */
+    protected $boundObject = null;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
     /**
      * @param array|string $args
      */
-    public function __construct($args = [])
+    public function __construct($args = [], ?DataMapperInterface $boundObject = null)
     {
         $this->parseArgs($args);
         $this->renderer = new FormRenderer($this);
+        $this->boundObject = $boundObject;
     }
 
     public function renderStart(): string
@@ -115,6 +119,14 @@ class Form
 
             $field->build();
             $field->mapData();
+        }
+
+        if ($this->boundObject instanceof DataMapperInterface && $this->isValid()) {
+            $modelData = array_map(function (TypeInterface $field) {
+                return $field->getNormData();
+            }, $this->all());
+
+            $this->boundObject->mapDataFromForm($modelData, $this);
         }
     }
 
@@ -344,6 +356,13 @@ class Form
         $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
 
         $parser->parseSetters($this);
+    }
+
+    public function bind(): void
+    {
+        if ($this->boundObject instanceof DataMapperInterface) {
+            $this->boundObject->mapDataToForm($this);
+        }
     }
 
     public function __toString(): string

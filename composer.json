@@ -15,6 +15,11 @@
             "Palmtree\\Form\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Palmtree\\Form\\Examples\\": "examples"
+        }
+    },
     "require": {
         "php": ">=7.1",
         "palmtree/argparser": "^2.1",

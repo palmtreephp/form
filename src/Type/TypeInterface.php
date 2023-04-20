@@ -42,6 +42,9 @@ interface TypeInterface
     /** @return mixed */
     public function getData();
 
+    /** @return mixed */
+    public function getNormData();
+
     /**
      * @param array|string|null $data
      */

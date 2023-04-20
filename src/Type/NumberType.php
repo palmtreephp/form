@@ -34,4 +34,15 @@ class NumberType extends AbstractType
 
         return $element;
     }
+
+    public function getNormData()
+    {
+        $data = parent::getData();
+
+        if ($data === null) {
+            return null;
+        }
+
+        return (float)$data;
+    }
 }
