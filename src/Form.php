@@ -122,6 +122,7 @@ class Form
         }
 
         if ($this->boundObject instanceof DataMapperInterface && $this->isValid()) {
+            /** @psalm-suppress MissingClosureReturnType */
             $modelData = array_map(function (TypeInterface $field) {
                 return $field->getNormData();
             }, $this->all());
