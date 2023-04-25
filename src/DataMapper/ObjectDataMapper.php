@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Palmtree\Form\DataMapper;
 
+use Palmtree\Form\Exception\InaccessiblePropertyException;
+use Palmtree\Form\Exception\UnsettablePropertyException;
 use Palmtree\Form\Form;
 
 trait ObjectDataMapper
@@ -36,7 +38,7 @@ trait ObjectDataMapper
             return $this->$property;
         }
 
-        return null;
+        throw new InaccessiblePropertyException($property, $this);
     }
 
     private function setPropertyValue(string $property, $value): void
@@ -51,6 +53,10 @@ trait ObjectDataMapper
 
         if (property_exists($this, $property)) {
             $this->$property = $value;
+
+            return;
         }
+
+        throw new UnsettablePropertyException($property, $this);
     }
 }
