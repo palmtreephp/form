@@ -15,6 +15,12 @@ class Person implements DataMapperInterface
     public $emailAddress;
     /** @var int */
     private $age;
+    /** @var bool */
+    private $signup = false;
+    /** @var string */
+    private $favouriteConsole;
+    /** @var array */
+    public $interests = [];
 
     public function setAge($age): void
     {
@@ -24,5 +30,15 @@ class Person implements DataMapperInterface
     public function getAge(): int
     {
         return $this->age;
+    }
+
+    public function setSignup($signup): void
+    {
+        $this->signup = (bool)$signup;
+    }
+
+    public function isSignup(): bool
+    {
+        return $this->signup;
     }
 }

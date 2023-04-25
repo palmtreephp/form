@@ -12,10 +12,12 @@ trait ObjectDataMapper
 {
     public function mapDataToForm(Form $form): void
     {
-        foreach ($form->all() as $child) {
-            $name = $child->getName();
+        foreach ($form->allMapped() as $child) {
+            if ($child->isMapped()) {
+                $name = $child->getName();
 
-            $child->setData($this->getPropertyValue($name));
+                $child->setData($this->getPropertyValue($name));
+            }
         }
     }
 
@@ -28,10 +30,17 @@ trait ObjectDataMapper
 
     private function getPropertyValue(string $property)
     {
-        $getter = 'get' . ucfirst($property);
+        $ucFirstProperty = ucfirst($property);
+        $getter = 'get' . $ucFirstProperty;
 
         if (method_exists($this, $getter)) {
             return $this->$getter();
+        }
+
+        $isser = 'is' . $ucFirstProperty;
+
+        if (method_exists($this, $isser)) {
+            return $this->$isser();
         }
 
         if (property_exists($this, $property)) {

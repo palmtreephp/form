@@ -27,7 +27,7 @@ class CheckboxType extends AbstractType
         $data = $this->data;
 
         if (\is_array($data)) {
-            $key = array_search($this->value, $data, false);
+            $key = array_search($this->value, $data);
 
             if ($key !== false) {
                 $data = $data[$key];

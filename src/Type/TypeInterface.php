@@ -45,6 +45,8 @@ interface TypeInterface
     /** @return mixed */
     public function getNormData();
 
+    public function clearData(): void;
+
     /**
      * @param array|string|null $data
      */
@@ -101,4 +103,6 @@ interface TypeInterface
     public function getConstraints(): array;
 
     public function clearConstraints(): self;
+
+    public function isMapped(): bool;
 }

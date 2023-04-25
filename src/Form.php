@@ -113,6 +113,8 @@ class Form
         foreach ($this->fields as $field) {
             $key = $field->getName();
 
+            $field->clearData();
+
             if (isset($data[$key]) || \array_key_exists($key, $data)) {
                 $field->setData($data[$key]);
             }
@@ -125,7 +127,7 @@ class Form
             /** @psalm-suppress MissingClosureReturnType */
             $modelData = array_map(function (TypeInterface $field) {
                 return $field->getNormData();
-            }, $this->all());
+            }, $this->allMapped());
 
             $this->boundObject->mapDataFromForm($modelData, $this);
         }
@@ -245,6 +247,16 @@ class Form
     public function all(): array
     {
         return $this->fields;
+    }
+
+    /**
+     * @return array<string, TypeInterface>
+     */
+    public function allMapped(): array
+    {
+        return array_filter($this->fields, function (TypeInterface $field) {
+            return $field->isMapped();
+        });
     }
 
     public function has(string $name): bool
