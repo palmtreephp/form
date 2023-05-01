@@ -13,11 +13,7 @@ class ObjectDataMapper implements DataMapperInterface
     public function mapDataToForm($object, Form $form): void
     {
         foreach ($form->allMapped() as $child) {
-            if ($child->isMapped()) {
-                $name = $child->getName();
-
-                $child->setData($this->getPropertyValue($object, $name));
-            }
+            $child->setData($this->getPropertyValue($object, $child->getName()));
         }
     }
 
