@@ -1,0 +1,50 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  run:
+    runs-on: 'ubuntu-22.04'
+    strategy:
+      matrix:
+        php-versions: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Declare variables
+        id: vars
+        run: echo "composer_cache_dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          tools: cs2pr
+
+      - name: Lint PHP
+        run: find -L src -type f -name '*.php' -print0 | xargs -0 -n 1 -P $(nproc) php -l
+
+      - name: Cache composer
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.vars.outputs.composer_cache_dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction
+        if: matrix.php-versions == 8.1
+
+      - name: PHP-CS-Fixer - Validate coding standards
+        run: php vendor/bin/php-cs-fixer fix -vvv --dry-run --using-cache=no --format=checkstyle | cs2pr
+        if: matrix.php-versions == 8.1
+
+      - name: Psalm - Static Analysis
+        run: php vendor/bin/psalm --no-cache --show-info=false --stats --output-format=github --threads=$(nproc)
+        if: matrix.php-versions == 8.1
