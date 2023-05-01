@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v4.3.2 - 2023-05-01
+
+* Bug fix: Allow `CollectionType` entry types to be scalar. Previously, the entry type data was required to be an array
+  which threw a fatal error if the data was a string for example. (#7)
+
 ## v4.3.1 - 2022-09-19
 
 * Added `renderRest` method to render all remaining unrendered fields.
