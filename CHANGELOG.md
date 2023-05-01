@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v4.3.1 - 2022-09-19
+
+* Added `renderRest` method to render all remaining unrendered fields.
+
 ## v4.3 - 2022-07-24
 
 Added functionality to render fields individually with a new `renderField` method. Among other things, this allows
