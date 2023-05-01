@@ -111,6 +111,9 @@ class CollectionType extends AbstractType
         return $normData;
     }
 
+    /**
+     * @param mixed $data
+     */
     private function buildEntry(int $position = 0, $data = null): TypeInterface
     {
         $entryType = $this->entryType;
