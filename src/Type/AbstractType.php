@@ -195,7 +195,7 @@ abstract class AbstractType implements TypeInterface
 
         $element = $this->getElement();
 
-        if (!$element->attributes['id']) {
+        if (!isset($element->attributes['id'])) {
             $element->attributes['id'] = $this->getIdAttribute();
         }
 
