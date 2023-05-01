@@ -24,8 +24,9 @@ class FormBuilder
 
     /**
      * @param array|string $args
+     * @param object|null  $boundObject
      */
-    public function __construct($args = [], ?DataMapperInterface $boundObject = null)
+    public function __construct($args = [], $boundObject = null)
     {
         $this->form = new Form($args, $boundObject);
         $this->typeLocator = new TypeLocator();
@@ -85,6 +86,13 @@ class FormBuilder
         $this->form->bind();
 
         return $this->form;
+    }
+
+    public function setDataMapper(DataMapperInterface $dataMapper): self
+    {
+        $this->form->setDataMapper($dataMapper);
+
+        return $this;
     }
 
     private function getRepeatedTypeBuilder(): RepeatedTypeBuilder

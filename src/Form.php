@@ -6,6 +6,7 @@ namespace Palmtree\Form;
 
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\DataMapper\DataMapperInterface;
+use Palmtree\Form\DataMapper\ObjectDataMapper;
 use Palmtree\Form\Exception\AlreadySubmittedException;
 use Palmtree\Form\Exception\NotSubmittedException;
 use Palmtree\Form\Exception\OutOfBoundsException;
@@ -41,19 +42,23 @@ class Form
     protected $htmlValidation = true;
     /** @var FormRenderer */
     protected $renderer;
-    /** @var DataMapperInterface|null */
+    /** @var object|null */
     protected $boundObject = null;
+    /** @var DataMapperInterface */
+    protected $dataMapper;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
     /**
+     * @param object|null  $boundObject
      * @param array|string $args
      */
-    public function __construct($args = [], ?DataMapperInterface $boundObject = null)
+    public function __construct($args = [], $boundObject = null)
     {
         $this->parseArgs($args);
         $this->renderer = new FormRenderer($this);
         $this->boundObject = $boundObject;
+        $this->dataMapper = new ObjectDataMapper();
     }
 
     public function renderStart(): string
@@ -123,13 +128,13 @@ class Form
             $field->mapData();
         }
 
-        if ($this->boundObject instanceof DataMapperInterface && $this->isValid()) {
+        if (\is_object($this->boundObject) && $this->isValid()) {
             /** @psalm-suppress MissingClosureReturnType */
             $modelData = array_map(function (TypeInterface $field) {
                 return $field->getNormData();
             }, $this->allMapped());
 
-            $this->boundObject->mapDataFromForm($modelData, $this);
+            $this->dataMapper->mapDataFromForm($this->boundObject, $modelData, $this);
         }
     }
 
@@ -373,9 +378,16 @@ class Form
 
     public function bind(): void
     {
-        if ($this->boundObject instanceof DataMapperInterface) {
-            $this->boundObject->mapDataToForm($this);
+        if (\is_object($this->boundObject)) {
+            $this->dataMapper->mapDataToForm($this->boundObject, $this);
         }
+    }
+
+    public function setDataMapper(DataMapperInterface $dataMapper): self
+    {
+        $this->dataMapper = $dataMapper;
+
+        return $this;
     }
 
     public function __toString(): string

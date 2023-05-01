@@ -5,10 +5,8 @@ namespace Palmtree\Form\Test\Fixtures;
 use Palmtree\Form\DataMapper\DataMapperInterface;
 use Palmtree\Form\DataMapper\ObjectDataMapper;
 
-class Person implements DataMapperInterface
+class Person
 {
-    use ObjectDataMapper;
-
     /** @var string */
     public $name;
     /** @var string */

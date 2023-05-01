@@ -4,22 +4,12 @@ As well as creating data, a common use case for forms is to update existing data
 The basic idea is that you pass the form a data object, and it will populate the form with the data from the object.
 When the form is submitted, it will update the data object with the new values.
 
-## Object Setup
-
-Any object you wish to bind to a form must implement the [`DataMapperInterface`](/src/DataMapper/DataMapperInterface.php).
-The easiest way to do this is to use the [`ObjectDataMapper`](/src/DataMapper/ObjectDataMapper.php) trait which implements
-both methods for you for the most common use cases.
-
-To retrieve a property's value, the `ObjectDataMapper` trait first looks for a getter method, then an isser method, before falling
-back to accessing the property directly.
-
-To set property values, it first looks for a setter method before falling back to setting the property directly:
+The [default data mapper](/src/DataMapper/ObjectDataMapper.php) prioritizes getters (and issers) and setters for retrieving
+and setting property values, respectively. If no getter or setter is found, the mapper will attempt to access the property
+directly (if it is public).
 
 ```php
-class Person implements \Palmtree\Form\DataMapper\DataMapperInterface {
-
-    use \Palmtree\Form\DataMapper\ObjectDataMapper;
-
+class Person {
     public string $name = 'Bob Smith';
     public int $age = 42;
     private array $interests = [];
@@ -53,7 +43,7 @@ class Person implements \Palmtree\Form\DataMapper\DataMapperInterface {
 
 ## Building the Form
 
-Now we have our model set up correctly, it's time to create the form:
+Now we have our model set up, it's time to create the form:
 
 ```php
 $person = new Person();
@@ -75,6 +65,12 @@ $builder
         'required' => false,
     ])
 ;
+```
+
+For more advanced use cases you may override the default data mapper by implementing the [`DataMapperInterface`](/src/DataMapper/DataMapperInterface.php):
+
+```php
+$builder->setDataMapper(new SomeOtherDataMapper());
 ```
 
 When the form is submitted and validated, the data object will be updated with the new values.
