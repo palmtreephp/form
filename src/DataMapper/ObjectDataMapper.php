@@ -28,6 +28,9 @@ trait ObjectDataMapper
         }
     }
 
+    /**
+     * Gets a property value from the object, prioritizing a getter and isser methods if they exist.
+     */
     private function getPropertyValue(string $property)
     {
         $ucFirstProperty = ucfirst($property);
@@ -50,6 +53,9 @@ trait ObjectDataMapper
         throw new InaccessiblePropertyException($property, $this);
     }
 
+    /**
+     * Sets a property value on the object, prioritizing a setter method if it exists.
+     */
     private function setPropertyValue(string $property, $value): void
     {
         $setter = 'set' . ucfirst($property);
