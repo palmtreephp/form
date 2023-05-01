@@ -42,5 +42,9 @@
         "allow-plugins": {
             "composer/package-versions-deprecated": true
         }
+    },
+    "scripts": {
+        "psalm": "@php vendor/bin/psalm --no-cache",
+        "fix": "@php vendor/bin/php-cs-fixer fix"
     }
 }
