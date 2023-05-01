@@ -31,6 +31,7 @@ jobs:
 
       - name: Cache composer
         uses: actions/cache@v3
+        if: matrix.php-versions == 8.1
         with:
           path: ${{ steps.vars.outputs.composer_cache_dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
