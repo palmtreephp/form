@@ -17,7 +17,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Palmtree\\Form\\Examples\\": "examples"
+            "Palmtree\\Form\\Examples\\": "examples",
+            "Palmtree\\Form\\Test\\": "tests"
         }
     },
     "require": {
@@ -28,7 +29,8 @@
     },
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^2.0",
-        "vimeo/psalm": "^4.18"
+        "vimeo/psalm": "^4.18",
+        "phpunit/phpunit": "^9.6"
     },
     "suggest": {
         "ext-curl": "For Google Recaptcha support",
@@ -50,6 +52,7 @@
     },
     "scripts": {
         "psalm": "@php vendor/bin/psalm --no-cache",
-        "fix": "@php vendor/bin/php-cs-fixer fix"
+        "fix": "@php vendor/bin/php-cs-fixer fix",
+        "test": "@php vendor/bin/phpunit"
     }
 }

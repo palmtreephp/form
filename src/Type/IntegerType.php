@@ -12,6 +12,6 @@ class IntegerType extends NumberType
             return null;
         }
 
-        return (float)$this->data;
+        return (int)$this->data;
     }
 }

@@ -5,12 +5,13 @@ use Palmtree\Form\FormBuilder;
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
-$person               = new \Palmtree\Form\Examples\Fixtures\Person();
+$person               = new \Palmtree\Form\Test\Fixtures\Person();
 $person->name         = 'Person';
 $person->emailAddress = 'person@example.org';
 $person->setAge(42);
 $person->setSignup(true);
 $person->interests[] = 'football';
+$person->pets[]      = 'cat';
 
 $builder = new FormBuilder([
     'key'             => 'data_binding_example',
@@ -27,7 +28,7 @@ $builder
     ])
     ->add('favouriteConsole', 'choice', [
         'placeholder' => 'Select a console',
-        'choices' => [
+        'choices'     => [
             'PlayStation' => 'PlayStation',
             'Xbox'        => 'Xbox',
             'Switch'      => 'Switch',
@@ -41,6 +42,9 @@ $builder
             'gaming'   => 'Gaming',
             'music'    => 'Music',
         ],
+    ])
+    ->add('pets', 'collection', [
+        'entry_type' => 'text',
     ])
 ;
 

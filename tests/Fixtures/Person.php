@@ -1,6 +1,6 @@
 <?php
 
-namespace Palmtree\Form\Examples\Fixtures;
+namespace Palmtree\Form\Test\Fixtures;
 
 use Palmtree\Form\DataMapper\DataMapperInterface;
 use Palmtree\Form\DataMapper\ObjectDataMapper;
@@ -14,13 +14,15 @@ class Person implements DataMapperInterface
     /** @var string */
     public $emailAddress;
     /** @var int */
-    private $age;
+    private $age = 0;
     /** @var bool */
     private $signup = false;
     /** @var string */
     private $favouriteConsole;
     /** @var array */
     public $interests = [];
+    /** @var array */
+    public $pets = [];
 
     public function setAge($age): void
     {
@@ -40,5 +42,21 @@ class Person implements DataMapperInterface
     public function isSignup(): bool
     {
         return $this->signup;
+    }
+
+    /**
+     * @param string $favouriteConsole
+     */
+    public function setFavouriteConsole(string $favouriteConsole): void
+    {
+        $this->favouriteConsole = $favouriteConsole;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFavouriteConsole(): ?string
+    {
+        return $this->favouriteConsole;
     }
 }

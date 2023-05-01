@@ -16,5 +16,17 @@
     </div>
 </main>
 <?= get_scripts(); ?>
+<script src="/public/dist/js/palmtree-form.pkgd.js"></script>
+<script>
+    $(function () {
+        $('#form_data_binding_example-pets').palmtreeFormCollection({
+            minEntries: 1,
+            maxEntries: 4,
+            labels: {
+                add: 'Add pet'
+            }
+        });
+    });
+</script>
 </body>
 </html>

@@ -49,3 +49,7 @@ jobs:
       - name: Psalm - Static Analysis
         run: php vendor/bin/psalm --no-cache --show-info=false --stats --output-format=github --threads=$(nproc)
         if: matrix.php-versions == 8.1
+
+      - name: PHPUnit - Tests
+        run: php vendor/bin/phpunit -v --do-not-cache-result
+        if: matrix.php-versions == 8.1

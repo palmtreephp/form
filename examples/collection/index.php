@@ -1,13 +1,12 @@
 <?php declare(strict_types=1);
 
+use Palmtree\Form\Examples\Fixtures\PersonType;
 use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Type\CollectionType;
-use Palmtree\Form\Type\PersonType;
 use Palmtree\Form\Type\SubmitType;
 
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
-require __DIR__ . '/PersonType.php';
 
 $builder = new FormBuilder([
     'key'             => 'collection_example',
