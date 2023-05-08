@@ -1,10 +1,12 @@
 # Data Binding
 
 As well as creating data, a common use case for forms is to update existing data. This is where data binding comes in.
-The basic idea is that you pass the form a data object, and it will populate the form with the data from the object.
-When the form is submitted, it will update the data object with the new values.
+The basic idea is that you pass the form a data object or array, and it will populate the form with the data and in the case
+of an object, update the object with the new values when the form is submitted.
 
-The [default data mapper](/src/DataMapper/ObjectDataMapper.php) prioritizes getters (and issers) and setters for retrieving
+## Object Data Mapping
+
+The [default object data mapper](/src/DataMapper/ObjectDataMapper.php) prioritizes getters (and issers) and setters for retrieving
 and setting property values, respectively. If no getter or setter is found, the mapper will attempt to access the property
 directly (if it is public).
 
@@ -67,6 +69,8 @@ $builder
 ;
 ```
 
+> Note: You may also use a regular stdClass for two-way data binding using the default object data mapper.
+
 For more advanced use cases you may override the default data mapper by implementing the [`DataMapperInterface`](/src/DataMapper/DataMapperInterface.php):
 
 ```php
@@ -74,6 +78,37 @@ $builder->setDataMapper(new SomeOtherDataMapper());
 ```
 
 When the form is submitted and validated, the data object will be updated with the new values.
+
+## Array Data Mapping
+
+You may use an array to populate the form instead of an object. In this case, the array keys will be used as the property
+names.
+
+```php
+$data = [
+    'name'       => 'Bob Smith',
+    'age'        => 42,
+    'interests'  => ['football', 'tennis'],
+    'active'     => true,
+];
+
+$builder = new \Palmtree\Form\FormBuilder([], $data);
+```
+
+When using an array to populate the form the array will not be updated when the form is submitted because it
+is passed by value. If you want two-way data binding you should use an [ArrayObject](https://www.php.net/manual/en/class.arrayobject.php)
+or an object which implements [ArrayAccess](https://www.php.net/manual/en/class.arrayaccess.php):
+
+```php
+$data = new \ArrayObject([
+    'name'       => 'Bob Smith',
+    'age'        => 42,
+    'interests'  => ['football', 'tennis'],
+    'active'     => true,
+]);
+
+$builder = new \Palmtree\Form\FormBuilder([], $data);
+```
 
 ## Unmapped Fields
 
