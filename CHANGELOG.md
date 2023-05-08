@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-# v4.4 - 2023-05-08
+## v4.4 - 2023-05-08
 
 * Added data binding to map form data to an object or an array. Read the [docs page](docs/data-binding.md) for more information
 
