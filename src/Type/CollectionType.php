@@ -14,11 +14,7 @@ class CollectionType extends AbstractType
     protected $required = false;
     /** @var string|null */
     protected $label = '';
-    /**
-     * @var string
-     *
-     * @psalm-var class-string<TypeInterface>
-     */
+    /** @var class-string<TypeInterface> */
     private $entryType;
     /** @var array */
     private $entryOptions = [];
@@ -32,6 +28,8 @@ class CollectionType extends AbstractType
         $entriesWrapper = new Element('div.palmtree-form-collection-entries');
 
         $collectionWrapper->addChild($entriesWrapper);
+
+        $this->build();
 
         foreach ($this->children as $entry) {
             $entriesWrapper->addChild($this->buildEntryElement($entry));
@@ -101,14 +99,24 @@ class CollectionType extends AbstractType
         return $this;
     }
 
-    public function getData(): array
+    public function getNormData(): array
     {
         $normData = [];
         foreach ($this->all() as $child) {
-            $normData[] = $child->getData();
+            $normData[] = $child->getNormData();
         }
 
         return $normData;
+    }
+
+    public function getData(): array
+    {
+        $data = [];
+        foreach ($this->all() as $child) {
+            $data[] = $child->getData();
+        }
+
+        return $data;
     }
 
     /**

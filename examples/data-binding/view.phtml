@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Palmtree Form - Data Binding Example</title>
+    <?= get_styles(); ?>
+</head>
+<body>
+<main>
+    <div class="container mt-3">
+        <h1>Palmtree Form - Data Binding Example</h1>
+        <?php if ($success): ?>
+            <div class="alert alert-success">Form submitted successfully</div>
+        <?php endif; ?>
+        <?= $form->render(); ?>
+    </div>
+</main>
+<?= get_scripts(); ?>
+<script src="/public/dist/js/palmtree-form.pkgd.js"></script>
+<script>
+    $(function () {
+        $('#form_data_binding_example-pets').palmtreeFormCollection({
+            minEntries: 1,
+            maxEntries: 4,
+            labels: {
+                add: 'Add pet'
+            }
+        });
+    });
+</script>
+</body>
+</html>

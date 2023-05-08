@@ -45,6 +45,8 @@ abstract class AbstractType implements TypeInterface
     protected $constraints = [];
     /** @var SnakeCaseToHumanNameConverter */
     protected $nameConverter;
+    /** @var bool */
+    protected $mapped = true;
     /** @var array */
     public static $defaultArgs = [
         'placeholder' => true,
@@ -272,6 +274,16 @@ abstract class AbstractType implements TypeInterface
         return $this->data;
     }
 
+    public function getNormData()
+    {
+        return $this->data;
+    }
+
+    public function clearData(): void
+    {
+        $this->data = null;
+    }
+
     public function setData($data): TypeInterface
     {
         $this->data = $data;
@@ -448,5 +460,10 @@ abstract class AbstractType implements TypeInterface
         $this->constraints = [];
 
         return $this;
+    }
+
+    public function isMapped(): bool
+    {
+        return $this->mapped;
     }
 }

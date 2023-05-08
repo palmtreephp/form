@@ -12,6 +12,7 @@ class ButtonType extends AbstractType
     protected $type = 'button';
     protected $required = false;
     protected $userInput = false;
+    protected $mapped = false;
 
     public static $defaultArgs = [
         'placeholder' => false,

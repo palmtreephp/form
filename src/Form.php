@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Palmtree\Form;
 
 use Palmtree\ArgParser\ArgParser;
+use Palmtree\Form\DataMapper\ArrayDataMapper;
+use Palmtree\Form\DataMapper\DataMapperInterface;
+use Palmtree\Form\DataMapper\ObjectDataMapper;
 use Palmtree\Form\Exception\AlreadySubmittedException;
 use Palmtree\Form\Exception\NotSubmittedException;
 use Palmtree\Form\Exception\OutOfBoundsException;
@@ -40,16 +43,23 @@ class Form
     protected $htmlValidation = true;
     /** @var FormRenderer */
     protected $renderer;
+    /** @var object|array|\ArrayAccess|null */
+    protected $boundData = null;
+    /** @var DataMapperInterface */
+    protected $dataMapper;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
     /**
-     * @param array|string $args
+     * @param object|array|null $boundData
+     * @param array|string      $args
      */
-    public function __construct($args = [])
+    public function __construct($args = [], $boundData = null)
     {
         $this->parseArgs($args);
         $this->renderer = new FormRenderer($this);
+        $this->boundData = $boundData;
+        $this->dataMapper = $this->createDataMapper();
     }
 
     public function renderStart(): string
@@ -109,12 +119,23 @@ class Form
         foreach ($this->fields as $field) {
             $key = $field->getName();
 
+            $field->clearData();
+
             if (isset($data[$key]) || \array_key_exists($key, $data)) {
                 $field->setData($data[$key]);
             }
 
             $field->build();
             $field->mapData();
+        }
+
+        if ($this->boundData !== null && $this->isValid()) {
+            /** @psalm-suppress MissingClosureReturnType */
+            $formData = array_map(function (TypeInterface $field) {
+                return $field->getNormData();
+            }, $this->allMapped());
+
+            $this->dataMapper->mapDataFromForm($this->boundData, $formData, $this);
         }
     }
 
@@ -234,6 +255,16 @@ class Form
         return $this->fields;
     }
 
+    /**
+     * @return array<string, TypeInterface>
+     */
+    public function allMapped(): array
+    {
+        return array_filter($this->fields, function (TypeInterface $field) {
+            return $field->isMapped();
+        });
+    }
+
     public function has(string $name): bool
     {
         return isset($this->fields[$name]);
@@ -344,6 +375,29 @@ class Form
         $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
 
         $parser->parseSetters($this);
+    }
+
+    public function bind(): void
+    {
+        if ($this->boundData !== null) {
+            $this->dataMapper->mapDataToForm($this->boundData, $this);
+        }
+    }
+
+    public function setDataMapper(DataMapperInterface $dataMapper): self
+    {
+        $this->dataMapper = $dataMapper;
+
+        return $this;
+    }
+
+    private function createDataMapper(): DataMapperInterface
+    {
+        if (\is_array($this->boundData) || $this->boundData instanceof \ArrayAccess) {
+            return new ArrayDataMapper();
+        }
+
+        return new ObjectDataMapper();
     }
 
     public function __toString(): string

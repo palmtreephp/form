@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Palmtree\Form;
 
+use Palmtree\Form\DataMapper\DataMapperInterface;
 use Palmtree\Form\Type\CollectionType;
 use Palmtree\Form\Type\FileType;
 use Palmtree\Form\Type\RepeatedType;
@@ -22,11 +23,12 @@ class FormBuilder
     private const FILE_UPLOAD_ENC_TYPE = 'multipart/form-data';
 
     /**
-     * @param array|string $args
+     * @param array|string      $args
+     * @param object|array|null $boundData
      */
-    public function __construct($args = [])
+    public function __construct($args = [], $boundData = null)
     {
-        $this->form = new Form($args);
+        $this->form = new Form($args, $boundData);
         $this->typeLocator = new TypeLocator();
     }
 
@@ -81,7 +83,16 @@ class FormBuilder
 
     public function getForm(): Form
     {
+        $this->form->bind();
+
         return $this->form;
+    }
+
+    public function setDataMapper(DataMapperInterface $dataMapper): self
+    {
+        $this->form->setDataMapper($dataMapper);
+
+        return $this;
     }
 
     private function getRepeatedTypeBuilder(): RepeatedTypeBuilder
