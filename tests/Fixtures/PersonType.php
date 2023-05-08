@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palmtree\Form\Test\Fixtures;
 
 use Palmtree\Form\Type\AbstractGroupType;
@@ -17,19 +19,19 @@ class PersonType extends AbstractGroupType
             ])
             ->add('favouriteConsole', 'choice', [
                 'placeholder' => 'Select a console',
-                'choices'     => [
+                'choices' => [
                     'PlayStation' => 'PlayStation',
-                    'Xbox'        => 'Xbox',
-                    'Switch'      => 'Switch',
+                    'Xbox' => 'Xbox',
+                    'Switch' => 'Switch',
                 ],
             ])
             ->add('interests', 'choice', [
                 'multiple' => true,
                 'expanded' => true,
-                'choices'  => [
+                'choices' => [
                     'football' => 'Football',
-                    'gaming'   => 'Gaming',
-                    'music'    => 'Music',
+                    'gaming' => 'Gaming',
+                    'music' => 'Music',
                 ],
             ])
             ->add('pets', 'collection', [

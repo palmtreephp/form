@@ -40,16 +40,13 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-interaction
-        if: matrix.php-versions == 8.1
 
       - name: PHP-CS-Fixer - Validate coding standards
         run: php vendor/bin/php-cs-fixer fix -vvv --dry-run --using-cache=no --format=checkstyle | cs2pr
-        if: matrix.php-versions == 8.1
+        if: matrix.php-versions == 8.2
 
       - name: Psalm - Static Analysis
         run: php vendor/bin/psalm --no-cache --show-info=false --stats --output-format=github --threads=$(nproc)
-        if: matrix.php-versions == 8.1
 
       - name: PHPUnit - Tests
         run: php vendor/bin/phpunit -v --do-not-cache-result
-        if: matrix.php-versions == 8.1

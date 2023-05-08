@@ -1,9 +1,8 @@
 <?php
 
-namespace Palmtree\Form\Test\Fixtures;
+declare(strict_types=1);
 
-use Palmtree\Form\DataMapper\DataMapperInterface;
-use Palmtree\Form\DataMapper\ObjectDataMapper;
+namespace Palmtree\Form\Test\Fixtures;
 
 class Person
 {
@@ -42,9 +41,6 @@ class Person
         return $this->signup;
     }
 
-    /**
-     * @param string $favouriteConsole
-     */
     public function setFavouriteConsole(string $favouriteConsole): void
     {
         $this->favouriteConsole = $favouriteConsole;

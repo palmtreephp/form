@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Palmtree\Form;
 
 use Palmtree\ArgParser\ArgParser;
+use Palmtree\Form\DataMapper\ArrayDataMapper;
 use Palmtree\Form\DataMapper\DataMapperInterface;
 use Palmtree\Form\DataMapper\ObjectDataMapper;
 use Palmtree\Form\Exception\AlreadySubmittedException;
@@ -42,23 +43,23 @@ class Form
     protected $htmlValidation = true;
     /** @var FormRenderer */
     protected $renderer;
-    /** @var object|null */
-    protected $boundObject = null;
+    /** @var object|array|\ArrayAccess|null */
+    protected $boundData = null;
     /** @var DataMapperInterface */
     protected $dataMapper;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
     /**
-     * @param object|null  $boundObject
-     * @param array|string $args
+     * @param object|array|null $boundData
+     * @param array|string      $args
      */
-    public function __construct($args = [], $boundObject = null)
+    public function __construct($args = [], $boundData = null)
     {
         $this->parseArgs($args);
         $this->renderer = new FormRenderer($this);
-        $this->boundObject = $boundObject;
-        $this->dataMapper = new ObjectDataMapper();
+        $this->boundData = $boundData;
+        $this->dataMapper = $this->createDataMapper();
     }
 
     public function renderStart(): string
@@ -128,13 +129,13 @@ class Form
             $field->mapData();
         }
 
-        if (\is_object($this->boundObject) && $this->isValid()) {
+        if ($this->boundData !== null && $this->isValid()) {
             /** @psalm-suppress MissingClosureReturnType */
-            $modelData = array_map(function (TypeInterface $field) {
+            $formData = array_map(function (TypeInterface $field) {
                 return $field->getNormData();
             }, $this->allMapped());
 
-            $this->dataMapper->mapDataFromForm($this->boundObject, $modelData, $this);
+            $this->dataMapper->mapDataFromForm($this->boundData, $formData, $this);
         }
     }
 
@@ -378,8 +379,8 @@ class Form
 
     public function bind(): void
     {
-        if (\is_object($this->boundObject)) {
-            $this->dataMapper->mapDataToForm($this->boundObject, $this);
+        if ($this->boundData !== null) {
+            $this->dataMapper->mapDataToForm($this->boundData, $this);
         }
     }
 
@@ -388,6 +389,15 @@ class Form
         $this->dataMapper = $dataMapper;
 
         return $this;
+    }
+
+    private function createDataMapper(): DataMapperInterface
+    {
+        if (\is_array($this->boundData) || $this->boundData instanceof \ArrayAccess) {
+            return new ArrayDataMapper();
+        }
+
+        return new ObjectDataMapper();
     }
 
     public function __toString(): string

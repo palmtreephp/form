@@ -10,17 +10,27 @@ use Palmtree\Form\Form;
 
 class ObjectDataMapper implements DataMapperInterface
 {
-    public function mapDataToForm($object, Form $form): void
+    /**
+     * @psalm-suppress MoreSpecificImplementedParamType
+     *
+     * @param object $data
+     */
+    public function mapDataToForm($data, Form $form): void
     {
         foreach ($form->allMapped() as $child) {
-            $child->setData($this->getPropertyValue($object, $child->getName()));
+            $child->setData($this->getPropertyValue($data, $child->getName()));
         }
     }
 
-    public function mapDataFromForm($object, array $data, Form $form): void
+    /**
+     * @psalm-suppress MoreSpecificImplementedParamType
+     *
+     * @param object $data
+     */
+    public function mapDataFromForm($data, array $formData, Form $form): void
     {
-        foreach ($data as $key => $value) {
-            $this->setPropertyValue($object, $key, $value);
+        foreach ($formData as $key => $value) {
+            $this->setPropertyValue($data, $key, $value);
         }
     }
 

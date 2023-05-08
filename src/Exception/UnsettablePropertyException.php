@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Palmtree\Form\Exception;
 
-class UnsettablePropertyException extends \LogicException
+class UnsettablePropertyException extends OutOfBoundsException
 {
     /**
      * @param object $object

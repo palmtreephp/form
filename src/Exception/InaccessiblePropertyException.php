@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Palmtree\Form\Exception;
 
-class InaccessiblePropertyException extends \LogicException
+class InaccessiblePropertyException extends OutOfBoundsException
 {
     /**
      * @param object $object
