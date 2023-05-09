@@ -50,7 +50,7 @@ Now we have our model set up, it's time to create the form:
 ```php
 $person = new Person();
 
-$builder = new \Palmtree\Form\FormBuilder([], $person);
+$builder = new \Palmtree\Form\FormBuilder('some_form_key', $person);
 
 $builder
     ->add('name', 'text')
@@ -107,7 +107,7 @@ $data = new \ArrayObject([
     'active'     => true,
 ]);
 
-$builder = new \Palmtree\Form\FormBuilder([], $data);
+$builder = new \Palmtree\Form\FormBuilder('some_form_key', $data);
 ```
 
 ## Unmapped Fields
