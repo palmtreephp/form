@@ -92,7 +92,7 @@ $data = [
     'active'     => true,
 ];
 
-$builder = new \Palmtree\Form\FormBuilder([], $data);
+$builder = new \Palmtree\Form\FormBuilder('some_form_key', $data);
 ```
 
 When using an array to populate the form the array will not be updated when the form is submitted because it
