@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## v4.4.1 - 2023-05-15
 
 * Bug fix: The `required` attribute is now correctly omitted on a select field if the `required` option is set to `false`
-  in the `ChoiceType` configuration (#9)
+  in the `ChoiceType` configuration ([#9](https://github.com/palmtreephp/form/issues/9))
 
 ## v4.4 - 2023-05-08
 
