@@ -44,6 +44,7 @@ class ChoiceType extends AbstractType
                 'name' => $this->name,
                 'multiple' => $this->multiple,
                 'placeholder' => $this->args['placeholder'],
+                'required' => $this->required,
             ]);
 
             $select->setForm($this->form);
