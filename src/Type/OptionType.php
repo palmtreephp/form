@@ -6,10 +6,8 @@ namespace Palmtree\Form\Type;
 
 class OptionType extends AbstractType
 {
-    /** @var string */
-    protected $tag = 'option';
-    /** @var string */
-    protected $value;
+    protected string $tag = 'option';
+    protected string $value;
 
     public function getElements(): array
     {
@@ -29,7 +27,7 @@ class OptionType extends AbstractType
         $data = $this->data;
 
         if (\is_array($data)) {
-            $key = array_search($this->value, $data, false);
+            $key = array_search($this->value, $data);
 
             if ($key !== false) {
                 $data = $data[$key];

@@ -19,38 +19,21 @@ class GoogleRecaptcha implements CaptchaInterface
         'missing-input-response' => 'The response parameter is missing.',
         'invalid-input-response' => 'The response parameter is invalid or malformed.',
     ];
-
-    /** @var string */
-    private $secretKey;
-    /** @var string */
-    private $siteKey;
-    /** @var string */
-    private $ip;
-    /** @var array */
-    private $errors = [];
-    /** @var array */
-    private $verificationResult = [];
-    /** @var bool */
-    private $autoload = true;
+    private readonly string $ip;
+    private array $errors = [];
+    private array $verificationResult = [];
+    private bool $autoload = true;
 
     /**
-     * @param string      $siteKey   Site key obtained from Google Recaptcha admin
-     * @param string      $secretKey Secret key obtained from Google Recaptcha admin
-     * @param bool|string $ip        Client's IP address. Setting to true uses $_SERVER['REMOTE_ADDR']
+     * @param string $siteKey   Site key obtained from Google Recaptcha admin
+     * @param string $secretKey Secret key obtained from Google Recaptcha admin
      */
-    public function __construct(string $siteKey, string $secretKey, $ip = true)
+    public function __construct(private readonly string $siteKey, private readonly string $secretKey, string $ip = null)
     {
-        $this->siteKey = $siteKey;
-        $this->secretKey = $secretKey;
-
-        if ($ip === true) {
-            $ip = @$_SERVER['REMOTE_ADDR'];
-        }
-
-        $this->ip = $ip;
+        $this->ip = $ip ?? $_SERVER['REMOTE_ADDR'] ?? '';
     }
 
-    public function verify($input): bool
+    public function verify(mixed $input): bool
     {
         return $this->doVerify($input);
     }
@@ -170,7 +153,7 @@ class GoogleRecaptcha implements CaptchaInterface
                 return [];
             }
 
-            $this->verificationResult[$response] = json_decode($result, true);
+            $this->verificationResult[$response] = json_decode($result, true, 512, \JSON_THROW_ON_ERROR);
         }
 
         return $this->verificationResult[$response];

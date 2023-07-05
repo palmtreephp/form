@@ -8,7 +8,7 @@ use Palmtree\Html\Element;
 
 class TextareaType extends AbstractType
 {
-    protected $tag = 'textarea';
+    protected string $tag = 'textarea';
 
     public function getElement(): Element
     {

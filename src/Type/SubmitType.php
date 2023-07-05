@@ -6,9 +6,9 @@ namespace Palmtree\Form\Type;
 
 class SubmitType extends ButtonType
 {
-    protected $type = 'submit';
+    protected string $type = 'submit';
 
-    public static $defaultArgs = [
+    public static array $defaultArgs = [
         'placeholder' => false,
         'classes' => [
             'btn',

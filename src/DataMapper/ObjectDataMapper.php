@@ -10,13 +10,12 @@ use Palmtree\Form\Form;
 
 class ObjectDataMapper implements DataMapperInterface
 {
-    /**
-     * @psalm-suppress MoreSpecificImplementedParamType
-     *
-     * @param object $data
-     */
-    public function mapDataToForm($data, Form $form): void
+    public function mapDataToForm(object|array $data, Form $form): void
     {
+        if (!\is_object($data)) {
+            throw new \InvalidArgumentException('Data must be an object');
+        }
+
         foreach ($form->allMapped() as $child) {
             $child->setData($this->getPropertyValue($data, $child->getName()));
         }
@@ -24,11 +23,13 @@ class ObjectDataMapper implements DataMapperInterface
 
     /**
      * @psalm-suppress MoreSpecificImplementedParamType
-     *
-     * @param object $data
      */
-    public function mapDataFromForm($data, array $formData, Form $form): void
+    public function mapDataFromForm(object|array $data, array $formData, Form $form): void
     {
+        if (!\is_object($data)) {
+            throw new \InvalidArgumentException('Data must be an object');
+        }
+
         foreach ($formData as $key => $value) {
             $this->setPropertyValue($data, $key, $value);
         }
@@ -36,12 +37,8 @@ class ObjectDataMapper implements DataMapperInterface
 
     /**
      * Gets a property value from the object, prioritizing a getter and isser methods if they exist.
-     *
-     * @param object $object
-     *
-     * @return mixed
      */
-    private function getPropertyValue($object, string $property)
+    private function getPropertyValue(object $object, string $property): mixed
     {
         $ucFirstProperty = ucfirst($property);
         $getter = 'get' . $ucFirstProperty;
@@ -65,11 +62,8 @@ class ObjectDataMapper implements DataMapperInterface
 
     /**
      * Sets a property value on the object, prioritizing a setter method if it exists.
-     *
-     * @param object $object
-     * @param mixed  $value
      */
-    private function setPropertyValue($object, string $property, $value): void
+    private function setPropertyValue(object $object, string $property, mixed $value): void
     {
         $setter = 'set' . ucfirst($property);
 

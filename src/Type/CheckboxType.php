@@ -8,12 +8,9 @@ use Palmtree\Html\Element;
 
 class CheckboxType extends AbstractType
 {
-    /** @var string */
-    protected $type = 'checkbox';
-    /** @var string */
-    protected $value = '1';
-    /** @var bool */
-    protected $siblings = false;
+    protected string $type = 'checkbox';
+    protected string $value = '1';
+    protected bool $siblings = false;
 
     public function getElement(): Element
     {

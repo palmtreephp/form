@@ -8,13 +8,12 @@ use Palmtree\Form\Captcha\CaptchaInterface;
 
 class CaptchaType extends AbstractType
 {
-    protected $type = 'text';
-    protected $userInput = false;
-    protected $errorMessage = 'Please confirm you\'re not a robot';
-    /** @var CaptchaInterface */
-    private $captcha;
+    protected string $type = 'text';
+    protected bool $userInput = false;
+    protected ?string $errorMessage = 'Please confirm you\'re not a robot';
+    private CaptchaInterface $captcha;
     /** @var bool Whether to display errors from the Captcha implementation */
-    private $captchaErrors = false;
+    private bool $captchaErrors = false;
 
     public function __construct(array $args = [])
     {
@@ -53,7 +52,7 @@ class CaptchaType extends AbstractType
         if (!$this->isValid()) {
             $element->classes[] = 'is-invalid';
 
-            $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
+            $elements[] = $this->form->createInvalidElement()->setInnerText((string)$this->errorMessage);
         }
 
         return $elements;

@@ -9,16 +9,12 @@ use Palmtree\Html\Element;
 
 class CollectionType extends AbstractType
 {
-    /** @var string|null */
-    protected $errorMessage;
-    /** @var bool */
-    protected $required = false;
-    /** @var string|null */
-    protected $label = '';
+    protected ?string $errorMessage = null;
+    protected bool $required = false;
+    protected ?string $label = '';
     /** @var class-string<TypeInterface> */
-    private $entryType;
-    /** @var array */
-    private $entryOptions = [];
+    private string $entryType;
+    private array $entryOptions = [];
 
     public function getElement(): Element
     {
@@ -91,7 +87,7 @@ class CollectionType extends AbstractType
         return $this->entryOptions;
     }
 
-    public function setData($data): TypeInterface
+    public function setData(array|string|int|bool|null $data): TypeInterface
     {
         $data = (array)$data;
 
@@ -124,10 +120,7 @@ class CollectionType extends AbstractType
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     */
-    private function buildEntry(int $position = 0, $data = null): TypeInterface
+    private function buildEntry(int $position = 0, mixed $data = null): TypeInterface
     {
         $entryType = $this->entryType;
         /** @var TypeInterface $entry */
@@ -195,7 +188,7 @@ class CollectionType extends AbstractType
         $normalized = [];
         $keys = array_keys($data);
 
-        for ($i = 0, $total = \count($data['name']); $i < $total; ++$i) {
+        for ($i = 0, $total = is_countable($data['name']) ? \count($data['name']) : 0; $i < $total; ++$i) {
             foreach ($keys as $key) {
                 $normalized[$i][$key] = $data[$key][$i];
             }

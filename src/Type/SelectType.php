@@ -8,9 +8,9 @@ use Palmtree\Html\Element;
 
 class SelectType extends AbstractType
 {
-    protected $tag = 'select';
-    /** @var bool */
-    protected $multiple = false;
+    protected string $tag = 'select';
+
+    protected bool $multiple = false;
 
     public function getElement(): Element
     {

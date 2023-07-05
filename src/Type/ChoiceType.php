@@ -8,16 +8,13 @@ use Palmtree\Html\Element;
 
 class ChoiceType extends AbstractType
 {
-    /** @var bool */
-    protected $multiple = false;
-    /** @var bool If true, use radio buttons/checkboxes. Otherwise use a select box */
-    protected $expanded = false;
+    protected bool $multiple = false;
+    /** @var bool If true, use radio buttons/checkboxes. Otherwise, use a select box */
+    protected bool $expanded = false;
     /** @var bool Whether expanded choices should display inline. Has no effect if expanded is false */
-    protected $inline = true;
-    /** @var array */
-    protected $choices = [];
-    /** @var string */
-    protected $choiceClass;
+    protected bool $inline = true;
+    protected array $choices = [];
+    protected string $choiceClass;
 
     public function __construct(array $args = [])
     {
@@ -159,7 +156,7 @@ class ChoiceType extends AbstractType
     }
 
     /**
-     * Returns whether this choice type is expanded i.e not a select box.
+     * Returns whether this choice type is expanded i.e. not a select box.
      */
     public function isExpanded(): bool
     {

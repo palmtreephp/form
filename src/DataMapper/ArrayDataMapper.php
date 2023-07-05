@@ -9,13 +9,12 @@ use Palmtree\Form\Form;
 
 class ArrayDataMapper implements DataMapperInterface
 {
-    /**
-     * @psalm-suppress MoreSpecificImplementedParamType
-     *
-     * @param array|\ArrayAccess $data
-     */
-    public function mapDataToForm($data, Form $form): void
+    public function mapDataToForm(object|array $data, Form $form): void
     {
+        if (\is_object($data) && !$data instanceof \ArrayAccess) {
+            throw new \InvalidArgumentException('Data must be an array or implement \ArrayAccess');
+        }
+
         foreach ($form->allMapped() as $child) {
             if (!$this->keyExists($child->getName(), $data)) {
                 $this->throwOutOfBoundsException($child->getName(), $data);
@@ -25,13 +24,12 @@ class ArrayDataMapper implements DataMapperInterface
         }
     }
 
-    /**
-     * @psalm-suppress MoreSpecificImplementedParamType
-     *
-     * @param array|\ArrayAccess $data
-     */
-    public function mapDataFromForm($data, array $formData, Form $form): void
+    public function mapDataFromForm(object|array $data, array $formData, Form $form): void
     {
+        if (\is_object($data) && !$data instanceof \ArrayAccess) {
+            throw new \InvalidArgumentException('Data must be an array or implement \ArrayAccess');
+        }
+
         foreach ($formData as $key => $value) {
             if (!$this->keyExists($key, $data)) {
                 $this->throwOutOfBoundsException($key, $data);
@@ -77,19 +75,12 @@ class ArrayDataMapper implements DataMapperInterface
         return null;
     }
 
-    /**
-     * @param array|\ArrayAccess $data
-     */
-    private function keyExists(string $key, $data): bool
+    private function keyExists(string $key, array|\ArrayAccess $data): bool
     {
-        if (\is_array($data)) {
-            return \array_key_exists($key, $data);
-        }
-
         if ($data instanceof \ArrayAccess) {
             return $data->offsetExists($key);
         }
 
-        throw new \InvalidArgumentException('Data must be an array or implement \ArrayAccess');
+        return \array_key_exists($key, $data);
     }
 }

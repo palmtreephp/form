@@ -11,20 +11,15 @@ use Palmtree\Html\Element;
 
 class FormRenderer
 {
-    /** @var Element */
-    private $element;
-    /** @var Form */
-    private $form;
+    private Element $element;
     /** @var array<string, list<Element>> */
-    private $fields = [];
+    private array $fields = [];
     /** @var list<string> */
-    private $renderedFields = [];
-    /** @var bool */
-    private $built = false;
+    private array $renderedFields = [];
+    private bool $built = false;
 
-    public function __construct(Form $form)
+    public function __construct(private readonly Form $form)
     {
-        $this->form = $form;
         $this->element = new Element('form.palmtree-form');
     }
 

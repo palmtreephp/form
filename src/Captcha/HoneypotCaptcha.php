@@ -9,7 +9,7 @@ use Palmtree\Html\Element;
 
 class HoneypotCaptcha implements CaptchaInterface
 {
-    public function verify($input): bool
+    public function verify(mixed $input): bool
     {
         return $this->doVerify($input);
     }

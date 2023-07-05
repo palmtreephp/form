@@ -6,8 +6,7 @@ namespace Palmtree\Form\Type;
 
 class RepeatedType extends AbstractType
 {
-    /** @var string */
-    private $repeatableType;
+    private string $repeatableType;
 
     public function getRepeatableType(): string
     {

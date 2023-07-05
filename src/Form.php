@@ -15,46 +15,29 @@ use Palmtree\Form\Type\TypeInterface;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
-class Form
+class Form implements \Stringable
 {
-    /** @var string */
-    protected $key;
+    protected string $key;
     /** @var array<string, TypeInterface> */
-    protected $fields = [];
-    /** @var bool */
-    protected $ajax = false;
-    /** @var bool */
-    protected $submitted = false;
-    /** @var bool|null */
-    protected $valid;
-    /** @var string */
-    protected $method = 'POST';
-    /** @var string|null */
-    protected $action;
-    /** @var string|null */
-    protected $encType;
+    protected array $fields = [];
+    protected bool $ajax = false;
+    protected bool $submitted = false;
+    protected ?bool $valid = null;
+    protected string $method = 'POST';
+    protected ?string $action = null;
+    protected ?string $encType = null;
     /** @var array<string, string> */
-    protected $errors = [];
-    /** @var string */
-    protected $fieldWrapper = 'div.form-group.mb-3';
-    /** @var string */
-    protected $invalidElementSelector = 'div.invalid-feedback.small';
-    /** @var bool */
-    protected $htmlValidation = true;
-    /** @var FormRenderer */
-    protected $renderer;
-    /** @var object|array|\ArrayAccess|null */
-    protected $boundData = null;
-    /** @var DataMapperInterface */
-    protected $dataMapper;
+    protected array $errors = [];
+    protected string $fieldWrapper = 'div.form-group.mb-3';
+    protected string $invalidElementSelector = 'div.invalid-feedback.small';
+    protected bool $htmlValidation = true;
+    protected FormRenderer $renderer;
+    protected object|array|null $boundData = null;
+    protected DataMapperInterface $dataMapper;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
-    /**
-     * @param object|array|null $boundData
-     * @param array|string      $args
-     */
-    public function __construct($args = [], $boundData = null)
+    public function __construct(array|string $args = [], object|array $boundData = null)
     {
         $this->parseArgs($args);
         $this->renderer = new FormRenderer($this);
@@ -131,9 +114,7 @@ class Form
 
         if ($this->boundData !== null && $this->isValid()) {
             /** @psalm-suppress MissingClosureReturnType */
-            $formData = array_map(function (TypeInterface $field) {
-                return $field->getNormData();
-            }, $this->allMapped());
+            $formData = array_map(fn (TypeInterface $field) => $field->getNormData(), $this->allMapped());
 
             $this->dataMapper->mapDataFromForm($this->boundData, $formData, $this);
         }
@@ -154,7 +135,7 @@ class Form
         }
 
         foreach ($_FILES[$this->key] ?? [] as $key => $parts) {
-            foreach ($parts as $name => $value) {
+            foreach ((array)$parts as $name => $value) {
                 $data[$name][$key] = $value;
             }
         }
@@ -260,9 +241,7 @@ class Form
      */
     public function allMapped(): array
     {
-        return array_filter($this->fields, function (TypeInterface $field) {
-            return $field->isMapped();
-        });
+        return array_filter($this->fields, fn (TypeInterface $field) => $field->isMapped());
     }
 
     public function has(string $name): bool

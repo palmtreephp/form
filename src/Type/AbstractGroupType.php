@@ -8,10 +8,9 @@ use Palmtree\Html\Element;
 
 abstract class AbstractGroupType extends AbstractType
 {
-    /** @var string|null */
-    protected $errorMessage = null;
-    /** @var bool */
-    protected $required = false;
+    protected ?string $errorMessage = null;
+
+    protected bool $required = false;
 
     public function getElement(): Element
     {
