@@ -11,13 +11,9 @@ use Palmtree\Form\UploadedFile;
 
 class Size extends AbstractConstraint implements ConstraintInterface
 {
-    /** @var NumberConstraint */
-    private $constraint;
+    private readonly NumberConstraint $constraint;
 
-    /**
-     * @param array|string $args
-     */
-    public function __construct($args = [])
+    public function __construct(array|string $args = [])
     {
         parent::__construct($args);
 
@@ -30,7 +26,7 @@ class Size extends AbstractConstraint implements ConstraintInterface
         }
     }
 
-    public function validate($input): bool
+    public function validate(mixed $input): bool
     {
         return $this->doValidate($input);
     }

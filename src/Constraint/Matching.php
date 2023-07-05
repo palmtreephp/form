@@ -8,12 +8,10 @@ use Palmtree\Form\Type\TypeInterface;
 
 class Matching extends AbstractConstraint implements ConstraintInterface
 {
-    /** @var TypeInterface */
-    private $matchField;
-    /** @var string */
-    protected $errorMessage = 'Fields do not match';
+    private TypeInterface $matchField;
+    protected string $errorMessage = 'Fields do not match';
 
-    public function validate($input): bool
+    public function validate(mixed $input): bool
     {
         return $this->doValidate($input);
     }

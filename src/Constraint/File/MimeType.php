@@ -11,9 +11,9 @@ use Palmtree\Form\UploadedFile;
 class MimeType extends AbstractConstraint implements ConstraintInterface
 {
     /** @var array<int, string> */
-    private $mimeTypes = [];
+    private array $mimeTypes = [];
 
-    public function validate($input): bool
+    public function validate(mixed $input): bool
     {
         return $this->doValidate($input);
     }

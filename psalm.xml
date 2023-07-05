@@ -16,6 +16,8 @@
         <PropertyNotSetInConstructor>
             <errorLevel type="suppress">
                 <referencedProperty name="Palmtree\Form\Form::$key"/>
+                <referencedProperty name="Palmtree\Form\Type\AbstractType::$parent"/>
+                <referencedProperty name="Palmtree\Form\Type\AbstractType::$label"/>
                 <referencedProperty name="Palmtree\Form\Type\AbstractType::$key"/>
                 <referencedProperty name="Palmtree\Form\Type\AbstractType::$type"/>
                 <referencedProperty name="Palmtree\Form\Type\AbstractType::$name"/>

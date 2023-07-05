@@ -8,8 +8,8 @@ use Palmtree\Html\Element;
 
 class HiddenType extends AbstractType
 {
-    protected $type = 'hidden';
-    protected $userInput = false;
+    protected string $type = 'hidden';
+    protected bool $userInput = false;
 
     public function getLabelElement(): ?Element
     {

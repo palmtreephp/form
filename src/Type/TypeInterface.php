@@ -39,18 +39,13 @@ interface TypeInterface
 
     public function getPlaceHolderAttribute(): string;
 
-    /** @return mixed */
-    public function getData();
+    public function getData(): mixed;
 
-    /** @return mixed */
-    public function getNormData();
+    public function getNormData(): mixed;
 
     public function clearData(): void;
 
-    /**
-     * @param array|string|null $data
-     */
-    public function setData($data): self;
+    public function setData(array|string|int|bool|null $data): self;
 
     public function mapData(): void;
 

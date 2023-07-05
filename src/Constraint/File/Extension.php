@@ -11,9 +11,9 @@ use Palmtree\Form\UploadedFile;
 class Extension extends AbstractConstraint implements ConstraintInterface
 {
     /** @var array<int, string> */
-    private $extensions = [];
+    private array $extensions = [];
 
-    public function validate($input): bool
+    public function validate(mixed $input): bool
     {
         return $this->doValidate($input);
     }

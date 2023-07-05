@@ -15,40 +15,26 @@ use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 abstract class AbstractType implements TypeInterface
 {
-    /** @var string */
-    protected $tag = 'input';
-    /** @var string */
-    protected $type;
-    /** @var string */
-    protected $name;
-    /** @var mixed */
-    protected $data;
-    /** @var string|null */
-    protected $label;
-    /** @var bool */
-    protected $userInput = true;
-    /** @var bool */
-    protected $required = true;
-    /** @var string|null */
-    protected $errorMessage = 'Please fill in this field';
-    /** @var Form */
-    protected $form;
-    /** @var TypeInterface|null */
-    protected $parent;
+    protected string $tag = 'input';
+    protected string $type = '';
+    protected string $name = '';
+    protected mixed $data = null;
+    protected ?string $label = null;
+    protected bool $userInput = true;
+    protected bool $required = true;
+    protected ?string $errorMessage = 'Please fill in this field';
+    protected Form $form;
+    protected ?TypeInterface $parent = null;
     /** @var array<string|int, TypeInterface> */
-    protected $children = [];
-    /** @var int */
-    protected $position = 0;
-    /** @var array */
-    protected $args = [];
+    protected array $children = [];
+    protected int $position = 0;
+    protected array $args = [];
     /** @var array<int, ConstraintInterface> */
-    protected $constraints = [];
-    /** @var SnakeCaseToHumanNameConverter */
-    protected $nameConverter;
-    /** @var bool */
-    protected $mapped = true;
-    /** @var array */
-    public static $defaultArgs = [
+    protected array $constraints = [];
+    protected SnakeCaseToHumanNameConverter $nameConverter;
+    protected bool $mapped = true;
+
+    public static array $defaultArgs = [
         'placeholder' => true,
         'classes' => [],
     ];
@@ -269,12 +255,12 @@ abstract class AbstractType implements TypeInterface
         return $placeholder;
     }
 
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    public function getNormData()
+    public function getNormData(): mixed
     {
         return $this->data;
     }
@@ -284,7 +270,7 @@ abstract class AbstractType implements TypeInterface
         $this->data = null;
     }
 
-    public function setData($data): TypeInterface
+    public function setData(array|string|int|bool|null $data): TypeInterface
     {
         $this->data = $data;
 

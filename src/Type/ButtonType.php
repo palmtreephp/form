@@ -8,13 +8,13 @@ use Palmtree\Html\Element;
 
 class ButtonType extends AbstractType
 {
-    protected $tag = 'button';
-    protected $type = 'button';
-    protected $required = false;
-    protected $userInput = false;
-    protected $mapped = false;
+    protected string $tag = 'button';
+    protected string $type = 'button';
+    protected bool $required = false;
+    protected bool $userInput = false;
+    protected bool $mapped = false;
 
-    public static $defaultArgs = [
+    public static array $defaultArgs = [
         'placeholder' => false,
         'classes' => [],
     ];

@@ -6,15 +6,14 @@ namespace Palmtree\Form\Constraint;
 
 class Email extends AbstractConstraint implements ConstraintInterface
 {
-    /** @var string */
-    protected $errorMessage = 'Please enter a valid email address';
+    protected string $errorMessage = 'Please enter a valid email address';
 
-    public function validate($input): bool
+    public function validate(mixed $input): bool
     {
         return $this->doValidate($input);
     }
 
-    private function doValidate(string $input): bool
+    protected function doValidate(string $input): bool
     {
         return filter_var($input, \FILTER_VALIDATE_EMAIL) !== false;
     }

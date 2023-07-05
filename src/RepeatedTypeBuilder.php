@@ -10,12 +10,8 @@ use Palmtree\Form\Type\TypeInterface;
 
 class RepeatedTypeBuilder
 {
-    /** @var FormBuilder */
-    private $formBuilder;
-
-    public function __construct(FormBuilder $formBuilder)
+    public function __construct(private readonly FormBuilder $formBuilder)
     {
-        $this->formBuilder = $formBuilder;
     }
 
     public function build(string $name, array $args): RepeatedType

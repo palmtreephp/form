@@ -7,7 +7,7 @@ namespace Palmtree\Form;
 class UploadedFile
 {
     /** @var array<int, string> */
-    public const ERROR_MESSAGES = [
+    final public const ERROR_MESSAGES = [
         1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
         2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
         3 => 'The uploaded file was only partially uploaded',
@@ -17,17 +17,15 @@ class UploadedFile
         8 => 'A PHP extension stopped the file upload.',
     ];
 
-    /** @var string */
-    private $name;
-    /** @var string|null */
-    private $type;
-    /** @var int */
-    private $size;
-    /** @var string */
-    private $tempName;
-    /** @var int */
-    private $errorCode;
+    private string $name;
+    private string|null $type;
+    private int $size;
+    private string $tempName;
+    private int $errorCode;
 
+    /**
+     * @param array{name: string, type: string, size: numeric-string, tmp_name: string, error: numeric-string} $uploadedFile
+     */
     public function __construct(array $uploadedFile)
     {
         $this->name = $uploadedFile['name'];
@@ -79,7 +77,7 @@ class UploadedFile
     }
 
     /**
-     * Returns a human readable error message based on the error code.
+     * Returns a human-readable error message based on the error code.
      */
     public function getErrorMessage(): string
     {

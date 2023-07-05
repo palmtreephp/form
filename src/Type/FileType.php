@@ -9,14 +9,10 @@ use Palmtree\Html\Element;
 
 class FileType extends AbstractType
 {
-    /** @var string */
-    protected $type = 'file';
-    /** @var bool */
-    private $custom = true;
-    /** @var string */
-    private $browseText = 'Browse';
-    /** @var UploadedFile|null */
-    private $normData = null;
+    protected string $type = 'file';
+    private bool $custom = true;
+    private string $browseText = 'Browse';
+    private ?UploadedFile $normData = null;
 
     public function __construct(array $args = [])
     {

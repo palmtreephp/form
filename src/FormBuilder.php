@@ -11,22 +11,18 @@ use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
 use Palmtree\Form\Type\TypeInterface;
 
+/**
+ * @psalm-import-type TypeType from TypeLocator
+ */
 class FormBuilder
 {
-    /** @var Form */
-    private $form;
-    /** @var TypeLocator */
-    private $typeLocator;
-    /** @var RepeatedTypeBuilder|null */
-    private $repeatedTypeBuilder = null;
+    private readonly Form $form;
+    private readonly TypeLocator $typeLocator;
+    private ?RepeatedTypeBuilder $repeatedTypeBuilder = null;
 
     private const FILE_UPLOAD_ENC_TYPE = 'multipart/form-data';
 
-    /**
-     * @param array|string      $args
-     * @param object|array|null $boundData
-     */
-    public function __construct($args = [], $boundData = null)
+    public function __construct(array|string $args = [], object|array $boundData = null)
     {
         $this->form = new Form($args, $boundData);
         $this->typeLocator = new TypeLocator();
@@ -35,9 +31,9 @@ class FormBuilder
     /**
      * Creates a form field and returns the current instance of the FormBuilder for chaining.
      *
-     * @param string|object $type
+     * @param TypeType $type
      */
-    public function add(string $name, $type = TextType::class, array $args = []): self
+    public function add(string $name, TypeInterface|string $type = TextType::class, array $args = []): self
     {
         $this->create($name, $type, $args);
 
@@ -47,11 +43,11 @@ class FormBuilder
     /**
      * Creates and returns a form field.
      *
-     * @param string|object $type
+     * @param TypeType $type
      */
-    public function create(string $name, $type = TextType::class, array $args = []): TypeInterface
+    public function create(string $name, TypeInterface|string $type = TextType::class, array $args = []): TypeInterface
     {
-        if ((\is_object($type) && $type instanceof RepeatedType) || (\is_string($type) && $this->typeLocator->getTypeClass($type) === RepeatedType::class)) {
+        if ($type instanceof RepeatedType || (\is_string($type) && $this->typeLocator->getTypeClass($type) === RepeatedType::class)) {
             return $this->getRepeatedTypeBuilder()->build($name, $args);
         }
 

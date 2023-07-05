@@ -6,13 +6,8 @@ namespace Palmtree\Form\Exception;
 
 class UnsettablePropertyException extends OutOfBoundsException
 {
-    /**
-     * @param object $object
-     */
-    public function __construct(string $property, $object)
+    public function __construct(string $property, object $object)
     {
-        $class = \get_class($object);
-
-        parent::__construct("Property '$property' is not settable on object of type '$class'");
+        parent::__construct(sprintf("Property %s is not settable on object of type '%s'", $property, $object::class));
     }
 }
