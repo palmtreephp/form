@@ -7,6 +7,7 @@ namespace Palmtree\Form;
 use Palmtree\Form\DataMapper\DataMapperInterface;
 use Palmtree\Form\Type\CollectionType;
 use Palmtree\Form\Type\FileType;
+use Palmtree\Form\Type\HiddenType;
 use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
 use Palmtree\Form\Type\TypeInterface;
@@ -30,6 +31,11 @@ class FormBuilder
     {
         $this->form = new Form($args, $boundData);
         $this->typeLocator = new TypeLocator();
+
+        if ($this->form->hasCsrfProtection()) {
+            $csrfField = new HiddenType();
+            $this->add('_csrf_token', $csrfField);
+        }
     }
 
     /**

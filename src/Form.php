@@ -9,6 +9,7 @@ use Palmtree\Form\DataMapper\ArrayDataMapper;
 use Palmtree\Form\DataMapper\DataMapperInterface;
 use Palmtree\Form\DataMapper\ObjectDataMapper;
 use Palmtree\Form\Exception\AlreadySubmittedException;
+use Palmtree\Form\Exception\InvalidCsrfTokenException;
 use Palmtree\Form\Exception\NotSubmittedException;
 use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Type\TypeInterface;
@@ -47,6 +48,10 @@ class Form
     protected $boundData = null;
     /** @var DataMapperInterface */
     protected $dataMapper;
+    /** @var bool */
+    protected $csrfProtection = false;
+    /** @var CsrfProtectionHandler */
+    private $csrfHandler;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
@@ -60,6 +65,7 @@ class Form
         $this->renderer = new FormRenderer($this);
         $this->boundData = $boundData;
         $this->dataMapper = $this->createDataMapper();
+        $this->csrfHandler = new CsrfProtectionHandler();
     }
 
     public function renderStart(): string
@@ -94,6 +100,12 @@ class Form
         }
 
         if ($this->valid === null) {
+            if ($this->hasCsrfProtection()) {
+                if (!$this->csrfHandler->validateToken($this->getKey(), $this->get('_csrf_token')->getData())) {
+                    throw new InvalidCsrfTokenException();
+                }
+            }
+
             $this->valid = true;
             foreach ($this->fields as $field) {
                 if (!$field->isValid()) {
@@ -103,6 +115,10 @@ class Form
                     }
                 }
             }
+        }
+
+        if ($this->valid) {
+            $this->csrfHandler->clearToken($this->getKey());
         }
 
         return $this->valid;
@@ -398,6 +414,21 @@ class Form
         }
 
         return new ObjectDataMapper();
+    }
+
+    public function setCsrfProtection(bool $csrfProtection): void
+    {
+        $this->csrfProtection = $csrfProtection;
+    }
+
+    public function hasCsrfProtection(): bool
+    {
+        return $this->csrfProtection;
+    }
+
+    public function generateCsrfToken(): string
+    {
+        return $this->csrfHandler->getToken($this->getKey());
     }
 
     public function __toString(): string

@@ -21,6 +21,8 @@ class FormRenderer
     private $renderedFields = [];
     /** @var bool */
     private $built = false;
+    /** @var list<Element> */
+    private $csrfTokenField = [];
 
     public function __construct(Form $form)
     {
@@ -48,6 +50,12 @@ class FormRenderer
         foreach ($this->fields as $name => $field) {
             if (!\in_array($name, $this->renderedFields)) {
                 $html .= $this->renderField($name);
+            }
+        }
+
+        if (\count($this->csrfTokenField) > 0) {
+            foreach ($this->csrfTokenField as $csrfTokenFieldElement) {
+                $html .= $csrfTokenFieldElement->render();
             }
         }
 
