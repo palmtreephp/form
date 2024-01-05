@@ -7,8 +7,10 @@ namespace Palmtree\Form\Type;
 use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Constraint\ConstraintInterface;
 use Palmtree\Form\Constraint\NotBlank;
+use Palmtree\Form\Exception\InvalidTypeException;
 use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
+use Palmtree\Form\TypeLocator;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
@@ -45,6 +47,8 @@ abstract class AbstractType implements TypeInterface
     protected $constraints = [];
     /** @var SnakeCaseToHumanNameConverter */
     protected $nameConverter;
+    /** @var TypeLocator */
+    protected $typeLocator;
     /** @var bool */
     protected $mapped = true;
     /** @var array */
@@ -56,6 +60,7 @@ abstract class AbstractType implements TypeInterface
     public function __construct(array $args = [])
     {
         $this->nameConverter = new SnakeCaseToHumanNameConverter();
+        $this->typeLocator = new TypeLocator();
 
         $this->args = $this->parseArgs($args);
 
@@ -384,8 +389,13 @@ abstract class AbstractType implements TypeInterface
 
     public function add(string $name, string $class, array $options = []): TypeInterface
     {
+        if (!$class = $this->typeLocator->getTypeClass($class)) {
+            throw new InvalidTypeException('Type could not be found');
+        }
+
         /** @var TypeInterface $type */
         $type = new $class($options);
+
         $type->setName($name);
 
         if ($type->getLabel() === null) {
