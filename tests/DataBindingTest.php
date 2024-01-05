@@ -8,6 +8,8 @@ use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
 use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Test\Fixtures\Person;
+use Palmtree\Form\Test\Fixtures\PersonType;
+use Palmtree\Form\Type\CollectionType;
 use PHPUnit\Framework\TestCase;
 
 class DataBindingTest extends TestCase
@@ -168,6 +170,83 @@ class DataBindingTest extends TestCase
         ]);
     }
 
+    public function testCollectionOneWayDataBinding(): void
+    {
+        $data = [
+            'people' => [
+                [
+                    'name' => 'John Smith',
+                    'emailAddress' => 'john.smith@example.org',
+                    'age' => 42,
+                    'favouriteConsole' => 'PlayStation',
+                    'interests' => ['football', 'gaming'],
+                    'signup' => false,
+                    'pets' => [],
+                ],
+            ],
+        ];
+
+        $builder = new FormBuilder('test', $data);
+
+        $builder->add('people', CollectionType::class, [
+            'entry_type' => PersonType::class,
+        ]);
+
+        $builder->add('send_message', 'submit');
+
+        $form = $builder->getForm();
+        $form->render();
+
+        $formPeople = $form->get('people')->getData();
+
+        self::assertSame($data['people'], $formPeople);
+    }
+
+    public function testCollectionTwoWayDataBinding(): void
+    {
+        $data = new \ArrayObject([
+            'people' => [
+                [
+                    'name' => 'John Smith',
+                    'emailAddress' => 'john.smith@example.org',
+                    'age' => 42,
+                    'favouriteConsole' => 'PlayStation',
+                    'interests' => ['football', 'gaming'],
+                    'signup' => false,
+                    'pets' => [],
+                ],
+            ],
+        ]);
+
+        $builder = new FormBuilder('test', $data);
+
+        $builder->add('people', CollectionType::class, [
+            'entry_type' => PersonType::class,
+        ]);
+
+        $builder->add('send_message', 'submit');
+
+        $form = $builder->getForm();
+
+        $form->submit([
+            'people' => [
+                [
+                    'name' => 'Bob Smith',
+                    'emailAddress' => 'bob.smith@example.org',
+                    'age' => 45,
+                    'favouriteConsole' => 'Xbox',
+                    'interests' => ['guitar'],
+                ],
+            ],
+        ]);
+
+        self::assertSame($data['people'][0]['name'], 'Bob Smith');
+        self::assertSame($data['people'][0]['emailAddress'], 'bob.smith@example.org');
+        self::assertSame($data['people'][0]['age'], 45);
+        self::assertSame($data['people'][0]['favouriteConsole'], 'Xbox');
+        self::assertSame($data['people'][0]['interests'], ['guitar']);
+    }
+
     /**
      * @param Person|array|\ArrayAccess|\stdClass $person
      */
@@ -201,7 +280,8 @@ class DataBindingTest extends TestCase
             ])
             ->add('pets', 'collection', [
                 'entry_type' => 'text',
-            ]);
+            ])
+        ;
 
         return $builder->getForm();
     }
