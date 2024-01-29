@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
+use Palmtree\Form\Exception\InvalidTypeException;
 use Palmtree\Html\Element;
 
 class CollectionType extends AbstractType
@@ -61,11 +62,15 @@ class CollectionType extends AbstractType
     }
 
     /**
-     * @psalm-param class-string<TypeInterface> $entryType
+     * @psalm-param class-string<TypeInterface>|string $entryType
      */
     public function setEntryType(string $entryType): void
     {
-        $this->entryType = $entryType;
+        if (!$class = $this->typeLocator->getTypeClass($entryType)) {
+            throw new InvalidTypeException('Type could not be found');
+        }
+
+        $this->entryType = $class;
     }
 
     /**
@@ -141,6 +146,14 @@ class CollectionType extends AbstractType
 
         if (\func_num_args() > 0) {
             $entry->setData($data);
+
+            if (\is_array($data)) {
+                foreach ($entry->all() as $child) {
+                    if (isset($data[$child->getName()])) {
+                        $child->setData($data[$child->getName()]);
+                    }
+                }
+            }
         }
 
         return $entry;

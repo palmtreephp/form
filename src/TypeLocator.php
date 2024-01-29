@@ -9,7 +9,7 @@ use Palmtree\Form\Type\TypeInterface;
 
 class TypeLocator
 {
-    /** @var array<string, string> Map of types where key is the shorthand name e.g 'text' and value is the FCQN. */
+    /** @var array<string, class-string<TypeInterface>> Map of types where key is the shorthand name e.g 'text' and value is the FCQN. */
     private static $types = [];
 
     private const TYPE_KEYS = [
@@ -21,11 +21,18 @@ class TypeLocator
     {
         if (empty(self::$types)) {
             foreach (glob(__DIR__ . '/Type/*Type.php', \GLOB_NOSORT) ?: [] as $file) {
-                self::$types[strtolower(basename($file, 'Type.php'))] = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');
+                /** @var class-string<TypeInterface> $class */
+                $class = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');
+                self::$types[strtolower(basename($file, 'Type.php'))] = $class;
             }
         }
     }
 
+    /**
+     * @param string|class-string<TypeInterface> $type
+     *
+     * @return class-string<TypeInterface>|null
+     */
     public function getTypeClass(string $type): ?string
     {
         if (isset(self::$types[$type])) {
@@ -33,6 +40,7 @@ class TypeLocator
         }
 
         if (class_exists($type)) {
+            /** @var class-string<TypeInterface> */
             return $type;
         }
 
