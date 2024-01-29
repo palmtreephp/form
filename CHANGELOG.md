@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## v4.5.0 - 2024-01-29
+
+* Bug fix: Fixed data binding not working for collection types ([#13](https://github.com/palmtreephp/form/issues/13))
+* Bug fix: Allow passing both shorthand types e.g. `text` to [AbstractType::add()](https://github.com/palmtreephp/form/blob/40d5c14af9b12ac336155f9b32110ebda88ac1db/src/Type/AbstractType.php#L390)
+* DX: Generic typing in [TypeLocator](https://github.com/palmtreephp/form/blob/73ee2a75b213a2f2e90ecb2da932259e34909e09/src/TypeLocator.php)
+
 ## v4.4.1 - 2023-05-15
 
 * Bug fix: The `required` attribute is now correctly omitted on a select field if the `required` option is set to `false`
