@@ -16,7 +16,9 @@ $builder
     ->add('name', TextType::class, [
         'label' => 'Please enter your name',
     ])
-    ->add('email_address', 'email')
+    ->add('email_address', 'email', [
+        'help' => 'We will never share your email address with anyone.'
+    ])
     ->add('phone_number', 'tel', ['required' => false])
     ->add('message', 'textarea', ['required' => false])
     ->add('preferences', 'choice', [
@@ -42,6 +44,7 @@ $builder
         'constraints'     => [
             new Palmtree\Form\Constraint\Length(['min' => 8]),
         ],
+        'help' => 'Your password must be at least 8 characters long.'
     ]);
 
 $builder->add('send_message', 'submit');

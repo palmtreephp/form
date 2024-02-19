@@ -26,7 +26,9 @@ use Palmtree\Form\Captcha\GoogleRecaptcha;
 
 $builder = (new FormBuilder('my_form'))
     ->add('name', 'text', ['error_message' => 'Please enter your name'])
-    ->add('email_address', 'email')
+    ->add('email_address', 'email', [
+        'help' => 'We will never share your email with anyone',
+    ])
     ->add('message', 'textarea', [
         'required' => false,
         'label' => 'Enter your message',
