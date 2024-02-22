@@ -216,8 +216,8 @@ abstract class AbstractType implements TypeInterface
 
         $elements[] = $element;
 
-        if ($this->help !== null) {
-            $elements[] = Element::create('div.help-text.form-text')->setInnerText($this->help);
+        if ($help = $this->getHelp()) {
+            $elements[] = Element::create('div.help-text.form-text')->setInnerText($help);
         }
 
         if (!$isValid && $this->errorMessage) {
