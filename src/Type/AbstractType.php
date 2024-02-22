@@ -51,6 +51,8 @@ abstract class AbstractType implements TypeInterface
     protected $typeLocator;
     /** @var bool */
     protected $mapped = true;
+    /** @var string|null */
+    protected $help = null;
     /** @var array */
     public static $defaultArgs = [
         'placeholder' => true,
@@ -213,6 +215,10 @@ abstract class AbstractType implements TypeInterface
         }
 
         $elements[] = $element;
+
+        if ($help = $this->getHelp()) {
+            $elements[] = Element::create('div.help-text.form-text')->setInnerText($help);
+        }
 
         if (!$isValid && $this->errorMessage) {
             $elements[] = $this->form->createInvalidElement()->setInnerText($this->errorMessage);
@@ -475,5 +481,15 @@ abstract class AbstractType implements TypeInterface
     public function isMapped(): bool
     {
         return $this->mapped;
+    }
+
+    public function setHelp(?string $help): void
+    {
+        $this->help = $help;
+    }
+
+    public function getHelp(): ?string
+    {
+        return $this->help;
     }
 }
