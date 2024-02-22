@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v4.5.1 - 2024-02-22
+
+* Added the ability to set [form (help) text](https://getbootstrap.com/docs/5.3/forms/form-control/#form-text) for form controls, e.g.:
+
+    ```php
+    $form->add('email', EmailType::class, [
+        'help' => "We'll never share your email with anyone."
+    ]);
+    ```
+
 ## v4.5.0 - 2024-01-29
 
 * Bug fix: Fixed data binding not working for collection types ([#13](https://github.com/palmtreephp/form/issues/13))
