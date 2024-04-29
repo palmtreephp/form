@@ -32,7 +32,7 @@ class GoogleRecaptcha implements CaptchaInterface
      */
     public function __construct(private readonly string $siteKey, private readonly string $secretKey, ?string $ip = null)
     {
-        if (!extension_loaded('curl')) {
+        if (!\extension_loaded('curl')) {
             throw new \RuntimeException('The curl extension is required to use Google Recaptcha');
         }
 
