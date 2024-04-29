@@ -28,7 +28,7 @@ class GoogleRecaptcha implements CaptchaInterface
      * @param string $siteKey   Site key obtained from Google Recaptcha admin
      * @param string $secretKey Secret key obtained from Google Recaptcha admin
      */
-    public function __construct(private readonly string $siteKey, private readonly string $secretKey, string $ip = null)
+    public function __construct(private readonly string $siteKey, private readonly string $secretKey, ?string $ip = null)
     {
         $this->ip = $ip ?? $_SERVER['REMOTE_ADDR'] ?? '';
     }
@@ -56,7 +56,6 @@ class GoogleRecaptcha implements CaptchaInterface
         return false;
     }
 
-    /** {@inheritDoc} */
     public function getElements(Element $element, Form $form): array
     {
         if (!$element->attributes['id']) {

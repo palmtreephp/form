@@ -37,7 +37,7 @@ class Form implements \Stringable
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
-    public function __construct(array|string $args = [], object|array $boundData = null)
+    public function __construct(array|string $args = [], object|array|null $boundData = null)
     {
         $this->parseArgs($args);
         $this->renderer = new FormRenderer($this);

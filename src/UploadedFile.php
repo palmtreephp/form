@@ -18,7 +18,7 @@ class UploadedFile
     ];
 
     private string $name;
-    private string|null $type;
+    private ?string $type;
     private int $size;
     private string $tempName;
     private int $errorCode;
