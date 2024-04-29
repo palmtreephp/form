@@ -28,11 +28,11 @@ class DataBindingTest extends TestCase
             'interests' => ['football', 'gaming'],
         ]);
 
-        self::assertSame($person->name, 'John Smith');
-        self::assertSame($person->emailAddress, 'john.smith@example.org');
-        self::assertSame($person->getAge(), 42);
-        self::assertSame($person->getFavouriteConsole(), 'PlayStation');
-        self::assertSame($person->interests, ['football', 'gaming']);
+        $this->assertSame($person->name, 'John Smith');
+        $this->assertSame($person->emailAddress, 'john.smith@example.org');
+        $this->assertSame($person->getAge(), 42);
+        $this->assertSame($person->getFavouriteConsole(), 'PlayStation');
+        $this->assertSame($person->interests, ['football', 'gaming']);
     }
 
     public function testArrayOneWayDataBinding()
@@ -49,11 +49,11 @@ class DataBindingTest extends TestCase
 
         $form = $this->buildForm($person);
 
-        self::assertSame($form->get('name')->getData(), 'John Smith');
-        self::assertSame($form->get('emailAddress')->getData(), 'john.smith@example.org');
-        self::assertSame($form->get('age')->getData(), 42);
-        self::assertSame($form->get('favouriteConsole')->getData(), 'PlayStation');
-        self::assertSame($form->get('interests')->getData(), ['football', 'gaming']);
+        $this->assertSame($form->get('name')->getData(), 'John Smith');
+        $this->assertSame($form->get('emailAddress')->getData(), 'john.smith@example.org');
+        $this->assertSame($form->get('age')->getData(), 42);
+        $this->assertSame($form->get('favouriteConsole')->getData(), 'PlayStation');
+        $this->assertSame($form->get('interests')->getData(), ['football', 'gaming']);
     }
 
     public function testArrayAccessTwoWayDataBinding()
@@ -70,11 +70,11 @@ class DataBindingTest extends TestCase
 
         $form = $this->buildForm($person);
 
-        self::assertSame($form->get('name')->getData(), 'John Smith');
-        self::assertSame($form->get('emailAddress')->getData(), 'john.smith@example.org');
-        self::assertSame($form->get('age')->getData(), 42);
-        self::assertSame($form->get('favouriteConsole')->getData(), 'PlayStation');
-        self::assertSame($form->get('interests')->getData(), ['football', 'gaming']);
+        $this->assertSame($form->get('name')->getData(), 'John Smith');
+        $this->assertSame($form->get('emailAddress')->getData(), 'john.smith@example.org');
+        $this->assertSame($form->get('age')->getData(), 42);
+        $this->assertSame($form->get('favouriteConsole')->getData(), 'PlayStation');
+        $this->assertSame($form->get('interests')->getData(), ['football', 'gaming']);
 
         $form->submit([
             'name' => 'Bob Smith',
@@ -84,11 +84,11 @@ class DataBindingTest extends TestCase
             'interests' => ['guitar'],
         ]);
 
-        self::assertSame($person['name'], 'Bob Smith');
-        self::assertSame($person['emailAddress'], 'bob.smith@example.org');
-        self::assertSame($person['age'], 45);
-        self::assertSame($person['favouriteConsole'], 'Xbox');
-        self::assertSame($person['interests'], ['guitar']);
+        $this->assertSame($person['name'], 'Bob Smith');
+        $this->assertSame($person['emailAddress'], 'bob.smith@example.org');
+        $this->assertSame($person['age'], 45);
+        $this->assertSame($person['favouriteConsole'], 'Xbox');
+        $this->assertSame($person['interests'], ['guitar']);
     }
 
     public function testStdClassTwoWayDataBinding(): void
@@ -104,11 +104,11 @@ class DataBindingTest extends TestCase
 
         $form = $this->buildForm($person);
 
-        self::assertSame($form->get('name')->getData(), 'John Smith');
-        self::assertSame($form->get('emailAddress')->getData(), 'john.smith@example.org');
-        self::assertSame($form->get('age')->getData(), 42);
-        self::assertSame($form->get('favouriteConsole')->getData(), 'PlayStation');
-        self::assertSame($form->get('interests')->getData(), ['football', 'gaming']);
+        $this->assertSame($form->get('name')->getData(), 'John Smith');
+        $this->assertSame($form->get('emailAddress')->getData(), 'john.smith@example.org');
+        $this->assertSame($form->get('age')->getData(), 42);
+        $this->assertSame($form->get('favouriteConsole')->getData(), 'PlayStation');
+        $this->assertSame($form->get('interests')->getData(), ['football', 'gaming']);
 
         $form->submit([
             'name' => 'Bob Smith',
@@ -118,11 +118,11 @@ class DataBindingTest extends TestCase
             'interests' => ['guitar'],
         ]);
 
-        self::assertSame($person->name, 'Bob Smith');
-        self::assertSame($person->emailAddress, 'bob.smith@example.org');
-        self::assertSame($person->age, 45);
-        self::assertSame($person->favouriteConsole, 'Xbox');
-        self::assertSame($person->interests, ['guitar']);
+        $this->assertSame($person->name, 'Bob Smith');
+        $this->assertSame($person->emailAddress, 'bob.smith@example.org');
+        $this->assertSame($person->age, 45);
+        $this->assertSame($person->favouriteConsole, 'Xbox');
+        $this->assertSame($person->interests, ['guitar']);
     }
 
     public function testArrayDataMapperThrowsOutOfBoundsException(): void
@@ -199,7 +199,7 @@ class DataBindingTest extends TestCase
 
         $formPeople = $form->get('people')->getData();
 
-        self::assertSame($data['people'], $formPeople);
+        $this->assertSame($data['people'], $formPeople);
     }
 
     public function testCollectionTwoWayDataBinding(): void
@@ -240,11 +240,11 @@ class DataBindingTest extends TestCase
             ],
         ]);
 
-        self::assertSame($data['people'][0]['name'], 'Bob Smith');
-        self::assertSame($data['people'][0]['emailAddress'], 'bob.smith@example.org');
-        self::assertSame($data['people'][0]['age'], 45);
-        self::assertSame($data['people'][0]['favouriteConsole'], 'Xbox');
-        self::assertSame($data['people'][0]['interests'], ['guitar']);
+        $this->assertSame($data['people'][0]['name'], 'Bob Smith');
+        $this->assertSame($data['people'][0]['emailAddress'], 'bob.smith@example.org');
+        $this->assertSame($data['people'][0]['age'], 45);
+        $this->assertSame($data['people'][0]['favouriteConsole'], 'Xbox');
+        $this->assertSame($data['people'][0]['interests'], ['guitar']);
     }
 
     /**
