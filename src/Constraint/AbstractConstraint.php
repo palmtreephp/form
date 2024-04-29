@@ -10,6 +10,9 @@ abstract class AbstractConstraint implements ConstraintInterface
 {
     protected string $errorMessage = 'Invalid value';
 
+    /**
+     * @param array<string, mixed>|string $args
+     */
     public function __construct(array|string $args = [])
     {
         $parser = new ArgParser($args, 'error_message');

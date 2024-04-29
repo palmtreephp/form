@@ -12,7 +12,7 @@ use Palmtree\Form\Type\TextType;
 use Palmtree\Form\Type\TypeInterface;
 
 /**
- * @psalm-import-type TypeType from TypeLocator
+ * @phpstan-import-type TypeType from TypeLocator
  */
 class FormBuilder
 {
@@ -22,6 +22,10 @@ class FormBuilder
 
     private const FILE_UPLOAD_ENC_TYPE = 'multipart/form-data';
 
+    /**
+     * @param array<string, mixed>|string      $args
+     * @param object|array<string, mixed>|null $boundData
+     */
     public function __construct(array|string $args = [], object|array|null $boundData = null)
     {
         $this->form = new Form($args, $boundData);
@@ -31,7 +35,8 @@ class FormBuilder
     /**
      * Creates a form field and returns the current instance of the FormBuilder for chaining.
      *
-     * @param TypeType $type
+     * @param TypeType             $type
+     * @param array<string, mixed> $args
      */
     public function add(string $name, TypeInterface|string $type = TextType::class, array $args = []): self
     {
@@ -43,7 +48,8 @@ class FormBuilder
     /**
      * Creates and returns a form field.
      *
-     * @param TypeType $type
+     * @param TypeType             $type
+     * @param array<string, mixed> $args
      */
     public function create(string $name, TypeInterface|string $type = TextType::class, array $args = []): TypeInterface
     {

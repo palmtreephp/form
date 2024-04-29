@@ -9,6 +9,9 @@ use Palmtree\Form\Form;
 
 class ArrayDataMapper implements DataMapperInterface
 {
+    /**
+     * @param object|\ArrayAccess<string, mixed>|array<string, mixed> $data
+     */
     public function mapDataToForm(object|array $data, Form $form): void
     {
         if (\is_object($data) && !$data instanceof \ArrayAccess) {
@@ -40,9 +43,9 @@ class ArrayDataMapper implements DataMapperInterface
     }
 
     /**
-     * @param array|\ArrayAccess $data
+     * @param array<string, mixed>|\ArrayAccess<string, mixed> $data
      */
-    private function throwOutOfBoundsException(string $key, $data): void
+    private function throwOutOfBoundsException(string $key, array|\ArrayAccess $data): void
     {
         $format = "Key '%s' not found in bound data";
         $params = [$key];
@@ -56,9 +59,11 @@ class ArrayDataMapper implements DataMapperInterface
     }
 
     /**
-     * @param array|\ArrayAccess $data
+     * @param array<string, mixed>|\ArrayAccess<string, mixed> $data
+     *
+     * @return list<string>|null
      */
-    private function keys($data): ?array
+    private function keys(array|\ArrayAccess $data): ?array
     {
         if (\is_array($data)) {
             return array_keys($data);
@@ -75,6 +80,9 @@ class ArrayDataMapper implements DataMapperInterface
         return null;
     }
 
+    /**
+     * @param array<string, mixed>|\ArrayAccess<string, mixed> $data
+     */
     private function keyExists(string $key, array|\ArrayAccess $data): bool
     {
         if ($data instanceof \ArrayAccess) {

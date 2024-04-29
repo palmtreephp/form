@@ -10,6 +10,9 @@ use Palmtree\Form\Form;
 
 class ObjectDataMapper implements DataMapperInterface
 {
+    /**
+     * @param object|array<string, mixed> $data
+     */
     public function mapDataToForm(object|array $data, Form $form): void
     {
         if (!\is_object($data)) {
@@ -22,7 +25,8 @@ class ObjectDataMapper implements DataMapperInterface
     }
 
     /**
-     * @psalm-suppress MoreSpecificImplementedParamType
+     * @param object|array<string, mixed> $data
+     * @param array<string, mixed>        $formData
      */
     public function mapDataFromForm(object|array $data, array $formData, Form $form): void
     {

@@ -32,11 +32,16 @@ class Form implements \Stringable
     protected string $invalidElementSelector = 'div.invalid-feedback.small';
     protected bool $htmlValidation = true;
     protected FormRenderer $renderer;
+    /** @var object|array<string, mixed>|null */
     protected object|array|null $boundData = null;
     protected DataMapperInterface $dataMapper;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
+    /**
+     * @param array<string, mixed>|string      $args
+     * @param object|array<string, mixed>|null $boundData
+     */
     public function __construct(array|string $args = [], object|array|null $boundData = null)
     {
         $this->parseArgs($args);
@@ -91,6 +96,9 @@ class Form implements \Stringable
         return $this->valid;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function submit(array $data): void
     {
         if ($this->submitted) {
@@ -113,7 +121,6 @@ class Form implements \Stringable
         }
 
         if ($this->boundData !== null && $this->isValid()) {
-            /** @psalm-suppress MissingClosureReturnType */
             $formData = array_map(fn (TypeInterface $field) => $field->getNormData(), $this->allMapped());
 
             $this->dataMapper->mapDataFromForm($this->boundData, $formData, $this);
@@ -143,6 +150,9 @@ class Form implements \Stringable
         $this->submit($data);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRequestData(): array
     {
         return strtoupper($this->method) === 'POST' ? $_POST : $_GET;
@@ -347,9 +357,9 @@ class Form implements \Stringable
     }
 
     /**
-     * @param string|array $args
+     * @param string|array<string, mixed> $args
      */
-    private function parseArgs($args): void
+    private function parseArgs(string|array $args): void
     {
         $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
 

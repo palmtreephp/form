@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Palmtree\Form;
 
+/**
+ * @phpstan-type UploadedFileArray array{name: string, type?: string, size: numeric-string, tmp_name: string, error: numeric-string}
+ */
 class UploadedFile
 {
     /** @var array<int, string> */
@@ -24,7 +27,7 @@ class UploadedFile
     private int $errorCode;
 
     /**
-     * @param array{name: string, type: string, size: numeric-string, tmp_name: string, error: numeric-string} $uploadedFile
+     * @param UploadedFileArray $uploadedFile
      */
     public function __construct(array $uploadedFile)
     {

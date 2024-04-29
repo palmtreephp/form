@@ -29,8 +29,8 @@
     },
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^2.0",
-        "vimeo/psalm": "^5.13",
-        "phpunit/phpunit": "^10.2"
+        "phpunit/phpunit": "^10.2",
+        "phpstan/phpstan": "^1.10"
     },
     "suggest": {
         "ext-curl": "For Google Recaptcha support",
@@ -45,13 +45,8 @@
         "captcha",
         "ajax"
     ],
-    "config": {
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true
-        }
-    },
     "scripts": {
-        "psalm": "@php vendor/bin/psalm --no-cache",
+        "sa": "@php vendor/bin/phpstan analyse",
         "fix": "@php vendor/bin/php-cs-fixer fix",
         "test": "@php vendor/bin/phpunit"
     }

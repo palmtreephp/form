@@ -20,7 +20,9 @@ class GoogleRecaptcha implements CaptchaInterface
         'invalid-input-response' => 'The response parameter is invalid or malformed.',
     ];
     private readonly string $ip;
+    /** @var list<string> */
     private array $errors = [];
+    /** @var array<string, array{success: bool, error-codes: list<key-of<self::ERROR_CODES>>}> */
     private array $verificationResult = [];
     private bool $autoload = true;
 
@@ -30,6 +32,10 @@ class GoogleRecaptcha implements CaptchaInterface
      */
     public function __construct(private readonly string $siteKey, private readonly string $secretKey, ?string $ip = null)
     {
+        if (!extension_loaded('curl')) {
+            throw new \RuntimeException('The curl extension is required to use Google Recaptcha');
+        }
+
         $this->ip = $ip ?? $_SERVER['REMOTE_ADDR'] ?? '';
     }
 
@@ -44,6 +50,10 @@ class GoogleRecaptcha implements CaptchaInterface
     protected function doVerify(string $input): bool
     {
         $result = $this->getVerificationResult($input);
+
+        if ($result === null) {
+            return false;
+        }
 
         if ($result['success']) {
             return true;
@@ -62,7 +72,7 @@ class GoogleRecaptcha implements CaptchaInterface
             $element->attributes['id'] = 'g-recaptcha-' . uniqid();
         }
 
-        $controlId = $element->attributes['id'];
+        $controlId = (string)$element->attributes['id'];
 
         $element->classes->remove('palmtree-form-control');
 
@@ -118,17 +128,20 @@ class GoogleRecaptcha implements CaptchaInterface
     {
         $url = self::SCRIPT_URL;
 
-        parse_str(parse_url($url, \PHP_URL_QUERY) ?? '', $queryArgs);
+        parse_str((string)parse_url($url, \PHP_URL_QUERY), $queryArgs);
 
         $queryArgs['onload'] = $onloadCallbackName;
         $queryArgs['render'] = 'explicit';
 
-        $url = sprintf('%s?%s', strtok($url, '?'), http_build_query($queryArgs));
-
-        return $url;
+        return sprintf('%s?%s', strtok($url, '?'), http_build_query($queryArgs));
     }
 
-    private function getVerificationResult(string $response): array
+    /**
+     * @return array{success: bool, error-codes: list<key-of<self::ERROR_CODES>>}|null
+     *
+     * @throws \JsonException
+     */
+    private function getVerificationResult(string $response): ?array
     {
         if (!isset($this->verificationResult[$response])) {
             $postFields = [
@@ -142,6 +155,10 @@ class GoogleRecaptcha implements CaptchaInterface
 
             $handle = curl_init(self::VERIFY_URL);
 
+            if (!$handle instanceof \CurlHandle) {
+                return null;
+            }
+
             curl_setopt($handle, \CURLOPT_POST, \count($postFields));
             curl_setopt($handle, \CURLOPT_POSTFIELDS, http_build_query($postFields));
             curl_setopt($handle, \CURLOPT_RETURNTRANSFER, true);
@@ -149,7 +166,7 @@ class GoogleRecaptcha implements CaptchaInterface
             $result = curl_exec($handle);
 
             if (!$result || !\is_string($result)) {
-                return [];
+                return null;
             }
 
             $this->verificationResult[$response] = json_decode($result, true, 512, \JSON_THROW_ON_ERROR);

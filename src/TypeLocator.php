@@ -8,11 +8,11 @@ use Palmtree\Form\Exception\InvalidTypeException;
 use Palmtree\Form\Type\TypeInterface;
 
 /**
- * @psalm-type TypeType = TypeInterface|class-string<TypeInterface>|string
+ * @phpstan-type TypeType = TypeInterface|class-string<TypeInterface>|string
  */
 class TypeLocator
 {
-    /** @var array<string, class-string<TypeInterface>> Map of types where key is the shorthand name e.g 'text' and value is the FCQN. */
+    /** @var array<string, class-string<TypeInterface>> Map of types where key is the shorthand name e.g 'text' and value is the fully-qualified class name. */
     private static array $types = [];
 
     private const TYPE_KEYS = [
@@ -52,9 +52,9 @@ class TypeLocator
     /**
      * Returns a new instance of the given form type.
      *
-     * @param TypeType $type Fully-qualified class name of the form type or shorthand e.g 'text', 'email'.
-     *                       Can also be a pre-constructed instance.
-     * @param array    $args Arguments to pass to the type class constructor.
+     * @param TypeType             $type Fully-qualified class name of the form type or shorthand e.g 'text', 'email'.
+     *                                   Can also be a pre-constructed instance.
+     * @param array<string, mixed> $args Arguments to pass to the type class constructor.
      */
     public function getTypeObject(TypeInterface|string $type, array $args): TypeInterface
     {

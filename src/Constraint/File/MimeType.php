@@ -55,11 +55,11 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
         if (\extension_loaded('fileinfo')) {
             $finfo = new \finfo(\FILEINFO_MIME_TYPE);
 
-            return $finfo->file($uploadedFile->getTempName());
+            return $finfo->file($uploadedFile->getTempName()) ?: null;
         }
 
         if (\function_exists('mime_content_type')) {
-            return mime_content_type($uploadedFile->getTempName());
+            return mime_content_type($uploadedFile->getTempName()) ?: null;
         }
 
         return null;

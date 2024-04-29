@@ -30,6 +30,7 @@ abstract class AbstractType implements TypeInterface
     /** @var array<string|int, TypeInterface> */
     protected array $children = [];
     protected int $position = 0;
+    /** @var array<string, mixed> */
     protected array $args = [];
     /** @var array<int, ConstraintInterface> */
     protected array $constraints = [];
@@ -38,11 +39,17 @@ abstract class AbstractType implements TypeInterface
     protected TypeLocator $typeLocator;
     protected ?string $help = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     public static array $defaultArgs = [
         'placeholder' => true,
         'classes' => [],
     ];
 
+    /**
+     * @param array<string, mixed> $args
+     */
     public function __construct(array $args = [])
     {
         $this->nameConverter = new SnakeCaseToHumanNameConverter();
@@ -55,6 +62,11 @@ abstract class AbstractType implements TypeInterface
         }
     }
 
+    /**
+     * @param array<string, mixed> $args
+     *
+     * @return array<string, mixed>
+     */
     protected function parseArgs(array $args): array
     {
         $parser = new ArgParser($args, '', new SnakeCaseToCamelCaseNameConverter());

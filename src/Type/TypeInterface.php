@@ -45,6 +45,9 @@ interface TypeInterface
 
     public function clearData(): void;
 
+    /**
+     * @param array<mixed>|string|int|bool|null $data
+     */
     public function setData(array|string|int|bool|null $data): self;
 
     public function mapData(): void;
@@ -73,6 +76,9 @@ interface TypeInterface
 
     public function addChild(self $child): self;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function add(string $name, string $class, array $options = []): self;
 
     /**

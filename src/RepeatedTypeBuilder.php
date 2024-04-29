@@ -14,6 +14,9 @@ class RepeatedTypeBuilder
     {
     }
 
+    /**
+     * @param array<string, mixed> $args
+     */
     public function build(string $name, array $args): RepeatedType
     {
         $repeatedType = new RepeatedType($args);
@@ -38,6 +41,11 @@ class RepeatedTypeBuilder
         return $repeatedType;
     }
 
+    /**
+     * @param array<string, mixed> $args
+     *
+     * @return array<string, mixed>
+     */
     private static function buildSecondArgs(TypeInterface $firstOfType, array $args): array
     {
         $secondArgs = $args;

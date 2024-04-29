@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Palmtree\Form\Type;
 
 use Palmtree\Form\Exception\InvalidTypeException;
+use Palmtree\Form\UploadedFile;
 use Palmtree\Html\Element;
 
+/**
+ * @phpstan-import-type UploadedFileArray from UploadedFile
+ */
 class CollectionType extends AbstractType
 {
     protected ?string $errorMessage = null;
@@ -14,6 +18,7 @@ class CollectionType extends AbstractType
     protected ?string $label = '';
     /** @var class-string<TypeInterface> */
     private string $entryType;
+    /** @var array<string, mixed> */
     private array $entryOptions = [];
 
     public function getElement(): Element
@@ -58,7 +63,7 @@ class CollectionType extends AbstractType
     }
 
     /**
-     * @psalm-param class-string<TypeInterface>|string $entryType
+     * @param class-string<TypeInterface>|string $entryType
      */
     public function setEntryType(string $entryType): void
     {
@@ -70,18 +75,24 @@ class CollectionType extends AbstractType
     }
 
     /**
-     * @psalm-return class-string<TypeInterface>
+     * @return class-string<TypeInterface>
      */
     public function getEntryType(): string
     {
         return $this->entryType;
     }
 
+    /**
+     * @param array<string, mixed> $entryOptions
+     */
     public function setEntryOptions(array $entryOptions): void
     {
         $this->entryOptions = $entryOptions;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getEntryOptions(): array
     {
         return $this->entryOptions;
@@ -100,6 +111,9 @@ class CollectionType extends AbstractType
         return $this;
     }
 
+    /**
+     * @return list<mixed>
+     */
     public function getNormData(): array
     {
         $normData = [];
@@ -110,6 +124,9 @@ class CollectionType extends AbstractType
         return $normData;
     }
 
+    /**
+     * @return list<mixed>
+     */
     public function getData(): array
     {
         $data = [];
@@ -169,7 +186,7 @@ class CollectionType extends AbstractType
 
         $prototype = $this->buildEntryElement($entry);
 
-        $html = trim(preg_replace('/>\s+</', '><', $prototype->render()));
+        $html = trim((string)preg_replace('/>\s+</', '><', $prototype->render()));
 
         return htmlentities($html);
     }
@@ -183,17 +200,23 @@ class CollectionType extends AbstractType
         }
     }
 
+    /**
+     * @param array<key-of<UploadedFileArray>, array<string>> $data
+     *
+     * @return array<UploadedFileArray>
+     */
     private static function normalizeFilesArray(array $data): array
     {
         $normalized = [];
         $keys = array_keys($data);
 
-        for ($i = 0, $total = is_countable($data['name']) ? \count($data['name']) : 0; $i < $total; ++$i) {
+        for ($i = 0, $total = \count($data['name']); $i < $total; ++$i) {
             foreach ($keys as $key) {
                 $normalized[$i][$key] = $data[$key][$i];
             }
         }
 
+        /** @var array<UploadedFileArray> */
         return $normalized;
     }
 }
