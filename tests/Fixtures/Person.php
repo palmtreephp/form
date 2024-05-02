@@ -46,9 +46,6 @@ class Person
         $this->favouriteConsole = $favouriteConsole;
     }
 
-    /**
-     * @return string
-     */
     public function getFavouriteConsole(): ?string
     {
         return $this->favouriteConsole;

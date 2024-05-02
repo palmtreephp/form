@@ -7,10 +7,13 @@ namespace Palmtree\Form;
 use Palmtree\Form\Exception\InvalidTypeException;
 use Palmtree\Form\Type\TypeInterface;
 
+/**
+ * @phpstan-type TypeType = TypeInterface|class-string<TypeInterface>|string
+ */
 class TypeLocator
 {
-    /** @var array<string, class-string<TypeInterface>> Map of types where key is the shorthand name e.g 'text' and value is the FCQN. */
-    private static $types = [];
+    /** @var array<string, class-string<TypeInterface>> Map of types where key is the shorthand name e.g 'text' and value is the fully-qualified class name. */
+    private static array $types = [];
 
     private const TYPE_KEYS = [
         'entry_type',
@@ -21,15 +24,15 @@ class TypeLocator
     {
         if (empty(self::$types)) {
             foreach (glob(__DIR__ . '/Type/*Type.php', \GLOB_NOSORT) ?: [] as $file) {
-                /** @var class-string<TypeInterface> $class */
-                $class = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');
-                self::$types[strtolower(basename($file, 'Type.php'))] = $class;
+                /** @var class-string<TypeInterface> $fcqn */
+                $fcqn = __NAMESPACE__ . '\\Type\\' . basename($file, '.php');
+                self::$types[strtolower(basename($file, 'Type.php'))] = $fcqn;
             }
         }
     }
 
     /**
-     * @param string|class-string<TypeInterface> $type
+     * @param class-string<TypeInterface>|string $type
      *
      * @return class-string<TypeInterface>|null
      */
@@ -39,8 +42,7 @@ class TypeLocator
             return self::$types[$type];
         }
 
-        if (class_exists($type)) {
-            /** @var class-string<TypeInterface> */
+        if (class_exists($type) && is_a($type, TypeInterface::class, true)) {
             return $type;
         }
 
@@ -50,17 +52,13 @@ class TypeLocator
     /**
      * Returns a new instance of the given form type.
      *
-     * @param string|object $type Fully-qualified class name of the form type or short hand e.g 'text', 'email'.
-     *                            Can also be a pre-constructed instance.
-     * @param array         $args Arguments to pass to the type class constructor.
+     * @param TypeType             $type Fully-qualified class name of the form type or shorthand e.g 'text', 'email'.
+     *                                   Can also be a pre-constructed instance.
+     * @param array<string, mixed> $args Arguments to pass to the type class constructor.
      */
-    public function getTypeObject($type, array $args): TypeInterface
+    public function getTypeObject(TypeInterface|string $type, array $args): TypeInterface
     {
-        if (\is_object($type)) {
-            if (!$type instanceof TypeInterface) {
-                throw new InvalidTypeException(sprintf("Type must be an instance of '%s'. '%s' given", TypeInterface::class, \get_class($type)));
-            }
-
+        if ($type instanceof TypeInterface) {
             return $type;
         }
 

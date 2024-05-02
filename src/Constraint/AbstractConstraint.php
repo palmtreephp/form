@@ -8,13 +8,12 @@ use Palmtree\ArgParser\ArgParser;
 
 abstract class AbstractConstraint implements ConstraintInterface
 {
-    /** @var string */
-    protected $errorMessage = 'Invalid value';
+    protected string $errorMessage = 'Invalid value';
 
     /**
-     * @param array|string $args
+     * @param array<string, mixed>|string $args
      */
-    public function __construct($args = [])
+    public function __construct(array|string $args = [])
     {
         $parser = new ArgParser($args, 'error_message');
         $parser->parseSetters($this);

@@ -8,7 +8,7 @@ use Palmtree\Form\Constraint\Email;
 
 class EmailType extends TextType
 {
-    protected $type = 'email';
+    protected string $type = 'email';
 
     public function __construct(array $args = [])
     {

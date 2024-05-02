@@ -6,5 +6,5 @@
 /.php-cs-fixer.dist.php      export-ignore
 /composer.lock               export-ignore
 /package.json                export-ignore
-/psalm.xml                   export-ignore
+/phpstan.dist.neon           export-ignore
 /yarn.lock                   export-ignore

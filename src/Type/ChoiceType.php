@@ -8,16 +8,14 @@ use Palmtree\Html\Element;
 
 class ChoiceType extends AbstractType
 {
-    /** @var bool */
-    protected $multiple = false;
-    /** @var bool If true, use radio buttons/checkboxes. Otherwise use a select box */
-    protected $expanded = false;
+    protected bool $multiple = false;
+    /** @var bool If true, use radio buttons/checkboxes. Otherwise, use a select box */
+    protected bool $expanded = false;
     /** @var bool Whether expanded choices should display inline. Has no effect if expanded is false */
-    protected $inline = true;
-    /** @var array */
-    protected $choices = [];
-    /** @var string */
-    protected $choiceClass;
+    protected bool $inline = true;
+    /** @var array<string|array<string>> */
+    protected array $choices = [];
+    protected string $choiceClass;
 
     public function __construct(array $args = [])
     {
@@ -67,7 +65,7 @@ class ChoiceType extends AbstractType
             if (\is_array($label)) {
                 $optGroup = new Element('optgroup');
 
-                $optGroup->attributes['label'] = $value;
+                $optGroup->attributes['label'] = (string)$value;
 
                 foreach ($label as $subValue => $subLabel) {
                     $args['label'] = $subLabel;
@@ -127,6 +125,9 @@ class ChoiceType extends AbstractType
         return $parent;
     }
 
+    /**
+     * @param array<string|array<string>> $choices
+     */
     public function setChoices(array $choices): self
     {
         $this->choices = $choices;
@@ -134,6 +135,9 @@ class ChoiceType extends AbstractType
         return $this;
     }
 
+    /**
+     * @return array<string|array<string>>
+     */
     public function getChoices(): array
     {
         return $this->choices;
@@ -159,7 +163,7 @@ class ChoiceType extends AbstractType
     }
 
     /**
-     * Returns whether this choice type is expanded i.e not a select box.
+     * Returns whether this choice type is expanded i.e. not a select box.
      */
     public function isExpanded(): bool
     {

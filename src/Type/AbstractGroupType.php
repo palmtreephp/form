@@ -8,10 +8,9 @@ use Palmtree\Html\Element;
 
 abstract class AbstractGroupType extends AbstractType
 {
-    /** @var string|null */
-    protected $errorMessage = null;
-    /** @var bool */
-    protected $required = false;
+    protected ?string $errorMessage = null;
+
+    protected bool $required = false;
 
     public function getElement(): Element
     {
@@ -28,7 +27,7 @@ abstract class AbstractGroupType extends AbstractType
 
     public function getGroupName(): string
     {
-        $shortClass = substr(strrchr(static::class, '\\'), 1);
+        $shortClass = substr((string)strrchr(static::class, '\\'), 1);
 
         return strtolower(basename($shortClass, 'Type'));
     }

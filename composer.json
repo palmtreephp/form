@@ -22,15 +22,15 @@
         }
     },
     "require": {
-        "php": ">=7.1",
+        "php": ">=8.1",
         "palmtree/argparser": "^2.1",
         "palmtree/nameconverter": "^2.0",
         "palmtree/html": "^4.0.2"
     },
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^2.0",
-        "vimeo/psalm": "^4.18",
-        "phpunit/phpunit": "^9.6"
+        "phpunit/phpunit": "^10.2",
+        "phpstan/phpstan": "^1.10"
     },
     "suggest": {
         "ext-curl": "For Google Recaptcha support",
@@ -45,13 +45,8 @@
         "captcha",
         "ajax"
     ],
-    "config": {
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true
-        }
-    },
     "scripts": {
-        "psalm": "@php vendor/bin/psalm --no-cache",
+        "sa": "@php vendor/bin/phpstan analyse",
         "fix": "@php vendor/bin/php-cs-fixer fix",
         "test": "@php vendor/bin/phpunit"
     }

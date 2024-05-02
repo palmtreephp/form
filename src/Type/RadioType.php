@@ -6,5 +6,5 @@ namespace Palmtree\Form\Type;
 
 class RadioType extends CheckboxType
 {
-    protected $type = 'radio';
+    protected string $type = 'radio';
 }

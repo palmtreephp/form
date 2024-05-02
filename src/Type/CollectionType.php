@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace Palmtree\Form\Type;
 
 use Palmtree\Form\Exception\InvalidTypeException;
+use Palmtree\Form\UploadedFile;
 use Palmtree\Html\Element;
 
+/**
+ * @phpstan-import-type UploadedFileArray from UploadedFile
+ */
 class CollectionType extends AbstractType
 {
-    /** @var string|null */
-    protected $errorMessage;
-    /** @var bool */
-    protected $required = false;
-    /** @var string|null */
-    protected $label = '';
+    protected ?string $errorMessage = null;
+    protected bool $required = false;
+    protected ?string $label = '';
     /** @var class-string<TypeInterface> */
-    private $entryType;
-    /** @var array */
-    private $entryOptions = [];
+    private string $entryType;
+    /** @var array<string, mixed> */
+    private array $entryOptions = [];
 
     public function getElement(): Element
     {
@@ -62,7 +63,7 @@ class CollectionType extends AbstractType
     }
 
     /**
-     * @psalm-param class-string<TypeInterface>|string $entryType
+     * @param class-string<TypeInterface>|string $entryType
      */
     public function setEntryType(string $entryType): void
     {
@@ -74,24 +75,30 @@ class CollectionType extends AbstractType
     }
 
     /**
-     * @psalm-return class-string<TypeInterface>
+     * @return class-string<TypeInterface>
      */
     public function getEntryType(): string
     {
         return $this->entryType;
     }
 
+    /**
+     * @param array<string, mixed> $entryOptions
+     */
     public function setEntryOptions(array $entryOptions): void
     {
         $this->entryOptions = $entryOptions;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getEntryOptions(): array
     {
         return $this->entryOptions;
     }
 
-    public function setData($data): TypeInterface
+    public function setData(array|string|int|bool|null $data): TypeInterface
     {
         $data = (array)$data;
 
@@ -104,6 +111,9 @@ class CollectionType extends AbstractType
         return $this;
     }
 
+    /**
+     * @return list<mixed>
+     */
     public function getNormData(): array
     {
         $normData = [];
@@ -114,6 +124,9 @@ class CollectionType extends AbstractType
         return $normData;
     }
 
+    /**
+     * @return list<mixed>
+     */
     public function getData(): array
     {
         $data = [];
@@ -124,10 +137,7 @@ class CollectionType extends AbstractType
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     */
-    private function buildEntry(int $position = 0, $data = null): TypeInterface
+    private function buildEntry(int $position = 0, mixed $data = null): TypeInterface
     {
         $entryType = $this->entryType;
         /** @var TypeInterface $entry */
@@ -176,7 +186,7 @@ class CollectionType extends AbstractType
 
         $prototype = $this->buildEntryElement($entry);
 
-        $html = trim(preg_replace('/>\s+</', '><', $prototype->render()));
+        $html = trim((string)preg_replace('/>\s+</', '><', $prototype->render()));
 
         return htmlentities($html);
     }
@@ -190,6 +200,11 @@ class CollectionType extends AbstractType
         }
     }
 
+    /**
+     * @param array<key-of<UploadedFileArray>, array<string>> $data
+     *
+     * @return array<UploadedFileArray>
+     */
     private static function normalizeFilesArray(array $data): array
     {
         $normalized = [];
@@ -201,6 +216,7 @@ class CollectionType extends AbstractType
             }
         }
 
+        /** @var array<UploadedFileArray> */
         return $normalized;
     }
 }

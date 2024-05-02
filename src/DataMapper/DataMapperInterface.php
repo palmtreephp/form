@@ -11,14 +11,15 @@ interface DataMapperInterface
     /**
      * Maps data from the model to the relevant form fields.
      *
-     * @param object|array $data
+     * @param object|array<string, mixed> $data
      */
-    public function mapDataToForm($data, Form $form): void;
+    public function mapDataToForm(object|array $data, Form $form): void;
 
     /**
      * Maps submitted data on the form to the model.
      *
-     * @param object|array $data
+     * @param object|array<string, mixed> $data
+     * @param array<string, mixed>        $formData
      */
-    public function mapDataFromForm($data, array $formData, Form $form): void;
+    public function mapDataFromForm(object|array $data, array $formData, Form $form): void;
 }

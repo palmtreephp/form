@@ -11,10 +11,10 @@ jobs:
     runs-on: 'ubuntu-22.04'
     strategy:
       matrix:
-        php-versions: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2' ]
+        php-versions: [ '8.1', '8.2', '8.3' ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Declare variables
         id: vars
@@ -30,8 +30,8 @@ jobs:
         run: find -L src -type f -name '*.php' -print0 | xargs -0 -n 1 -P $(nproc) php -l
 
       - name: Cache composer
-        uses: actions/cache@v3
-        if: matrix.php-versions == 8.1
+        uses: actions/cache@v4
+        if: matrix.php-versions == 8.3
         with:
           path: ${{ steps.vars.outputs.composer_cache_dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -40,16 +40,16 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-interaction
-        if: matrix.php-versions == 8.1
+        if: matrix.php-versions == 8.3
 
-      - name: PHP-CS-Fixer - Validate coding standards
+      - name: Validate coding standards
         run: php vendor/bin/php-cs-fixer fix -vvv --dry-run --using-cache=no --format=checkstyle | cs2pr
-        if: matrix.php-versions == 8.1
+        if: matrix.php-versions == 8.3
 
-      - name: Psalm - Static Analysis
-        run: php vendor/bin/psalm --no-cache --show-info=false --stats --output-format=github --threads=$(nproc)
-        if: matrix.php-versions == 8.1
+      - name: Static Analysis
+        run: php vendor/bin/phpstan analyse --error-format=github
+        if: matrix.php-versions == 8.3
 
-      - name: PHPUnit - Tests
-        run: php vendor/bin/phpunit -v --do-not-cache-result
-        if: matrix.php-versions == 8.1
+      - name: Tests
+        run: php vendor/bin/phpunit --do-not-cache-result
+        if: matrix.php-versions == 8.3

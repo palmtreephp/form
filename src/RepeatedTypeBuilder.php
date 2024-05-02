@@ -10,14 +10,13 @@ use Palmtree\Form\Type\TypeInterface;
 
 class RepeatedTypeBuilder
 {
-    /** @var FormBuilder */
-    private $formBuilder;
-
-    public function __construct(FormBuilder $formBuilder)
+    public function __construct(private readonly FormBuilder $formBuilder)
     {
-        $this->formBuilder = $formBuilder;
     }
 
+    /**
+     * @param array<string, mixed> $args
+     */
     public function build(string $name, array $args): RepeatedType
     {
         $repeatedType = new RepeatedType($args);
@@ -42,6 +41,11 @@ class RepeatedTypeBuilder
         return $repeatedType;
     }
 
+    /**
+     * @param array<string, mixed> $args
+     *
+     * @return array<string, mixed>
+     */
     private static function buildSecondArgs(TypeInterface $firstOfType, array $args): array
     {
         $secondArgs = $args;

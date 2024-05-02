@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class DataBindingTest extends TestCase
 {
-    public function testObjectTwoWayDataBinding()
+    public function testObjectTwoWayDataBinding(): void
     {
         $person = new Person();
 
@@ -35,7 +35,7 @@ class DataBindingTest extends TestCase
         $this->assertSame($person->interests, ['football', 'gaming']);
     }
 
-    public function testArrayOneWayDataBinding()
+    public function testArrayOneWayDataBinding(): void
     {
         $person = [
             'name' => 'John Smith',
@@ -56,7 +56,7 @@ class DataBindingTest extends TestCase
         $this->assertSame($form->get('interests')->getData(), ['football', 'gaming']);
     }
 
-    public function testArrayAccessTwoWayDataBinding()
+    public function testArrayAccessTwoWayDataBinding(): void
     {
         $person = new \ArrayObject([
             'name' => 'John Smith',
