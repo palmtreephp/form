@@ -7,7 +7,7 @@
 PHP form builder with [Bootstrap](https://getbootstrap.com/) v5 and v4 classes, [validation](docs/constraints.md), [data binding](docs/data-binding.md), [Google Recaptcha](https://www.google.com/recaptcha/intro/) support and other goodies
 
 ## Requirements
-* PHP >= 7.1
+* PHP >= 8.1
 * jQuery (If you want to use Recaptcha and/or AJAX submissions)
 
 ## Installation
