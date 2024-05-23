@@ -31,7 +31,7 @@ class FormCollection {
 
     constructor(widget: HTMLElement) {
         this.widget = widget;
-        this.options = { ...defaults, ...JSON.parse(this.widget.dataset.palmtreeFormCollection) };
+        this.options = { ...defaults, ...JSON.parse(this.widget.dataset.palmtreeFormCollection || '') };
 
         this.addButton = this.createAddButton();
 
@@ -46,12 +46,12 @@ class FormCollection {
         }
 
         const index = this.widget.dataset.index || this.widget.querySelectorAll(this.options.entrySelector).length;
-        const html = this.widget.dataset.prototype.replace(/__name__/g, index.toString());
+        const html = this.widget.dataset.prototype?.replace(/__name__/g, index.toString()) || '';
 
         const entry = document.createElement('div');
         entry.innerHTML = html;
 
-        this.widget.querySelector('.palmtree-form-collection-bottom').before(entry);
+        this.widget.querySelector('.palmtree-form-collection-bottom')?.before(entry);
         this.widget.dataset.index = (parseInt(index.toString()) + 1).toString();
 
         this.createRemoveButton(entry);
@@ -66,7 +66,7 @@ class FormCollection {
     }
 
     removeEntry(entry: Element) {
-        entry.parentElement.removeChild(entry);
+        entry.remove();
 
         const event = new CustomEvent('palmtreeFormCollection.remove', { detail: { entry } });
         this.widget.dispatchEvent(event);

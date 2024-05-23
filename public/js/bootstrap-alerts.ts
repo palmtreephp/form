@@ -11,7 +11,7 @@ const defaults: BootstrapAlertsOptions = {
 export function useBootstrapAlerts(element: HTMLElement, options: Partial<BootstrapAlertsOptions> = {}) {
     const config: BootstrapAlertsOptions = { ...defaults, ...options };
 
-    return function createAlert(type: string, message: string): void {
+    return function createAlert(message: string, type = 'success'): void {
         const alert = document.createElement('div');
 
         alert.setAttribute('role', 'alert');

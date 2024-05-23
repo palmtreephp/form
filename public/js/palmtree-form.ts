@@ -1,3 +1,6 @@
+import { elementFromHtml } from "./element-from-html.ts";
+import { useBootstrapAlerts } from "./bootstrap-alerts.ts";
+
 type PalmtreeFormOptions = {
     url: string;
     method: string;
@@ -33,6 +36,8 @@ export const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFor
     const config = { ...defaults, ...options };
     const submitBtn = form.querySelector<HTMLInputElement>('button[type="submit"]');
 
+    const createAlert = useBootstrapAlerts(form);
+
     const handleResponse = function (response: Response) {
         const formControls = [...form.querySelectorAll<FormControl>('.palmtree-form-control')]
 
@@ -48,26 +53,29 @@ export const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFor
             firstInvalidFormControl?.focus();
 
             if (response.data.message) {
-                _this.showAlert(response.data.message, 'danger');
+                createAlert(response.data.message, 'danger');
             }
 
-            form.trigger(this.getEvent('error'), {
-                responseData: response.data
-            });
+            form.dispatchEvent(new CustomEvent('palmtreeForm.error', {
+                detail: {
+                    responseData: response.data
+                }
+            }));
 
             return false;
         }
     };
 
-    const setControlStates = (formControls: FormControl[], errors) => {
+    const setControlStates = (formControls: FormControl[], errors: Record<string, string>) => {
         formControls.forEach((formControl) => {
             const errorKey = formControl.dataset.name;
             const formGroup = formControl.closest('.form-group');
-            let feedback = formGroup?.querySelectorAll('.palmtree-invalid-feedback');
 
-            if (errors && errorKey && typeof errors[errorKey] !== 'undefined') {
+            if (formGroup && errors && errorKey && typeof errors[errorKey] !== 'undefined') {
+                let feedback = formGroup.querySelector('.palmtree-invalid-feedback');
+
                 if (!feedback) {
-                    feedback = $(_this.$form.data('invalid_element'));
+                    feedback = elementFromHtml(form.dataset.invalid_element || '');
                 }
 
                 feedback.innerHTML = errors[errorKey];
