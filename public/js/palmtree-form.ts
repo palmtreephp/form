@@ -5,6 +5,15 @@ type PalmtreeFormOptions = {
     controlStates: string[];
 }
 
+type Response = {
+    success: boolean;
+    data: {
+        message: string;
+        errors: Record<string, string>;
+    }
+
+}
+
 const defaults: PalmtreeFormOptions = {
     url: '',
     method: 'GET',
@@ -12,18 +21,20 @@ const defaults: PalmtreeFormOptions = {
     controlStates: ['valid', 'invalid']
 }
 
+type FormControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll<HTMLFormElement>('.palmtree-form.is-ajax').forEach((form) => {
         palmtreeForm(form);
     });
 });
 
-const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFormOptions> = {}) => {
+export const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFormOptions> = {}) => {
     const config = { ...defaults, ...options };
     const submitBtn = form.querySelector<HTMLInputElement>('button[type="submit"]');
 
-    function handleResponse(response) {
-        const formControls = form.querySelectorAll('.palmtree-form-control');
+    const handleResponse = function (response: Response) {
+        const formControls = [...form.querySelectorAll<FormControl>('.palmtree-form-control')]
 
         // Clear all form control states
         clearState(formControls);
@@ -33,8 +44,8 @@ const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFormOption
 
             setControlStates(formControls, errors);
 
-            var $first = formControls.filter('.is-invalid').first();
-            $first.trigger('focus');
+            const firstInvalidFormControl = formControls.find((formControl) => formControl.classList.contains('is-invalid'));
+            firstInvalidFormControl?.focus();
 
             if (response.data.message) {
                 _this.showAlert(response.data.message, 'danger');
@@ -46,11 +57,11 @@ const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFormOption
 
             return false;
         }
-    }
+    };
 
-    const setControlStates = (formControls: NodeListOf<HTMLElement>, errors) => {
+    const setControlStates = (formControls: FormControl[], errors) => {
         formControls.forEach((formControl) => {
-            const errorKey = formControl.data('name');
+            const errorKey = formControl.dataset.name;
             const formGroup = formControl.closest('.form-group');
             let feedback = formGroup?.querySelectorAll('.palmtree-invalid-feedback');
 
@@ -62,11 +73,11 @@ const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFormOption
                 feedback.innerHTML = errors[errorKey];
                 formGroup.append(feedback);
 
-                setState(formControl, 'invalid');
+                setState([formControl], 'invalid');
 
                 const listener = () => {
                     const state = formControl.value.length ? '' : 'invalid';
-                    setState(formControl, state);
+                    setState([formControl], state);
                 };
 
                 ['input', 'change'].forEach((eventName) => {
@@ -74,30 +85,31 @@ const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFormOption
                     formControl.addEventListener(`${eventName}.palmtreeForm`, listener);
                 })
             } else {
-                clearState(formControl);
+                clearState([formControl]);
             }
         });
     }
 
-    const clearState = (formControls: NodeListOf<Element>) => {
+    const clearState = (formControls: FormControl[]) => {
         setState(formControls, '');
     }
 
-    const setState = (formControls: NodeListOf<Element>, state: string) => {
+    const setState = (formControls: FormControl[], state: string) => {
         formControls.forEach((formControl) => {
             const formGroup = formControl.closest('.form-group');
-            const feedback = formGroup.find('.palmtree-invalid-feedback');
+            if (formGroup) {
+                config.controlStates.forEach((controlState) => {
+                    formControl.classList.remove(`is-${controlState}`);
+                });
 
-            // Remove all states first.
-            for (var i = 0; i < config.controlStates.length; i++) {
-                formControl.removeClass('is-' + _this.options.controlStates[i]);
-            }
+                const feedback = formGroup.querySelector('.palmtree-invalid-feedback');
 
-            if (!state) {
-                feedback.hide();
-            } else if (config.controlStates.indexOf(state) > -1) {
-                formControl.classList.add('is-' + state);
-                feedback.show();
+                if (!state) {
+                    feedback?.classList.add('d-none');
+                } else if (config.controlStates.includes(state)) {
+                    formControl.classList.add(`is-${state}`);
+                    feedback?.classList.remove('d-none');
+                }
             }
         });
     }
@@ -118,7 +130,7 @@ const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFormOption
             body: formData,
         });
 
-        const json = response.json();
+        const json: Response = await response.json();
 
         handleResponse(json);
 

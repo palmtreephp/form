@@ -109,3 +109,5 @@ class FormCollection {
         });
     }
 }
+
+export {};
