@@ -1,5 +1,5 @@
-import { elementFromHtml } from "./element-from-html.ts";
-import { useBootstrapAlerts } from "./bootstrap-alerts.ts";
+import { elementFromHtml } from "./element-from-html";
+import { useBootstrapAlerts } from "./bootstrap-alerts";
 
 type PalmtreeFormOptions = {
     url: string;
@@ -136,6 +136,9 @@ export const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFor
         const response = await fetch(form.action, {
             method: form.method,
             body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         });
 
         const json: Response = await response.json();
@@ -149,5 +152,8 @@ export const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFor
         }
 
         form.classList.remove('is-submitting');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+        }
     });
 }

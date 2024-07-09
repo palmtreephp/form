@@ -13,8 +13,8 @@ const defaults: FormCollectionOptions = {
 document.addEventListener('DOMContentLoaded', () => {
     formCollection(document.querySelectorAll('[data-palmtree-form-collection]'));
 
-    document.body.addEventListener('palmtreeFormCollection.add', (event: CustomEvent) => {
-        formCollection(event.detail.$entry.querySelectorAll('[data-palmtree-form-collection]'));
+    document.body.addEventListener('palmtreeFormCollection.add', (event) => {
+        formCollection((event as CustomEvent).detail.$entry.querySelectorAll('[data-palmtree-form-collection]'));
     });
 });
 
