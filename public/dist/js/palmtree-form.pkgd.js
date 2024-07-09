@@ -140,7 +140,7 @@
     /* global define:false */
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
-    } else if (typeof module === 'object' && module.exports) {
+    } else if (typeof module === 'object' && module.exports && typeof require === 'function') {
         module.exports = factory(require('jquery'));
     } else {
         factory(window.jQuery);
@@ -159,7 +159,7 @@
     /* global define:false */
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
-    } else if (typeof module === 'object' && module.exports) {
+    } else if (typeof module === 'object' && module.exports && typeof require === 'function') {
         module.exports = factory(require('jquery'));
     } else {
         factory(window.jQuery);
@@ -236,7 +236,7 @@
     /* global define:false */
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
-    } else if (typeof module === 'object' && module.exports) {
+    } else if (typeof module === 'object' && module.exports && typeof require === 'function') {
         module.exports = factory(require('jquery'));
     } else {
         factory(window.jQuery);
@@ -394,7 +394,7 @@
     /* global define:false */
     if (typeof define !== 'undefined' && define.amd) {
         define(['jquery'], factory);
-    } else if (typeof module === 'object' && module.exports) {
+    } else if (typeof module === 'object' && module.exports && typeof require === 'function') {
         module.exports = factory(require('jquery'));
     } else {
         factory(jQuery);
