@@ -1,11 +1,14 @@
 declare interface Window {
     [key: string]: any;
 
-    grecaptcha: any;
+    grecaptcha: {
+        render: (elementId: string, options: Record<string, unknown>) => number;
+        reset: (widgetId: number) => void;
+    };
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll<HTMLFormElement>('.palmtree-form').forEach(function (form) {
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll<HTMLFormElement>('.palmtree-form').forEach((form) => {
         const element = form.querySelector<HTMLElement>('.g-recaptcha-autoload');
 
         if (element && element.dataset.onload && element.dataset.script_url) {
