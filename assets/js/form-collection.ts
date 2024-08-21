@@ -111,7 +111,7 @@ class FormCollection {
 
         const wrapper = elementFromHtml('<section class="d-flex justify-content-end palmtree-form-collection-bottom"></section>');
 
-        wrapper.appendChild(addButton);
+        wrapper.append(addButton);
 
         this.widget.append(wrapper);
 
