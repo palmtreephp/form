@@ -19,6 +19,8 @@ $builder
     ->add('files', CollectionType::class, [
         'label'         => 'Files must be a maximum of 5MB each. You may upload images, PDFs, Word documents, Spreadsheets and Powerpoint presentations',
         'required'      => false,
+        'min_entries'   => 1,
+        'max_entries'   => 5,
         'entry_type'    => FileType::class,
         'entry_options' => [
             'required'    => false,

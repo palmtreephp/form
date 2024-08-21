@@ -16,7 +16,9 @@ $builder = new FormBuilder([
 
 $builder
     ->add('people', CollectionType::class, [
-        'entry_type' => PersonType::class,
+        'entry_type'  => PersonType::class,
+        'min_entries' => 1,
+        'max_entries' => 4,
     ]);
 
 $builder->add('send_message', SubmitType::class);

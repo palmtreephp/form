@@ -70,7 +70,7 @@ class Number extends AbstractConstraint implements ConstraintInterface
     {
         $errorMessage = match ($this->errorCode) {
             self::ERROR_TOO_SMALL => "This value must be greater than or equal to $this->min",
-            self::ERROR_TOO_LARGE => "'This value must be less than $this->max",
+            self::ERROR_TOO_LARGE => "This value must be less than $this->max",
             default => 'This value must be a number',
         };
 
