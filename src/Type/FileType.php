@@ -12,7 +12,6 @@ class FileType extends AbstractType
     protected string $type = 'file';
     private ?UploadedFile $normData = null;
 
-
     public function getElement(): Element
     {
         $element = parent::getElement();

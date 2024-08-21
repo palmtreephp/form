@@ -43,7 +43,7 @@ class CollectionType extends AbstractType
         $collectionWrapper->attributes->setData('prototype', $this->generatePrototype());
 
         $config = array_filter([
-            'addLabel'   => $this->addLabel,
+            'addLabel' => $this->addLabel,
             'minEntries' => $this->minEntries,
             'maxEntries' => $this->maxEntries,
         ], fn ($value) => $value !== null);
@@ -234,7 +234,7 @@ class CollectionType extends AbstractType
     private static function normalizeFilesArray(array $data): array
     {
         $normalized = [];
-        $keys       = array_keys($data);
+        $keys = array_keys($data);
 
         for ($i = 0, $total = \count($data['name']); $i < $total; ++$i) {
             foreach ($keys as $key) {
