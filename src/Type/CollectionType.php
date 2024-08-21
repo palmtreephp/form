@@ -20,6 +20,9 @@ class CollectionType extends AbstractType
     private string $entryType;
     /** @var array<string, mixed> */
     private array $entryOptions = [];
+    private ?string $addLabel = null;
+    private ?int $maxEntries = null;
+    private ?int $minEntries = null;
 
     public function getElement(): Element
     {
@@ -38,6 +41,14 @@ class CollectionType extends AbstractType
         }
 
         $collectionWrapper->attributes->setData('prototype', $this->generatePrototype());
+
+        $config = array_filter([
+            'addLabel'   => $this->addLabel,
+            'minEntries' => $this->minEntries,
+            'maxEntries' => $this->maxEntries,
+        ], fn ($value) => $value !== null);
+
+        $collectionWrapper->attributes->setData('palmtree-form-collection', htmlentities(json_encode($config)));
 
         return $collectionWrapper;
     }
@@ -137,6 +148,21 @@ class CollectionType extends AbstractType
         return $data;
     }
 
+    public function setMinEntries(int $minEntries): void
+    {
+        $this->minEntries = $minEntries;
+    }
+
+    public function setMaxEntries(int $maxEntries): void
+    {
+        $this->maxEntries = $maxEntries;
+    }
+
+    public function setAddLabel(string $addLabel): void
+    {
+        $this->addLabel = $addLabel;
+    }
+
     private function buildEntry(int $position = 0, mixed $data = null): TypeInterface
     {
         $entryType = $this->entryType;
@@ -208,7 +234,7 @@ class CollectionType extends AbstractType
     private static function normalizeFilesArray(array $data): array
     {
         $normalized = [];
-        $keys = array_keys($data);
+        $keys       = array_keys($data);
 
         for ($i = 0, $total = \count($data['name']); $i < $total; ++$i) {
             foreach ($keys as $key) {

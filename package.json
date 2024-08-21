@@ -1,23 +1,23 @@
 {
-    "private": true,
-    "dependencies": {
-        "jquery": "^3.5.1",
-        "jquery-bsalert": "^2.0.0"
+    "name": "@palmtree/form",
+    "type": "module",
+    "scripts": {
+        "build": "rollup -c",
+        "start": "rollup -c -w"
     },
     "devDependencies": {
-        "uglify-js": "^3.14.5"
+        "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-typescript": "^11.1.6",
+        "prettier": "^3.3.3",
+        "rollup": "^4.18.1",
+        "tslib": "^2.6.3",
+        "typescript": "^5.5.3"
     },
-    "scripts": {
-        "build": "yarn run concat && yarn run minify && yarn run copy-bsalert",
-        "concat": "cat $(node -p -e \"require('./package.json').pkgFiles.join(' ')\") > public/dist/js/palmtree-form.pkgd.js",
-        "minify": "uglifyjs --compress --mangle -- public/dist/js/palmtree-form.pkgd.js > public/dist/js/palmtree-form.pkgd.min.js",
-        "copy-bsalert": "cp node_modules/jquery-bsalert/dist/jquery.bsAlert.js public/js/jquery.bsAlert.js"
-    },
-    "pkgFiles": [
-        "node_modules/jquery-bsalert/dist/jquery.bsAlert.js",
-        "public/js/jquery.palmtree-custom-file.js",
-        "public/js/jquery.palmtree-recaptcha.js",
-        "public/js/jquery.palmtree-form-collection.js",
-        "public/js/jquery.palmtree-form.js"
-    ]
+    "files": [
+        "dist",
+        "assets"
+    ],
+    "prettier": {
+        "printWidth": 240
+    }
 }

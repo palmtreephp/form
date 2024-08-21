@@ -9,5 +9,4 @@ indent_style = space
 indent_size = 4
 
 [.github/workflows/*.yaml]
-
 indent_size = 2
