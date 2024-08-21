@@ -2,3 +2,4 @@
 /node_modules
 /.php-cs-fixer.cache
 /examples/php.ini
+/composer.lock
