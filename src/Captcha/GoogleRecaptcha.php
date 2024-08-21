@@ -79,7 +79,7 @@ class GoogleRecaptcha implements CaptchaInterface
         $element->attributes->set('hidden');
 
         // Placeholder Element that actually displays the captcha
-        $placeholderId = sprintf('%s_placeholder', $controlId);
+        $placeholderId = \sprintf('%s_placeholder', $controlId);
 
         $placeholder = new Element('div.palmtree-form-control.g-recaptcha');
 
@@ -96,7 +96,7 @@ class GoogleRecaptcha implements CaptchaInterface
         $placeholder->attributes->setData('site_key', $this->siteKey);
         $placeholder->attributes->setData('form_control', $controlId);
 
-        $onloadCallback = sprintf('%s_onload', str_replace('-', '_', $controlId));
+        $onloadCallback = \sprintf('%s_onload', str_replace('-', '_', $controlId));
         $placeholder->attributes->setData('script_url', $this->getScriptSrc($onloadCallback));
         $placeholder->attributes->setData('onload', $onloadCallback);
 
@@ -133,7 +133,7 @@ class GoogleRecaptcha implements CaptchaInterface
         $queryArgs['onload'] = $onloadCallbackName;
         $queryArgs['render'] = 'explicit';
 
-        return sprintf('%s?%s', strtok($url, '?'), http_build_query($queryArgs));
+        return \sprintf('%s?%s', strtok($url, '?'), http_build_query($queryArgs));
     }
 
     /**

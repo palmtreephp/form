@@ -67,7 +67,7 @@ class TypeLocator
         if ($class === null) {
             throw new InvalidTypeException('Type could not be found');
         } elseif (!is_subclass_of($class, TypeInterface::class, true)) {
-            throw new InvalidTypeException(sprintf("Type must be an instance of '%s'. '%s' given", TypeInterface::class, $type));
+            throw new InvalidTypeException(\sprintf("Type must be an instance of '%s'. '%s' given", TypeInterface::class, $type));
         }
 
         foreach ($args as $key => $value) {
