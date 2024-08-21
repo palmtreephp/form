@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             script.defer = true;
             script.src = element.dataset.script_url;
 
-            document.head.appendChild(script);
+            document.head.append(script);
         }
     });
 });
