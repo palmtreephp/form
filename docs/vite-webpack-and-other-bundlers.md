@@ -16,3 +16,5 @@ import '@palmtree/form/recaptcha';
 ```
 
 Each of the above imports has side effects, namely adding `DOMContentLoaded` event listeners to the document to initialize the relevant features.
+
+[Return to index](index.md)

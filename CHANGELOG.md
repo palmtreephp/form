@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.0.0
+
+* Refactored all jQuery code to vanilla JavaScript/TypeScript. jQuery is no longer required.
+* Collections are now initialized with a data attribute containing json config set within PHP code.
+  This means that the collection type can now be initialized without any JavaScript. See
+  the [collection docs](/docs/collections.md) for more info
+* The JavaScript/Typescript code is now published as an [NPM module](https://www.npmjs.com/package/@palmtree/form) and
+  can be imported into your project.
+  See the [Vite, Webpack and other bundlers docs](/docs/vite-webpack-and-other-bundlers.md) for more info. You can also
+  use the [unpkg CDN](https://unpkg.com/@palmtree/form@6.0.0/dist/palmtree-form.pkgd.min.js) to get the full pacakge:
+
+    ```html
+    <script src="https://unpkg.com/@palmtree/form@6.0.0/dist/palmtree-form.pkgd.min.js"></script>
+    ```
+
 ## v5.0.1 - 2024-07-09
 
 * Updated UMD in JS code for Vite support. In Vite production builds, `module.exports` is defined but `require` is not.
@@ -49,7 +64,6 @@ All notable changes to this project will be documented in this file.
 
 Added functionality to render fields individually with a new `renderField` method. Among other things, this allows
 developers to fully utilise Bootstrap's grid system by rendering fields in different columns.
-
 
 ## v4.2 - 2022-02-16
 
