@@ -61,6 +61,10 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
+      - name: Install npm dependencies
+        if: matrix.php-versions == 8.3
+        run: npm ci
+
       - name: Prettier
         if: matrix.php-versions == 8.3
         run: npx prettier --check assets/
