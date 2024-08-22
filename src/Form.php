@@ -23,7 +23,7 @@ class Form implements \Stringable
     protected bool $ajax = false;
     protected bool $submitted = false;
     protected ?bool $valid = null;
-    protected string $method = 'POST';
+    protected string $method = 'post';
     protected ?string $action = null;
     protected ?string $encType = null;
     /** @var array<string, string> */
