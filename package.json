@@ -12,7 +12,9 @@
     ],
     "scripts": {
         "build": "rollup -c",
-        "start": "rollup -c -w"
+        "start": "rollup -c -w",
+        "prettier:check": "prettier --check assets/",
+        "type-check": "tsc --noEmit"
     },
     "prettier": {
         "printWidth": 240
