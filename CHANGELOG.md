@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v5.0.1 - 2024-07-09
+
+* Updated UMD in JS code for Vite support. In Vite production builds, `module.exports` is defined but `require` is not.
+  This change checks that `require` is defined as a function before using it.
+
 ## v5.0 - 2024-05-01
 
 * Bumped the minimum required PHP version to 8.1
