@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## v6.0.0
+## v6.0.0 - 2024-08-22
 
 * Refactored all jQuery code to vanilla JavaScript/TypeScript. jQuery is no longer required.
 * Collections are now initialized with a data attribute containing json config set within PHP code.
