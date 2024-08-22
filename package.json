@@ -14,6 +14,7 @@
         "build": "rollup -c",
         "start": "rollup -c -w",
         "prettier:check": "prettier --check assets/",
+        "prettier:write": "prettier --write assets/",
         "type-check": "tsc --noEmit"
     },
     "prettier": {
