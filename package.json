@@ -19,7 +19,8 @@
         "assets"
     ],
     "exports": {
-        ".": "./dist/palmtree-form.pkgd.js"
+        "./*": "./assets/js/*.ts",
+        "./dist/": "./dist/"
     },
     "prettier": {
         "printWidth": 240
