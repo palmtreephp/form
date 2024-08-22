@@ -4,21 +4,32 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/palmtreephp/form/build.yaml?branch=master)](https://github.com/palmtreephp/form/actions/workflows/build.yaml)
 [![Packagist Version](https://img.shields.io/packagist/v/palmtree/form)](https://packagist.org/packages/palmtree/form)
 
-PHP form builder with [Bootstrap](https://getbootstrap.com/) classes, [validation](docs/constraints.md), [data binding](docs/data-binding.md), [Google Recaptcha](https://www.google.com/recaptcha/intro/) support and other goodies
+PHP form builder with [Bootstrap](https://getbootstrap.com/)
+classes, [validation](docs/constraints.md), [data binding](docs/data-binding.md), [Google Recaptcha](https://www.google.com/recaptcha/intro/)
+support and other goodies
 
 ## Requirements
+
 * PHP >= 8.1
 
 ## Installation
 
 Use composer to add the package to your dependencies:
+
 ```sh
 composer require palmtree/form
+```
+
+Optional: Install the NPM package for AJAX form submission, CAPTCHA support and form collections:
+
+```sh
+npm install @palmtree/form
 ```
 
 ## Usage Example
 
 #### Build
+
 ```php
 use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Captcha\GoogleRecaptcha;
@@ -44,7 +55,9 @@ $form = $builder->getForm();
 ```
 
 #### Render
+
 ```html
+
 <div class="container">
     <?= $form->render(); ?>
 </div>
@@ -54,6 +67,7 @@ $form = $builder->getForm();
 ```
 
 #### Process
+
 ```php
 $form->handleRequest();
 
