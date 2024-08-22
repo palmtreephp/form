@@ -48,7 +48,7 @@ class CollectionType extends AbstractType
             'maxEntries' => $this->maxEntries,
         ], fn ($value) => $value !== null);
 
-        $collectionWrapper->attributes->setData('palmtree-form-collection', htmlentities(json_encode($config)));
+        $collectionWrapper->attributes->setData('palmtree-form-collection', htmlentities(json_encode($config, JSON_THROW_ON_ERROR)));
 
         return $collectionWrapper;
     }
