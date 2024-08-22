@@ -45,7 +45,9 @@ $form = $builder->getForm();
 
 #### Render
 ```html
-<script src="/path/to/palmtree-form.pkgd.min.js"></script> <!-- Optional -->
+<!-- Optional JS for AJAX submissions, CAPTCHA support and form collections -->
+<script src="https://unpkg.com/@palmtree/form@6.0.0/dist/palmtree-form.pkgd.min.js"></script>
+
 <div class="container">
     <?= $form->render(); ?>
 </div>

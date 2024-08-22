@@ -6,27 +6,13 @@ The `CollectionType` can be used to add/remove multiple entries of the same fiel
 use Palmtree\Form\FormBuilder;
 
 $builder = (new FormBuilder('collection_example'))
-    ->add('name', 'collection', [
+    ->add('names', 'collection', [
         'entry_type'    => 'text',
-        'classes'       => ['names-collection']
+        'min_entries' => 1,
+        'max_entries' => 4,
+        'add_label' => 'Add person',
     ])
     ->add('submit', 'submit');
-```
-
-```html
-<script src="/path/to/palmtree-form.pkgd.js"></script>
-<script>
-$(function () {
-    $('.names-collection').palmtreeFormCollection({
-        minEntries: 1,
-        maxEntries: 4,
-        labels: {
-            add: 'Add person',
-            remove: 'Remove person'
-        }
-    });
-});
-</script>
 ```
 
 See the [collection example](/examples/collection) for a more advanced use-case.

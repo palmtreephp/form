@@ -8,3 +8,4 @@
 * [File Uploads](file-uploads.md)
 * [Rendering individual fields](rendering-fields.md)
 * [Shorthand Type Values](shorthand-type-values.md)
+* [Usage with Vite, Webpack etc.](vite-webpack-and-other-bundlers.md)
