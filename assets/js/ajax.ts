@@ -27,11 +27,11 @@ type FormControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll<HTMLFormElement>(".palmtree-form.is-ajax").forEach((form) => {
-        palmtreeForm(form);
+        ajax(form);
     });
 });
 
-export const palmtreeForm = (form: HTMLFormElement, options: Partial<PalmtreeFormOptions> = {}) => {
+export const ajax = (form: HTMLFormElement, options: Partial<PalmtreeFormOptions> = {}) => {
     const config = { ...defaults, ...options };
     const submitBtn = form.querySelector<HTMLInputElement>('button[type="submit"]');
 
