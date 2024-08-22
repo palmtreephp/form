@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v5.0 - 2024-05-01
+
+* Bumped the minimum required PHP version to 8.1
+
 ## v4.5.1 - 2024-02-22
 
 * Added the ability to set [form (help) text](https://getbootstrap.com/docs/5.3/forms/form-control/#form-text) for form controls, e.g.:
