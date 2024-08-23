@@ -31,6 +31,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+type PalmtreeFormInstance = {
+    clearState: (formControls: FormControl[]) => void;
+};
+
+const instances = new Map<HTMLFormElement, PalmtreeFormInstance>();
+
+declare global {
+    interface Window {
+        palmtreeForm: {
+            getInstance: (form: HTMLFormElement) => PalmtreeFormInstance | undefined;
+        };
+    }
+}
+
+window.palmtreeForm = {
+    getInstance: (form: HTMLFormElement) => instances.get(form),
+};
+
 export const ajax = (form: HTMLFormElement, options: Partial<PalmtreeFormOptions> = {}) => {
     const config = { ...defaults, ...options };
     const submitBtn = form.querySelector<HTMLInputElement>('button[type="submit"]');
@@ -173,4 +191,6 @@ export const ajax = (form: HTMLFormElement, options: Partial<PalmtreeFormOptions
             submitBtn.disabled = false;
         }
     });
+
+    instances.set(form, { clearState });
 };

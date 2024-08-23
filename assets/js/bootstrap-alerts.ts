@@ -7,7 +7,7 @@ type BootstrapAlertsOptions = {
 
 const defaults: BootstrapAlertsOptions = {
     dismissible: true,
-    position: "beforebegin",
+    position: "afterbegin",
 };
 
 export function useBootstrapAlerts(element: HTMLElement) {

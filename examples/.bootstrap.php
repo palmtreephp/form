@@ -24,6 +24,8 @@ function send_json($data = [], $success = true)
         'data'    => $data,
     ]);
 
+    header('Content-Type: application/json');
+
     echo $response;
     exit;
 }
