@@ -4,9 +4,8 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/palmtreephp/form/build.yaml?branch=master)](https://github.com/palmtreephp/form/actions/workflows/build.yaml)
 [![Packagist Version](https://img.shields.io/packagist/v/palmtree/form)](https://packagist.org/packages/palmtree/form)
 
-PHP form builder with [Bootstrap](https://getbootstrap.com/)
-classes, [validation](docs/constraints.md), [data binding](docs/data-binding.md), [Google Recaptcha](https://www.google.com/recaptcha/intro/)
-support and other goodies
+PHP form builder with [Bootstrap](https://getbootstrap.com/) classes, [validation](docs/constraints.md), [data binding](docs/data-binding.md),
+[Google Recaptcha](https://www.google.com/recaptcha/intro/) and [hCaptcha](https://www.hcaptcha.com/) support, plus other goodies.
 
 ## Requirements
 
@@ -33,6 +32,7 @@ npm install @palmtree/form
 ```php
 use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Captcha\GoogleRecaptcha;
+use Palmtree\Form\Captcha\HCaptcha;
 
 $builder = (new FormBuilder('my_form'))
     ->add('name', 'text', ['error_message' => 'Please enter your name'])
@@ -45,6 +45,7 @@ $builder = (new FormBuilder('my_form'))
     ])
     ->add('recaptcha', 'captcha', [
         'captcha' => new GoogleRecaptcha('<site_key>', '<secret>'),
+        //'captcha' => new HCaptcha('<site_key>', '<secret>'),
     ]);
 
 $builder->add('send_message', 'submit');
