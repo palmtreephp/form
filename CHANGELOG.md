@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.1.0 - 2024-08-23
+
+* Added [hCaptcha](https://www.hcaptcha.com/) support. You can now use either Google Recaptcha or hCaptcha by passing the appropriate captcha object
+  to the `captcha` option in the field configuration. See the [hCaptcha example](/examples/hcaptcha/index.php) for more info.
+
 ## v6.0.0 - 2024-08-22
 
 * Refactored all jQuery code to vanilla JavaScript/TypeScript. jQuery is no longer required.
