@@ -64,7 +64,7 @@ $form = $builder->getForm();
 </div>
 
 <!-- Optional JS for AJAX submissions, CAPTCHA support and form collections -->
-<script src="https://unpkg.com/@palmtree/form@6.0.0/dist/palmtree-form.pkgd.min.js"></script>
+<script src="https://unpkg.com/@palmtree/form@6.1.0/dist/palmtree-form.pkgd.min.js"></script>
 ```
 
 #### Process
