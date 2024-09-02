@@ -3,6 +3,7 @@
 [![License](http://img.shields.io/packagist/l/palmtree/form.svg)](LICENSE)
 [![Build](https://img.shields.io/github/actions/workflow/status/palmtreephp/form/build.yaml?branch=master)](https://github.com/palmtreephp/form/actions/workflows/build.yaml)
 [![Packagist Version](https://img.shields.io/packagist/v/palmtree/form)](https://packagist.org/packages/palmtree/form)
+[![npm version](https://img.shields.io/npm/v/@palmtree/form.svg)](https://www.npmjs.com/package/@palmtree/form)
 
 PHP form builder with [Bootstrap](https://getbootstrap.com/) classes, [validation](docs/constraints.md), [data binding](docs/data-binding.md),
 [Google Recaptcha](https://www.google.com/recaptcha/intro/) and [hCaptcha](https://www.hcaptcha.com/) support, plus other goodies.

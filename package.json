@@ -1,6 +1,11 @@
 {
     "name": "@palmtree/form",
     "version": "6.1.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/palmtreephp/form"
+    },
+    "license": "MIT",
     "type": "module",
     "exports": {
         "./*": "./assets/js/*.ts",
@@ -8,13 +13,14 @@
     },
     "files": [
         "dist",
-        "assets"
+        "assets",
+        "LICENSE"
     ],
     "scripts": {
         "build": "rollup -c",
-        "start": "rollup -c -w",
         "prettier:check": "prettier --check assets/",
         "prettier:write": "prettier --write assets/",
+        "start": "rollup -c -w",
         "type-check": "tsc --noEmit"
     },
     "prettier": {
