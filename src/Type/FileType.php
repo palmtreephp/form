@@ -27,11 +27,19 @@ class FileType extends AbstractType
             return true;
         }
 
+        if (!$uploadedFile = $this->getData()) {
+            return true;
+        }
+
+        if (!$this->isRequired() && $uploadedFile->getErrorCode() === UploadedFile::UPLOAD_ERR_NO_FILE) {
+            return true;
+        }
+
         if (!parent::isValid()) {
             return false;
         }
 
-        if (($uploadedFile = $this->getData()) && $uploadedFile->getErrorCode() > 0) {
+        if ($uploadedFile->getErrorCode() !== UploadedFile::UPLOAD_ERR_OK) {
             $this->setErrorMessage($uploadedFile->getErrorMessage());
 
             return false;
