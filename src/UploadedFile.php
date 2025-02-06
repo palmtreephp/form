@@ -9,15 +9,24 @@ namespace Palmtree\Form;
  */
 class UploadedFile
 {
+    final public const UPLOAD_ERR_OK = 0;
+    final public const UPLOAD_ERR_INI_SIZE = 1;
+    final public const UPLOAD_ERR_FORM_SIZE = 2;
+    final public const UPLOAD_ERR_PARTIAL = 3;
+    final public const UPLOAD_ERR_NO_FILE = 4;
+    final public const UPLOAD_ERR_NO_TMP_DIR = 6;
+    final public const UPLOAD_ERR_CANT_WRITE = 7;
+    final public const UPLOAD_ERR_EXTENSION = 8;
+
     /** @var array<int, string> */
     final public const ERROR_MESSAGES = [
-        1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
-        2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
-        3 => 'The uploaded file was only partially uploaded',
-        4 => 'No file was uploaded',
-        6 => 'Missing a temporary folder',
-        7 => 'Failed to write file to disk.',
-        8 => 'A PHP extension stopped the file upload.',
+        self::UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+        self::UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+        self::UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
+        self::UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+        self::UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+        self::UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk.',
+        self::UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload.',
     ];
 
     private string $name;
