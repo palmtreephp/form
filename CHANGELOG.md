@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.1.1 - 2025-02-06
+
+* Fixed a bug where constraints were always checked on files even if the file was not required and not uploaded. ([#24](https://github.com/palmtreephp/form/issues/24))
+
 ## v6.1.0 - 2024-08-23
 
 * Added [hCaptcha](https://www.hcaptcha.com/) support. You can now use either Google Recaptcha or hCaptcha by passing the appropriate captcha object
