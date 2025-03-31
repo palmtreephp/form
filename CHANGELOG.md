@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.1.2 - 2025-03-31
+
+* Fixed a bug where `floats` could not be set on `AbstractType::setData`, causing the `NumberType` to not work properly.
+
 ## v6.1.1 - 2025-02-06
 
 * Fixed a bug where constraints were always checked on files even if the file was not required and not uploaded. ([#24](https://github.com/palmtreephp/form/issues/24))
