@@ -109,7 +109,7 @@ class CollectionType extends AbstractType
         return $this->entryOptions;
     }
 
-    public function setData(array|string|int|bool|null $data): TypeInterface
+    public function setData(array|string|int|float|bool|null $data): TypeInterface
     {
         $data = (array)$data;
 

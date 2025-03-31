@@ -291,7 +291,7 @@ abstract class AbstractType implements TypeInterface
         $this->data = null;
     }
 
-    public function setData(array|string|int|bool|null $data): TypeInterface
+    public function setData(array|string|int|float|bool|null $data): TypeInterface
     {
         $this->data = $data;
 
