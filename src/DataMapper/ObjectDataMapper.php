@@ -58,7 +58,7 @@ class ObjectDataMapper implements DataMapperInterface
         }
 
         if (property_exists($object, $property)) {
-            return $object->$property;
+            return isset($object->$property) ? $object->$property : null;
         }
 
         throw new InaccessiblePropertyException($property, $object);
