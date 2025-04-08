@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.2.0 - 2025-04-08
+
+* Added support for uninitialized properties in bound objects. Uninitialized properties are now treated as `null`
+
 ## v6.1.2 - 2025-03-31
 
 * Fixed a bug where `floats` could not be set on `AbstractType::setData`, causing the `NumberType` to not work properly.
