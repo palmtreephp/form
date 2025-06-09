@@ -474,6 +474,11 @@ abstract class AbstractType implements TypeInterface
         return $this;
     }
 
+    public function setMapped(bool $mapped): void
+    {
+        $this->mapped = $mapped;
+    }
+
     public function isMapped(): bool
     {
         return $this->mapped;
