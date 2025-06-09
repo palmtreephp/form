@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.2.1 - 2025-06-09
+
+* Fixed a bug where the `mapped` property was not being set on AbstractType causing unmapped fields to throw an error
+
 ## v6.2.0 - 2025-04-08
 
 * Added support for uninitialized properties in bound objects. Uninitialized properties are now treated as `null`
