@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.2.2 - 2025-09-18
+
+* Added a [JsonResponse helper class](/src/Http/JsonResponse.php) to return JSON responses for Ajax form submissions
+* Added [documentation for Ajax submissions](/docs/ajax.md)
+
 ## v6.2.1 - 2025-06-09
 
 * Fixed a bug where the `mapped` property was not being set on AbstractType causing unmapped fields to throw an error
