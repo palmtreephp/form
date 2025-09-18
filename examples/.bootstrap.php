@@ -17,24 +17,6 @@ function redirect($location)
     exit;
 }
 
-function send_json($data = [], $success = true)
-{
-    $response = json_encode([
-        'success' => $success,
-        'data'    => $data,
-    ]);
-
-    header('Content-Type: application/json');
-
-    echo $response;
-    exit;
-}
-
-function send_json_error($data = [])
-{
-    send_json($data, false);
-}
-
 function get_styles()
 {
     return <<<HTML

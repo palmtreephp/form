@@ -3,6 +3,7 @@
 use Palmtree\Form\Captcha\GoogleRecaptcha;
 use Palmtree\Form\Form;
 use Palmtree\Form\FormBuilder;
+use Palmtree\Form\Http\JsonResponse;
 use Palmtree\Form\Type\TextType;
 
 require __DIR__ . '/../../vendor/autoload.php';
@@ -30,16 +31,9 @@ $form = $builder->getForm();
 $form->handleRequest();
 
 if ($form->isSubmitted() && Form::isAjaxRequest()) {
-    if ($form->isValid()) {
-        send_json([
-            'message' => 'Thanks!',
-        ]);
-    } else {
-        send_json_error([
-            'message' => 'Oops! Something went wrong there. Check the form for errors',
-            'errors'  => $form->getErrors(),
-        ]);
-    }
+    $response = JsonResponse::fromForm($form);
+
+    $response->send();
 }
 
 if ($form->isSubmitted() && $form->isValid()) {

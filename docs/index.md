@@ -2,8 +2,9 @@
 
 ## Table of Contents
 
-* [Constraints (Validation)](constraints.md)
+* [Ajax Submissions](ajax.md)
 * [Collections](collections.md)
+* [Constraints (Validation)](constraints.md)
 * [Data Binding](data-binding.md)
 * [File Uploads](file-uploads.md)
 * [Rendering individual fields](rendering-fields.md)

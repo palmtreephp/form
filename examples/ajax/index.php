@@ -1,8 +1,10 @@
 <?php declare(strict_types=1);
 
+use Palmtree\Form\Captcha\GoogleRecaptcha;
 use Palmtree\Form\Constraint\Number;
 use Palmtree\Form\Form;
 use Palmtree\Form\FormBuilder;
+use Palmtree\Form\Http\JsonResponse;
 use Palmtree\Form\Type\TextType;
 
 require __DIR__ . '/../../vendor/autoload.php';
@@ -74,7 +76,11 @@ $builder
                 'cricket'  => 'Cricket',
             ],
         ],
-    ]);
+    ])
+    ->add('recaptcha', 'captcha', [
+        'captcha' => new GoogleRecaptcha('6LfOO5YUAAAAALKjc8OvDLW6WdKSxRVvQuIjEuFY', '6LfOO5YUAAAAAL5zQe0aZh2bMJq5-3sh7xKwzevR'),
+    ])
+;
 
 $builder->add('send_message', 'submit');
 
@@ -83,16 +89,9 @@ $form = $builder->getForm();
 $form->handleRequest();
 
 if ($form->isSubmitted() && Form::isAjaxRequest()) {
-    if ($form->isValid()) {
-        send_json([
-            'message' => 'Thanks!',
-        ]);
-    } else {
-        send_json_error([
-            'message' => 'Oops! Something went wrong there. Check the form for errors',
-            'errors'  => $form->getErrors(),
-        ]);
-    }
+    $response = JsonResponse::fromForm($form, successMessage: 'Thanks for your enquiry. We will be in touch shortly');
+
+    $response->send();
 }
 
 $view = template('view.phtml', [
