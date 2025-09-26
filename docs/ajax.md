@@ -1,6 +1,6 @@
 # Ajax Submissions
 
-You can submit forms using Ajax to provide a smoother user experience without full page reloads.
+You can submit forms using Ajax to provide a smoother user experience without full page reloads. Ajax submissions use the [`Fetch API`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) under the hood.
 
 ## Frontend Setup
 
