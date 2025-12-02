@@ -10,7 +10,7 @@ PHP form builder with [Bootstrap](https://getbootstrap.com/) classes, [validatio
 
 ## Requirements
 
-* PHP >= 8.1
+* PHP >= 8.3
 
 ## Installation
 
