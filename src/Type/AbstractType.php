@@ -12,6 +12,7 @@ use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
 use Palmtree\Form\TypeLocator;
 use Palmtree\Html\Element;
+use Palmtree\NameConverter\NameConverterInterface;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
@@ -34,7 +35,7 @@ abstract class AbstractType implements TypeInterface
     protected array $args = [];
     /** @var array<int, ConstraintInterface> */
     protected array $constraints = [];
-    protected SnakeCaseToHumanNameConverter $nameConverter;
+    protected NameConverterInterface $nameConverter;
     protected bool $mapped = true;
     protected TypeLocator $typeLocator;
     protected ?string $help = null;
@@ -492,5 +493,10 @@ abstract class AbstractType implements TypeInterface
     public function getHelp(): ?string
     {
         return $this->help;
+    }
+
+    public function setNameConverter(NameConverterInterface $nameConverter): void
+    {
+        $this->nameConverter = $nameConverter;
     }
 }

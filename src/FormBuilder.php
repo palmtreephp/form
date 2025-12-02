@@ -10,6 +10,7 @@ use Palmtree\Form\Type\FileType;
 use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
 use Palmtree\Form\Type\TypeInterface;
+use Palmtree\NameConverter\NameConverterInterface;
 
 /**
  * @phpstan-import-type TypeType from TypeLocator
@@ -19,6 +20,7 @@ class FormBuilder
     private readonly Form $form;
     private readonly TypeLocator $typeLocator;
     private ?RepeatedTypeBuilder $repeatedTypeBuilder = null;
+    private ?NameConverterInterface $nameConverter = null;
 
     private const FILE_UPLOAD_ENC_TYPE = 'multipart/form-data';
 
@@ -57,6 +59,10 @@ class FormBuilder
             return $this->getRepeatedTypeBuilder()->build($name, $args);
         }
 
+        if (!isset($args['name_converter']) && $this->nameConverter !== null) {
+            $args['name_converter'] = $this->nameConverter;
+        }
+
         $fieldType = $this->typeLocator->getTypeObject($type, $args);
 
         if (!isset($args['name'])) {
@@ -93,6 +99,13 @@ class FormBuilder
     public function setDataMapper(DataMapperInterface $dataMapper): self
     {
         $this->form->setDataMapper($dataMapper);
+
+        return $this;
+    }
+
+    public function setNameConverter(NameConverterInterface $nameConverter): self
+    {
+        $this->nameConverter = $nameConverter;
 
         return $this;
     }

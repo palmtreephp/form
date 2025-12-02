@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Palmtree\Form\Type;
 
 use Palmtree\Html\Element;
+use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 class CheckboxType extends AbstractType
 {
@@ -113,7 +114,7 @@ class CheckboxType extends AbstractType
         $attribute = parent::getIdAttribute();
 
         if ($this->parent) {
-            $attribute .= '-' . $this->nameConverter->denormalize($this->value);
+            $attribute .= '-' . (new SnakeCaseToHumanNameConverter())->denormalize($this->value);
         }
 
         return $attribute;
