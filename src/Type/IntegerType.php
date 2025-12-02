@@ -8,6 +8,8 @@ class IntegerType extends AbstractType
 {
     use NumberTypeTrait;
 
+    protected string $type = 'number';
+
     public function getNormData(): ?int
     {
         if ($this->data === null) {
