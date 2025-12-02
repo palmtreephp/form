@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 * Added ability to pass a NameConverter to the FormBuilder to customize how default labels and placeholders are generated from field names e.g. camelCase to Title Case.
   See the [name converters docs](/docs/name-converters.md) for more info.
+* Bumped minimum required PHP version to 8.3
 
 ## v6.2.3 - 2025-12-02
 
