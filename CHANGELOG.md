@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.3.0 - 2025-12-02
+
+* Added ability to pass a NameConverter to the FormBuilder to customize how default labels and placeholders are generated from field names e.g. camelCase to Title Case.
+  See the [name converters docs](/docs/name-converters.md) for more info.
+
 ## v6.2.3 - 2025-12-02
 
 * Bug fix: Added missing `$type = 'number'` property to `IntegerType` which was causing integer fields to render as text inputs.
