@@ -22,10 +22,10 @@
         }
     },
     "require": {
-        "php": ">=8.1",
-        "palmtree/argparser": "^2.1",
-        "palmtree/nameconverter": "^2.0",
-        "palmtree/html": "^4.0.2"
+        "php": ">=8.3",
+        "palmtree/argparser": "^3.0",
+        "palmtree/nameconverter": "^3.0",
+        "palmtree/html": "^5.0"
     },
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^2.0",
