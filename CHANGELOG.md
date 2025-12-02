@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.2.3 - 2025-12-02
+
+* Bug fix: Added missing `$type = 'number'` property to `IntegerType` which was causing integer fields to render as text inputs.
+
 ## v6.2.2 - 2025-09-18
 
 * Added a [JsonResponse helper class](/src/Http/JsonResponse.php) to return JSON responses for Ajax form submissions
