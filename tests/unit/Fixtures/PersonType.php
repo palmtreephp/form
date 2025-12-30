@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Palmtree\Form\Test\Fixtures;
+namespace Palmtree\Form\Test\unit\Fixtures;
 
 use Palmtree\Form\Type\AbstractGroupType;
 

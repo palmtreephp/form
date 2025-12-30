@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Palmtree\Form\Test;
+namespace Palmtree\Form\Test\unit;
 
 use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
 use Palmtree\Form\FormBuilder;
-use Palmtree\Form\Test\Fixtures\Person;
-use Palmtree\Form\Test\Fixtures\PersonType;
+use Palmtree\Form\Test\unit\Fixtures\Person;
+use Palmtree\Form\Test\unit\Fixtures\PersonType;
 use Palmtree\Form\Type\CollectionType;
 use PHPUnit\Framework\TestCase;
 

@@ -5,7 +5,7 @@
     <coverage/>
     <testsuites>
         <testsuite name="Palmtree Form">
-            <directory>./tests</directory>
+            <directory>./tests/unit</directory>
         </testsuite>
     </testsuites>
     <source>

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Palmtree\Form\Test;
+namespace Palmtree\Form\Test\unit;
 
 use Palmtree\Form\FormBuilder;
 use Palmtree\NameConverter\CamelCaseToHumanNameConverter;
