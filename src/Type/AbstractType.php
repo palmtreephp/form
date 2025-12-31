@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Palmtree\Form\Type;
 
-use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Constraint\ConstraintInterface;
 use Palmtree\Form\Constraint\NotBlank;
 use Palmtree\Form\Exception\InvalidTypeException;
@@ -14,7 +13,6 @@ use Palmtree\Form\TypeLocator;
 use Palmtree\Form\UnknownOptions;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\NameConverterInterface;
-use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 use Palmtree\NameConverter\SnakeCaseToHumanNameConverter;
 
 abstract class AbstractType implements TypeInterface
@@ -76,11 +74,19 @@ abstract class AbstractType implements TypeInterface
     {
         UnknownOptions::deprecate($this, $args, [...array_keys(static::$defaultArgs), ...$this->getExtraOptionKeys()]);
 
-        $parser = new ArgParser($args, '', new SnakeCaseToCamelCaseNameConverter());
+        // Extract args that have corresponding setters and call them
+        foreach ($args as $key => $value) {
+            // Convert snake_case to camelCase for setter method names
+            $method = 'set' . str_replace('_', '', ucwords($key, '_'));
 
-        $parser->parseSetters($this);
+            if (method_exists($this, $method)) {
+                $this->$method($value);
+                unset($args[$key]);
+            }
+        }
 
-        return $parser->resolveOptions(static::$defaultArgs);
+        // Merge remaining args with default args
+        return array_merge(static::$defaultArgs, $args);
     }
 
     /**

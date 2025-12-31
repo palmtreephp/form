@@ -16,7 +16,7 @@ use Palmtree\Form\FormBuilder;
 use Palmtree\Form\NameConverter\NameConverterInterface;
 use Palmtree\NameConverter\CamelCaseToHumanNameConverter;
 
-$builder = new FormBuilder('some_form_key');
+$builder = new FormBuilder();
 $builder->setNameConverter(new CamelCaseToHumanNameConverter());
 
 $builder->add('firstName', 'text'); // Default Label: "First Name", Default Placeholder: "Enter your first name"

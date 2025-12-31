@@ -22,7 +22,8 @@ When building your form, just set the `ajax` option set to `true`:
 
 ```php
 use Palmtree\Form\FormBuilder;
-$builder = (new FormBuilder('ajax_example', ['ajax' => true]))
+$builder = (new FormBuilder())
+    ->ajax()
     ->add('name', 'text')
     ->add('message', 'textarea')
     ->add('submit', 'submit', ['label' => 'Send message']);

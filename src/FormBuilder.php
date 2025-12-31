@@ -28,12 +28,11 @@ class FormBuilder
     private const FILE_UPLOAD_ENC_TYPE = 'multipart/form-data';
 
     /**
-     * @param array<string, mixed>|string      $args
      * @param object|array<string, mixed>|null $boundData
      */
-    public function __construct(array|string $args = [], object|array|null $boundData = null)
+    public function __construct(object|array|null $boundData = null)
     {
-        $this->form = new Form($args, $boundData);
+        $this->form = new Form($boundData);
         $this->typeLocator = new TypeLocator();
     }
 
@@ -151,6 +150,62 @@ class FormBuilder
     public function setCsrfValidator(CsrfValidatorInterface $validator): self
     {
         $this->form->setCsrfValidator($validator);
+
+        return $this;
+    }
+
+    public function key(string $key): self
+    {
+        $this->form->setKey($key);
+
+        return $this;
+    }
+
+    public function method(string $method): self
+    {
+        $this->form->setMethod($method);
+
+        return $this;
+    }
+
+    public function action(string $action): self
+    {
+        $this->form->setAction($action);
+
+        return $this;
+    }
+
+    public function ajax(bool $ajax = true): self
+    {
+        $this->form->setAjax($ajax);
+
+        return $this;
+    }
+
+    public function htmlValidation(bool $enabled = true): self
+    {
+        $this->form->setHtmlValidation($enabled);
+
+        return $this;
+    }
+
+    public function encType(string $encType): self
+    {
+        $this->form->setEncType($encType);
+
+        return $this;
+    }
+
+    public function fieldWrapper(string $fieldWrapper): self
+    {
+        $this->form->setFieldWrapper($fieldWrapper);
+
+        return $this;
+    }
+
+    public function invalidElementSelector(string $invalidElementSelector): self
+    {
+        $this->form->setInvalidElementSelector($invalidElementSelector);
 
         return $this;
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Palmtree\Form;
 
-use Palmtree\ArgParser\ArgParser;
 use Palmtree\Form\Csrf\CsrfValidatorInterface;
 use Palmtree\Form\DataMapper\ArrayDataMapper;
 use Palmtree\Form\DataMapper\DataMapperInterface;
@@ -17,10 +16,11 @@ use Palmtree\Form\Type\CollectionType;
 use Palmtree\Form\Type\FileType;
 use Palmtree\Form\Type\TypeInterface;
 use Palmtree\Html\Element;
-use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
 class Form implements \Stringable
 {
+    private static int $formCounter = 0;
+
     protected string $key;
     /** @var array<string, TypeInterface> */
     protected array $fields = [];
@@ -35,7 +35,7 @@ class Form implements \Stringable
     protected array $errors = [];
     protected string $fieldWrapper = 'div.form-group.mb-3';
     protected string $invalidElementSelector = 'div.invalid-feedback.small';
-    protected bool $htmlValidation = true;
+    protected bool $htmlValidation = false;
     protected FormRenderer $renderer;
     /** @var object|array<string, mixed>|null */
     protected object|array|null $boundData = null;
@@ -46,12 +46,11 @@ class Form implements \Stringable
     public const CSRF_ERROR_MESSAGE = 'CSRF validation failed. Please try submitting the form again.';
 
     /**
-     * @param array<string, mixed>|string      $args
      * @param object|array<string, mixed>|null $boundData
      */
-    public function __construct(array|string $args = [], object|array|null $boundData = null)
+    public function __construct(object|array|null $boundData = null)
     {
-        $this->parseArgs($args);
+        $this->key = 'form_' . ++self::$formCounter;
         $this->renderer = new FormRenderer($this);
         $this->boundData = $boundData;
         $this->dataMapper = $this->createDataMapper();
@@ -192,7 +191,7 @@ class Form implements \Stringable
 
     public function setKey(string $key): self
     {
-        $this->key = "form_$key";
+        $this->key = $key;
 
         return $this;
     }
@@ -388,19 +387,6 @@ class Form implements \Stringable
         return $this->fields;
     }
 
-    /**
-     * @param string|array<string, mixed> $args
-     */
-    private function parseArgs(string|array $args): void
-    {
-        if (\is_array($args)) {
-            UnknownOptions::deprecate($this, $args);
-        }
-
-        $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
-
-        $parser->parseSetters($this);
-    }
 
     public function bind(): void
     {

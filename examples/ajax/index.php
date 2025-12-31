@@ -10,13 +10,10 @@ use Palmtree\Form\Type\TextType;
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
-$builder = new FormBuilder([
-    'key'             => 'ajax_example',
-    'action'          => 'index.php',
-    'ajax'            => true,
-    'html_validation' => false,
-    'enc_type'        => 'multipart/form-data',
-]);
+$builder = (new FormBuilder())
+    ->action('index.php')
+    ->ajax()
+    ->encType('multipart/form-data');
 
 $builder
     ->add('name', TextType::class, [

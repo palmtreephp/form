@@ -6,11 +6,7 @@ use Palmtree\Form\Type\TextType;
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
-$builder = new FormBuilder([
-    'key'             => 'simple_example',
-    'method'          => 'POST',
-    'html_validation' => false,
-]);
+$builder = new FormBuilder();
 
 $builder
     ->add('name', TextType::class, [
