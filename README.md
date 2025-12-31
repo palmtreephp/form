@@ -5,7 +5,7 @@
 [![Packagist Version](https://img.shields.io/packagist/v/palmtree/form)](https://packagist.org/packages/palmtree/form)
 [![npm version](https://img.shields.io/npm/v/@palmtree/form.svg)](https://www.npmjs.com/package/@palmtree/form)
 
-PHP form builder with [Bootstrap](https://getbootstrap.com/) classes, [validation](docs/constraints.md), [data binding](docs/data-binding.md),
+PHP form builder with [Bootstrap](https://getbootstrap.com/) classes, [validation](docs/constraints.md), [CSRF protection](docs/csrf-protection.md), [data binding](docs/data-binding.md),
 [Google Recaptcha](https://www.google.com/recaptcha/intro/) and [hCaptcha](https://www.hcaptcha.com/) support, plus other goodies.
 
 ## Requirements
