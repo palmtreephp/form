@@ -49,5 +49,10 @@
         "sa": "@php vendor/bin/phpstan analyse",
         "fix": "@php vendor/bin/php-cs-fixer fix",
         "test": "@php vendor/bin/phpunit"
+    },
+    "config": {
+        "platform": {
+            "php": "8.3"
+        }
     }
 }
