@@ -115,6 +115,13 @@ class FormRenderer
 
         $this->element->attributes->setData('invalid_element', htmlentities($this->form->createInvalidElement()->render()));
 
+        if ($errorMessage = $this->form->getErrorMessage()) {
+            $error = new Element('div.alert.alert-danger');
+            $error->setInnerText($errorMessage);
+
+            $this->element->addChild($error);
+        }
+
         $this->addFieldsToElement();
 
         $this->built = true;

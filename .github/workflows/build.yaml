@@ -12,6 +12,10 @@ jobs:
     strategy:
       matrix:
         php-versions: [ '8.3', '8.4', '8.5' ]
+        symfony-versions: [ '6.4', '7.4', '8.0' ]
+        exclude:
+          - php-versions: '8.3'
+            symfony-versions: '8.0'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,44 +35,48 @@ jobs:
 
       - name: Cache composer
         uses: actions/cache@v4
-        if: matrix.php-versions == 8.3
         with:
           path: ${{ steps.vars.outputs.composer_cache_dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
 
+      - name: Install Symfony Flex
+        run: |
+          composer global config --no-plugins allow-plugins.symfony/flex true
+          composer global require symfony/flex
+
+      - name: Configure Symfony version for symfony/flex
+        run: composer config extra.symfony.require "${{ matrix.symfony-versions }}.*"
+
       - name: Install dependencies
-        run: composer install --no-interaction
-        if: matrix.php-versions == 8.3
+        run: composer update --no-interaction
 
       - name: Validate coding standards
+        if: matrix.php-versions == '8.3' && matrix.symfony-versions == '6.4'
         run: php vendor/bin/php-cs-fixer fix -vvv --dry-run --using-cache=no --format=checkstyle | cs2pr
-        if: matrix.php-versions == 8.3
 
       - name: Static Analysis
         run: php vendor/bin/phpstan analyse --error-format=github
-        if: matrix.php-versions == 8.3
 
       - name: Tests
         run: php vendor/bin/phpunit --do-not-cache-result
-        if: matrix.php-versions == 8.3
 
       - name: Setup Node
         uses: actions/setup-node@v4
-        if: matrix.php-versions == 8.3
+        if: matrix.php-versions == '8.3' && matrix.symfony-versions == '6.4'
         with:
           node-version: '20.x'
           cache: 'npm'
 
       - name: Install npm dependencies
-        if: matrix.php-versions == 8.3
+        if: matrix.php-versions == '8.3' && matrix.symfony-versions == '6.4'
         run: npm ci
 
       - name: Prettier
-        if: matrix.php-versions == 8.3
+        if: matrix.php-versions == '8.3' && matrix.symfony-versions == '6.4'
         run: npm run prettier:check
 
       - name: Typescript
-        if: matrix.php-versions == 8.3
+        if: matrix.php-versions == '8.3' && matrix.symfony-versions == '6.4'
         run: npm run type-check

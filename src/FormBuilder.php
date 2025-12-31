@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Palmtree\Form;
 
+use Palmtree\Form\Csrf\CsrfValidatorInterface;
+use Palmtree\Form\Csrf\SameOriginCsrfValidator;
 use Palmtree\Form\DataMapper\DataMapperInterface;
 use Palmtree\Form\Type\CollectionType;
 use Palmtree\Form\Type\FileType;
@@ -11,6 +13,7 @@ use Palmtree\Form\Type\RepeatedType;
 use Palmtree\Form\Type\TextType;
 use Palmtree\Form\Type\TypeInterface;
 use Palmtree\NameConverter\NameConverterInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @phpstan-import-type TypeType from TypeLocator
@@ -135,5 +138,20 @@ class FormBuilder
 
             $this->recursiveEncTypeCheck($fieldType->all());
         }
+    }
+
+    public function enableCsrf(bool $strict = true, ?Request $request = null): self
+    {
+        $validator = new SameOriginCsrfValidator($request, $strict);
+        $this->form->setCsrfValidator($validator);
+
+        return $this;
+    }
+
+    public function setCsrfValidator(CsrfValidatorInterface $validator): self
+    {
+        $this->form->setCsrfValidator($validator);
+
+        return $this;
     }
 }

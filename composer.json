@@ -25,7 +25,8 @@
         "php": ">=8.3",
         "palmtree/argparser": "^3.0",
         "palmtree/nameconverter": "^3.0",
-        "palmtree/html": "^5.0"
+        "palmtree/html": "^5.0",
+        "symfony/http-foundation": "^6.4||^7.4||^8.0"
     },
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^2.0",
@@ -49,10 +50,5 @@
         "sa": "@php vendor/bin/phpstan analyse",
         "fix": "@php vendor/bin/php-cs-fixer fix",
         "test": "@php vendor/bin/phpunit"
-    },
-    "config": {
-        "platform": {
-            "php": "8.3"
-        }
     }
 }

@@ -5,6 +5,7 @@
 * [Ajax Submissions](ajax.md)
 * [Collections](collections.md)
 * [Constraints (Validation)](constraints.md)
+* [CSRF Protection](csrf-protection.md)
 * [Data Binding](data-binding.md)
 * [File Uploads](file-uploads.md)
 * [Name Converters](name-converters.md)
