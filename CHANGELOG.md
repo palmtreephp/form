@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6.4.0 - 2025-12-31
+
+* Added support for modern CSRF protection using same-origin validation. See the [CSRF protection docs](/docs/csrf-protection.md) for more info.
+
 ## v6.3.0 - 2025-12-02
 
 * Added ability to pass a NameConverter to the FormBuilder to customize how default labels and placeholders are generated from field names e.g. camelCase to Title Case.

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Palmtree\Form;
 
 use Palmtree\ArgParser\ArgParser;
+use Palmtree\Form\Csrf\CsrfValidatorInterface;
 use Palmtree\Form\DataMapper\ArrayDataMapper;
 use Palmtree\Form\DataMapper\DataMapperInterface;
 use Palmtree\Form\DataMapper\ObjectDataMapper;
 use Palmtree\Form\Exception\AlreadySubmittedException;
+use Palmtree\Form\Exception\CsrfValidationFailedException;
 use Palmtree\Form\Exception\NotSubmittedException;
 use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Type\TypeInterface;
@@ -26,6 +28,7 @@ class Form implements \Stringable
     protected string $method = 'post';
     protected ?string $action = null;
     protected ?string $encType = null;
+    protected ?string $errorMessage = null;
     /** @var array<string, string> */
     protected array $errors = [];
     protected string $fieldWrapper = 'div.form-group.mb-3';
@@ -35,6 +38,7 @@ class Form implements \Stringable
     /** @var object|array<string, mixed>|null */
     protected object|array|null $boundData = null;
     protected DataMapperInterface $dataMapper;
+    protected ?CsrfValidatorInterface $csrfValidator = null;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
 
@@ -103,6 +107,17 @@ class Form implements \Stringable
     {
         if ($this->submitted) {
             throw new AlreadySubmittedException(__METHOD__ . ' can only be called once');
+        }
+
+        if ($this->csrfValidator instanceof CsrfValidatorInterface) {
+            try {
+                $this->csrfValidator->validate();
+            } catch (CsrfValidationFailedException $e) {
+                $this->valid = false;
+                $this->setErrorMessage('CSRF validation failed. Please try submitting the form again.');
+
+                return;
+            }
         }
 
         $this->submitted = true;
@@ -387,6 +402,33 @@ class Form implements \Stringable
         }
 
         return new ObjectDataMapper();
+    }
+
+    public function isCsrfEnabled(): bool
+    {
+        return $this->csrfValidator instanceof CsrfValidatorInterface;
+    }
+
+    public function setCsrfValidator(CsrfValidatorInterface $validator): self
+    {
+        $this->csrfValidator = $validator;
+
+        return $this;
+    }
+
+    public function getCsrfValidator(): ?CsrfValidatorInterface
+    {
+        return $this->csrfValidator;
+    }
+
+    public function setErrorMessage(?string $errorMessage): void
+    {
+        $this->errorMessage = $errorMessage;
+    }
+
+    public function getErrorMessage(): ?string
+    {
+        return $this->errorMessage;
     }
 
     public function __toString(): string
