@@ -31,7 +31,7 @@
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^2.0",
         "phpunit/phpunit": "^10.2",
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^2.2"
     },
     "suggest": {
         "ext-curl": "For Google Recaptcha support",
