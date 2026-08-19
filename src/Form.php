@@ -136,7 +136,7 @@ class Form implements \Stringable
         }
 
         if ($this->boundData !== null && $this->isValid()) {
-            $formData = array_map(fn (TypeInterface $field) => $field->getNormData(), $this->allMapped());
+            $formData = array_map(static fn (TypeInterface $field) => $field->getNormData(), $this->allMapped());
 
             $this->dataMapper->mapDataFromForm($this->boundData, $formData, $this);
         }
@@ -266,7 +266,7 @@ class Form implements \Stringable
      */
     public function allMapped(): array
     {
-        return array_filter($this->fields, fn (TypeInterface $field) => $field->isMapped());
+        return array_filter($this->fields, static fn (TypeInterface $field) => $field->isMapped());
     }
 
     public function has(string $name): bool
