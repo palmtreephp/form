@@ -161,7 +161,7 @@ trait RecaptchaTrait
                 return null;
             }
 
-            curl_setopt($handle, \CURLOPT_POST, \count($postFields));
+            curl_setopt($handle, \CURLOPT_POST, true);
             curl_setopt($handle, \CURLOPT_POSTFIELDS, http_build_query($postFields));
             curl_setopt($handle, \CURLOPT_RETURNTRANSFER, true);
 
