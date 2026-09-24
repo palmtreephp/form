@@ -43,6 +43,7 @@ class Form implements \Stringable
     protected ?CsrfValidatorInterface $csrfValidator = null;
 
     protected const REQUESTED_WITH_HEADER = 'HTTP_X_REQUESTED_WITH';
+    public const CSRF_ERROR_MESSAGE = 'CSRF validation failed. Please try submitting the form again.';
 
     /**
      * @param array<string, mixed>|string      $args
@@ -111,17 +112,6 @@ class Form implements \Stringable
             throw new AlreadySubmittedException(__METHOD__ . ' can only be called once');
         }
 
-        if ($this->csrfValidator instanceof CsrfValidatorInterface) {
-            try {
-                $this->csrfValidator->validate();
-            } catch (CsrfValidationFailedException $e) {
-                $this->valid = false;
-                $this->setErrorMessage('CSRF validation failed. Please try submitting the form again.');
-
-                return;
-            }
-        }
-
         $this->submitted = true;
 
         foreach ($this->fields as $field) {
@@ -135,6 +125,14 @@ class Form implements \Stringable
 
             $field->build();
             $field->mapData();
+        }
+
+        // The submitted data is still set on the fields above so the form can be redisplayed with the user's input
+        if (!$this->isCsrfValid()) {
+            $this->valid = false;
+            $this->setErrorMessage(self::CSRF_ERROR_MESSAGE);
+
+            return;
         }
 
         if ($this->boundData !== null && $this->isValid()) {
@@ -417,6 +415,21 @@ class Form implements \Stringable
         }
 
         return new ObjectDataMapper();
+    }
+
+    private function isCsrfValid(): bool
+    {
+        if (!$this->csrfValidator instanceof CsrfValidatorInterface) {
+            return true;
+        }
+
+        try {
+            $this->csrfValidator->validate();
+        } catch (CsrfValidationFailedException) {
+            return false;
+        }
+
+        return true;
     }
 
     public function isCsrfEnabled(): bool

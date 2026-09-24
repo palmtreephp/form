@@ -48,7 +48,7 @@ class JsonResponse implements \JsonSerializable
         $success = $form->isValid();
 
         $data = [
-            'message' => $success ? $successMessage : $errorMessage,
+            'message' => $success ? $successMessage : ($form->getErrorMessage() ?? $errorMessage),
         ];
 
         if (!$success) {

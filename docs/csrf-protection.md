@@ -87,6 +87,22 @@ The `SameOriginCsrfValidator` checks origins in the following order:
                 In permissive mode: Accept if no headers present
 ```
 
+## Handling Failed Validation
+
+A form that fails CSRF validation is treated as submitted but invalid, so the usual check needs no changes:
+
+```php
+$form->handleRequest();
+
+if ($form->isSubmitted() && $form->isValid()) {
+    // Only reached when CSRF validation passes
+}
+```
+
+The form's error message is set to `Form::CSRF_ERROR_MESSAGE` and rendered as an alert above the fields. The submitted
+values are kept so the form can be redisplayed, but they are never mapped to [bound data](data-binding.md).
+For AJAX forms, `JsonResponse::fromForm()` returns an unsuccessful response with the CSRF error as its message.
+
 ## Custom CSRF Validators
 
 If you need custom CSRF validation logic, you can implement the `CsrfValidatorInterface` and set it on the form:
