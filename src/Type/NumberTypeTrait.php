@@ -9,6 +9,29 @@ use Palmtree\Html\Element;
 
 trait NumberTypeTrait
 {
+    public function isValid(): bool
+    {
+        if (!parent::isValid()) {
+            return false;
+        }
+
+        if (!$this->form->isSubmitted() || $this->data === null || $this->data === '') {
+            return true;
+        }
+
+        if (!$this->isValidNumber($this->data)) {
+            $this->setErrorMessage($this->getInvalidNumberMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    abstract protected function isValidNumber(mixed $value): bool;
+
+    abstract protected function getInvalidNumberMessage(): string;
+
     public function getElement(): Element
     {
         $element = parent::getElement();

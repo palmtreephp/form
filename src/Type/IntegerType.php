@@ -10,9 +10,19 @@ class IntegerType extends AbstractType
 
     protected string $type = 'number';
 
+    protected function isValidNumber(mixed $value): bool
+    {
+        return filter_var($value, \FILTER_VALIDATE_INT) !== false;
+    }
+
+    protected function getInvalidNumberMessage(): string
+    {
+        return 'Please enter a whole number';
+    }
+
     public function getNormData(): ?int
     {
-        if ($this->data === null) {
+        if ($this->data === null || $this->data === '') {
             return null;
         }
 
