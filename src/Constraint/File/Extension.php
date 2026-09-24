@@ -20,9 +20,9 @@ class Extension extends AbstractConstraint implements ConstraintInterface
 
     private function doValidate(UploadedFile $input): bool
     {
-        $extension = pathinfo($input->getName(), \PATHINFO_EXTENSION);
+        $extension = strtolower(pathinfo($input->getName(), \PATHINFO_EXTENSION));
 
-        if (!\in_array($extension, $this->extensions, true)) {
+        if (!\in_array($extension, array_map(strtolower(...), $this->extensions), true)) {
             $this->setErrorMessage('Only the following file extensions are allowed: ' . implode(', ', $this->extensions));
 
             return false;
