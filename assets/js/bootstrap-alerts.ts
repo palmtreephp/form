@@ -18,7 +18,10 @@ export function useBootstrapAlerts(element: HTMLElement) {
 
         const config: BootstrapAlertsOptions = { ...defaults, ...options };
 
-        const alert = elementFromHtml(`<div role="alert" class="alert alert-${type}">${message}</div>`);
+        const alert = document.createElement("div");
+        alert.setAttribute("role", "alert");
+        alert.classList.add("alert", `alert-${type}`);
+        alert.textContent = message;
 
         if (config.dismissible) {
             alert.classList.add("alert-dismissible", "fade", "show");

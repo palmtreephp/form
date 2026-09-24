@@ -92,13 +92,13 @@ trait RecaptchaTrait
 
         $onloadCallback = \sprintf('%s_onload', str_replace('-', '_', $controlId));
 
-        $config = htmlentities(json_encode([
+        $config = json_encode([
             'type' => $this->getType(),
             'siteKey' => $this->siteKey,
             'formControlId' => $controlId,
             'scriptSrc' => $this->getScriptSrc($onloadCallback),
             'onLoadCallbackName' => $onloadCallback,
-        ], \JSON_THROW_ON_ERROR));
+        ], \JSON_THROW_ON_ERROR);
 
         $placeholder->attributes->setData('palmtree-form-captcha', $config);
 

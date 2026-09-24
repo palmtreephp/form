@@ -48,7 +48,7 @@ class CollectionType extends AbstractType
             'maxEntries' => $this->maxEntries,
         ], static fn ($value) => $value !== null);
 
-        $collectionWrapper->attributes->setData('palmtree-form-collection', htmlentities(json_encode($config, \JSON_THROW_ON_ERROR)));
+        $collectionWrapper->attributes->setData('palmtree-form-collection', json_encode($config, \JSON_THROW_ON_ERROR));
 
         return $collectionWrapper;
     }
@@ -212,9 +212,7 @@ class CollectionType extends AbstractType
 
         $prototype = $this->buildEntryElement($entry);
 
-        $html = trim((string)preg_replace('/>\s+</', '><', $prototype->render()));
-
-        return htmlentities($html);
+        return trim((string)preg_replace('/>\s+</', '><', $prototype->render()));
     }
 
     private static function clearPrototypeEntryConstraints(TypeInterface $entry): void

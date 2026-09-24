@@ -25,7 +25,7 @@
         "php": ">=8.3",
         "palmtree/argparser": "^3.0",
         "palmtree/nameconverter": "^3.0",
-        "palmtree/html": "^5.0",
+        "palmtree/html": "^6.0",
         "symfony/http-foundation": "^6.4||^7.4||^8.0"
     },
     "require-dev": {

@@ -67,7 +67,7 @@ export const ajax = (form: HTMLFormElement, options: Partial<PalmtreeFormOptions
                     feedback = elementFromHtml(form.dataset.invalid_element || "");
                 }
 
-                feedback.innerHTML = errors[errorKey];
+                feedback.textContent = errors[errorKey];
                 formGroup.append(feedback);
 
                 setState([formControl], "invalid");

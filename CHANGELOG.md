@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+* **Security:** Fixed reflected XSS where submitted values, labels, help text, choice labels and error messages were rendered without HTML escaping.
+  Requires `palmtree/html` v6, which escapes all inner text and attribute values. HTML passed in labels, help text or other text options is now displayed as text.
+* The JavaScript package inserts error messages, alert messages and the collection add label as text rather than HTML.
+* Fixed a textarea with a value of `"0"` rendering empty.
+
 ## v6.4.0 - 2025-12-31
 
 * Added support for modern CSRF protection using same-origin validation. See the [CSRF protection docs](/docs/csrf-protection.md) for more info.
