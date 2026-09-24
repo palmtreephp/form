@@ -89,6 +89,30 @@ class UploadedFile
     }
 
     /**
+     * Returns whether the file was successfully uploaded via HTTP POST, as opposed to being a path
+     * supplied by the client.
+     */
+    public function isUploaded(): bool
+    {
+        return $this->errorCode === self::UPLOAD_ERR_OK && is_uploaded_file($this->tempName);
+    }
+
+    /**
+     * Returns whether the given value has the shape of an entry in PHP's $_FILES array.
+     *
+     * @phpstan-assert-if-true UploadedFileArray $value
+     */
+    public static function isUploadedFileArray(mixed $value): bool
+    {
+        return \is_array($value)
+            && \is_string($value['name'] ?? null)
+            && \is_string($value['tmp_name'] ?? null)
+            && is_numeric($value['size'] ?? null)
+            && is_numeric($value['error'] ?? null)
+            && \is_string($value['type'] ?? '');
+    }
+
+    /**
      * Returns a human-readable error message based on the error code.
      */
     public function getErrorMessage(): string
