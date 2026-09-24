@@ -55,6 +55,11 @@ class FileType extends AbstractType
         return parent::isValid();
     }
 
+    protected function acceptsArrayData(): bool
+    {
+        return true;
+    }
+
     public function getData(): ?UploadedFile
     {
         if ($this->normData === null && UploadedFile::isUploadedFileArray($this->data)) {

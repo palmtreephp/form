@@ -53,6 +53,11 @@ class CollectionType extends AbstractType
         return $collectionWrapper;
     }
 
+    protected function acceptsArrayData(): bool
+    {
+        return true;
+    }
+
     public function build(): void
     {
         if (\is_array($this->data)) {

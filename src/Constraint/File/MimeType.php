@@ -15,7 +15,7 @@ class MimeType extends AbstractConstraint implements ConstraintInterface
 
     public function validate(mixed $input): bool
     {
-        return $this->doValidate($input);
+        return $input instanceof UploadedFile && $this->doValidate($input);
     }
 
     private function doValidate(UploadedFile $input): bool
