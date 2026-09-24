@@ -13,11 +13,20 @@ This release fixes several security issues. All users should upgrade.
 * **Security:** `ChoiceType` rejects submitted values that are not one of its choices.
 * **Security:** Fields that expect a single value are invalid when an array is submitted, and constraints and captchas fail validation for input of the wrong type
   instead of throwing a `TypeError`.
+* **Security:** The `Size` file constraint's options are ordinary setters (`min_bytes`/`max_bytes`, with `min`/`max` aliases). The `'max'` option used in the
+  examples was previously ignored, so no size limit was applied. Error messages state the inclusive bounds.
+* reCAPTCHA and hCaptcha verification requests time out after 3 seconds to connect and 5 seconds in total, configurable with `setTimeout()`. Verification fails
+  instead of throwing for a non-200 response, invalid JSON or an unexpected response.
+* A form that fails CSRF validation is submitted and invalid, so `isSubmitted()` returns `true`. The submitted values are kept for redisplay but not mapped
+  to bound data, and `JsonResponse::fromForm()` returns the CSRF error rather than throwing `NotSubmittedException`. The message is available as `Form::CSRF_ERROR_MESSAGE`.
+  See [handling failed validation](/docs/csrf-protection.md#handling-failed-validation).
+* `JsonResponse::fromForm()` uses the form's error message, when set, as the response message.
 * A required `FileType` field is invalid when no file data is submitted at all.
 * The JavaScript package inserts error messages, alert messages and the collection add label as text rather than HTML.
 * Fixed a textarea with a value of `"0"` rendering empty.
 * Added `UploadedFile::isUploaded()` and `UploadedFile::isUploadedFileArray()`.
 * The JavaScript bundles in `dist/` are built with rolldown and target ES2022, which requires Safari/iOS 14 or later.
+* Fixed the data-binding example referencing a missing test fixture.
 
 ## v6.4.0 - 2025-12-31
 
