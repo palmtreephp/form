@@ -2,12 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v6.5.0 - 2026-09-24
+
+This release fixes several security issues. All users should upgrade.
 
 * **Security:** Fixed reflected XSS where submitted values, labels, help text, choice labels and error messages were rendered without HTML escaping.
   Requires `palmtree/html` v6, which escapes all inner text and attribute values. HTML passed in labels, help text or other text options is now displayed as text.
+* **Security:** File fields only accept data from `$_FILES`. A client could previously submit a forged upload array in the request body with an arbitrary
+  `tmp_name` (e.g. `/etc/passwd`). `FileType` also rejects any file that `is_uploaded_file()` does not recognise before running constraints.
+* **Security:** `ChoiceType` rejects submitted values that are not one of its choices.
+* **Security:** Fields that expect a single value are invalid when an array is submitted, and constraints and captchas fail validation for input of the wrong type
+  instead of throwing a `TypeError`.
+* A required `FileType` field is invalid when no file data is submitted at all.
 * The JavaScript package inserts error messages, alert messages and the collection add label as text rather than HTML.
 * Fixed a textarea with a value of `"0"` rendering empty.
+* Added `UploadedFile::isUploaded()` and `UploadedFile::isUploadedFileArray()`.
 
 ## v6.4.0 - 2025-12-31
 

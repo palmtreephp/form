@@ -125,6 +125,56 @@ class ChoiceType extends AbstractType
         return $parent;
     }
 
+    public function isValid(): bool
+    {
+        if (!parent::isValid()) {
+            return false;
+        }
+
+        if (!$this->form->isSubmitted() || $this->data === null || $this->data === '' || $this->data === []) {
+            return true;
+        }
+
+        $allowed = $this->getChoiceValues();
+
+        foreach ((array)$this->data as $value) {
+            if (!\is_scalar($value) || !\in_array((string)$value, $allowed, true)) {
+                $this->setErrorMessage('The selected value is not a valid choice');
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function acceptsArrayData(): bool
+    {
+        return $this->multiple;
+    }
+
+    /**
+     * Returns every selectable value, including those within option groups.
+     *
+     * @return list<string>
+     */
+    private function getChoiceValues(): array
+    {
+        $values = [];
+
+        foreach ($this->choices as $value => $label) {
+            if (\is_array($label)) {
+                foreach (array_keys($label) as $subValue) {
+                    $values[] = (string)$subValue;
+                }
+            } else {
+                $values[] = (string)$value;
+            }
+        }
+
+        return $values;
+    }
+
     /**
      * @param array<string|array<string>> $choices
      */

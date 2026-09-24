@@ -13,6 +13,8 @@ use Palmtree\Form\Exception\AlreadySubmittedException;
 use Palmtree\Form\Exception\CsrfValidationFailedException;
 use Palmtree\Form\Exception\NotSubmittedException;
 use Palmtree\Form\Exception\OutOfBoundsException;
+use Palmtree\Form\Type\CollectionType;
+use Palmtree\Form\Type\FileType;
 use Palmtree\Form\Type\TypeInterface;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
@@ -146,23 +148,36 @@ class Form implements \Stringable
     {
         $requestData = $this->getRequestData();
 
-        if (!isset($requestData[$this->key])) {
+        if (!isset($requestData[$this->key]) || !\is_array($requestData[$this->key])) {
             return;
         }
 
-        $data = [];
+        $data = $requestData[$this->key];
 
-        foreach ($requestData[$this->key] ?? [] as $key => $value) {
-            $data[$key] = $value;
+        // File data must only ever come from $_FILES, otherwise a client could submit a forged
+        // upload array with an arbitrary tmp_name
+        foreach ($this->fields as $name => $field) {
+            if (self::acceptsFiles($field)) {
+                unset($data[$name]);
+            }
         }
 
         foreach ($_FILES[$this->key] ?? [] as $key => $parts) {
             foreach ((array)$parts as $name => $value) {
+                if (!\is_array($data[$name] ?? null)) {
+                    $data[$name] = [];
+                }
+
                 $data[$name][$key] = $value;
             }
         }
 
         $this->submit($data);
+    }
+
+    private static function acceptsFiles(TypeInterface $field): bool
+    {
+        return $field instanceof FileType || ($field instanceof CollectionType && $field->getEntryType() === FileType::class);
     }
 
     /**

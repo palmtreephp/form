@@ -43,6 +43,11 @@ class SelectType extends AbstractType
         return $value;
     }
 
+    protected function acceptsArrayData(): bool
+    {
+        return $this->multiple;
+    }
+
     public function setMultiple(bool $multiple): self
     {
         $this->multiple = $multiple;
