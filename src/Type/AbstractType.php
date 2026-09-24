@@ -61,8 +61,9 @@ abstract class AbstractType implements TypeInterface
 
         $this->args = $this->parseArgs($args);
 
+        // NotBlank runs before any constraints passed in the args, so an empty required field reports that it is required
         if ($this->required && $this->errorMessage) {
-            $this->addConstraint(new NotBlank($this->errorMessage));
+            array_unshift($this->constraints, new NotBlank($this->errorMessage));
         }
     }
 
