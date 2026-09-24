@@ -10,7 +10,11 @@ class Email extends AbstractConstraint implements ConstraintInterface
 
     public function validate(mixed $input): bool
     {
-        return $this->doValidate($input);
+        if ($input !== null && !\is_scalar($input)) {
+            return false;
+        }
+
+        return $this->doValidate((string)$input);
     }
 
     protected function doValidate(string $input): bool

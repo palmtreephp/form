@@ -40,6 +40,8 @@ abstract class AbstractType implements TypeInterface
     protected TypeLocator $typeLocator;
     protected ?string $help = null;
 
+    protected const INVALID_VALUE_MESSAGE = 'This value is not valid';
+
     /**
      * @var array<string, mixed>
      */
@@ -121,6 +123,12 @@ abstract class AbstractType implements TypeInterface
             return true;
         }
 
+        if ($this->hasUnexpectedArrayData()) {
+            $this->setErrorMessage(self::INVALID_VALUE_MESSAGE);
+
+            return false;
+        }
+
         foreach ($this->constraints as $constraint) {
             // We use $this->getData() instead of $this->data here so that the
             // data can be normalized by its type class before validation
@@ -138,6 +146,19 @@ abstract class AbstractType implements TypeInterface
         }
 
         return true;
+    }
+
+    /**
+     * Whether this field accepts an array as its submitted data. Fields without children only accept a scalar by default.
+     */
+    protected function acceptsArrayData(): bool
+    {
+        return $this->children !== [];
+    }
+
+    protected function hasUnexpectedArrayData(): bool
+    {
+        return \is_array($this->data) && !$this->acceptsArrayData();
     }
 
     public function getLabelElement(): ?Element

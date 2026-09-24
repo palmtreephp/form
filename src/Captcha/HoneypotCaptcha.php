@@ -11,7 +11,7 @@ class HoneypotCaptcha implements CaptchaInterface
 {
     public function verify(mixed $input): bool
     {
-        return $this->doVerify($input);
+        return \is_string($input) && $this->doVerify($input);
     }
 
     protected function doVerify(string $input): bool

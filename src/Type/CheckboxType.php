@@ -78,7 +78,17 @@ class CheckboxType extends AbstractType
 
     public function isValid(): bool
     {
-        if (!$this->required || !$this->form->isSubmitted()) {
+        if (!$this->form->isSubmitted()) {
+            return true;
+        }
+
+        if ($this->hasUnexpectedArrayData()) {
+            $this->setErrorMessage(self::INVALID_VALUE_MESSAGE);
+
+            return false;
+        }
+
+        if (!$this->required) {
             return true;
         }
 
@@ -95,6 +105,11 @@ class CheckboxType extends AbstractType
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    protected function acceptsArrayData(): bool
+    {
+        return $this->siblings;
     }
 
     public function setSiblings(bool $siblings): self

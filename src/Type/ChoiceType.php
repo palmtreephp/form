@@ -148,6 +148,11 @@ class ChoiceType extends AbstractType
         return true;
     }
 
+    protected function acceptsArrayData(): bool
+    {
+        return $this->multiple;
+    }
+
     /**
      * Returns every selectable value, including those within option groups.
      *

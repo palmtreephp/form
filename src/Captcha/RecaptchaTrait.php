@@ -38,7 +38,7 @@ trait RecaptchaTrait
 
     public function verify(mixed $input): bool
     {
-        return $this->doVerify($input);
+        return \is_string($input) && $input !== '' && $this->doVerify($input);
     }
 
     /**

@@ -13,11 +13,10 @@ class Matching extends AbstractConstraint implements ConstraintInterface
 
     public function validate(mixed $input): bool
     {
-        return $this->doValidate($input);
-    }
+        if ($input !== null && !\is_scalar($input)) {
+            return false;
+        }
 
-    private function doValidate(string $input): bool
-    {
         return $input === $this->matchField->getData();
     }
 
