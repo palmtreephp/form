@@ -6,25 +6,12 @@ namespace Palmtree\Form\Constraint\File;
 
 use Palmtree\Form\Constraint\AbstractConstraint;
 use Palmtree\Form\Constraint\ConstraintInterface;
-use Palmtree\Form\Constraint\Number as NumberConstraint;
 use Palmtree\Form\UploadedFile;
 
 class Size extends AbstractConstraint implements ConstraintInterface
 {
-    private readonly NumberConstraint $constraint;
-
-    public function __construct(array|string $args = [])
-    {
-        parent::__construct($args);
-
-        $this->constraint = new NumberConstraint();
-
-        $this->constraint->setMin($args['min_bytes'] ?? 1);
-
-        if (isset($args['max_bytes'])) {
-            $this->constraint->setMax($args['max_bytes']);
-        }
-    }
+    private int $minBytes = 1;
+    private ?int $maxBytes = null;
 
     public function validate(mixed $input): bool
     {
@@ -33,18 +20,60 @@ class Size extends AbstractConstraint implements ConstraintInterface
 
     private function doValidate(UploadedFile $input): bool
     {
-        if ($this->constraint->validate($input->getSize())) {
-            return true;
+        $size = $input->getSize();
+
+        if ($size < $this->minBytes) {
+            $this->setErrorMessage("File size must be at least $this->minBytes bytes");
+
+            return false;
         }
 
-        $errorCode = $this->constraint->getErrorCode();
+        if ($this->maxBytes !== null && $size > $this->maxBytes) {
+            $this->setErrorMessage("File size must not exceed $this->maxBytes bytes");
 
-        if ($errorCode === NumberConstraint::ERROR_TOO_SMALL) {
-            $this->setErrorMessage('File size must be greater than ' . $this->constraint->getMin() . ' bytes');
-        } elseif ($errorCode === NumberConstraint::ERROR_TOO_LARGE) {
-            $this->setErrorMessage('File size must be less than ' . $this->constraint->getMax() . ' bytes');
+            return false;
         }
 
-        return false;
+        return true;
+    }
+
+    public function setMinBytes(int $minBytes): self
+    {
+        $this->minBytes = $minBytes;
+
+        return $this;
+    }
+
+    public function getMinBytes(): int
+    {
+        return $this->minBytes;
+    }
+
+    public function setMaxBytes(?int $maxBytes): self
+    {
+        $this->maxBytes = $maxBytes;
+
+        return $this;
+    }
+
+    public function getMaxBytes(): ?int
+    {
+        return $this->maxBytes;
+    }
+
+    /**
+     * Alias of setMinBytes() so the constraint can be configured with a 'min' option.
+     */
+    public function setMin(int $minBytes): self
+    {
+        return $this->setMinBytes($minBytes);
+    }
+
+    /**
+     * Alias of setMaxBytes() so the constraint can be configured with a 'max' option.
+     */
+    public function setMax(?int $maxBytes): self
+    {
+        return $this->setMaxBytes($maxBytes);
     }
 }

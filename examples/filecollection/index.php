@@ -26,7 +26,7 @@ $builder
             'required'    => false,
             'constraints' => [
                 new Constraint\File\Size([
-                    'max' => 1024 * 1024 * 5,
+                    'max_bytes' => 1024 * 1024 * 5,
                 ]),
                 new Constraint\File\Extension([
                     'extensions' => [
