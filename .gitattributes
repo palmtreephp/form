@@ -12,5 +12,5 @@
 /package-lock.json           export-ignore
 /phpstan.dist.neon           export-ignore
 /phpunit.xml.dist            export-ignore
-/rollup.config.js            export-ignore
+/rolldown.config.js           export-ignore
 /tsconfig.json               export-ignore

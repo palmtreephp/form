@@ -17,21 +17,18 @@
         "LICENSE"
     ],
     "scripts": {
-        "build": "rollup -c",
+        "build": "rolldown -c",
         "prettier:check": "prettier --check assets/",
         "prettier:write": "prettier --write assets/",
-        "start": "rollup -c -w",
+        "start": "rolldown -c -w",
         "type-check": "tsc --noEmit"
     },
     "prettier": {
         "printWidth": 240
     },
     "devDependencies": {
-        "@rollup/plugin-terser": "^0.4.4",
-        "@rollup/plugin-typescript": "^11.1.6",
         "prettier": "^3.3.3",
-        "rollup": "^4.18.1",
-        "tslib": "^2.6.3",
+        "rolldown": "^1.2.10",
         "typescript": "^5.5.3"
     }
 }
