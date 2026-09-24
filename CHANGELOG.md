@@ -22,6 +22,8 @@ This release fixes several security issues. All users should upgrade.
 * A required `FileType` field is invalid when no file data is submitted at all.
 * Fixed the `Size` file constraint ignoring the `'max'` option used in the examples, which meant no size limit was applied. If you copied an example,
   your limit is now enforced. The options are `min_bytes`/`max_bytes`, with `min`/`max` accepted as aliases, and error messages state the inclusive bounds.
+* The `Length` constraint counts characters rather than bytes, so multibyte input such as `Zoë` no longer fails a maximum it is within.
+  `symfony/polyfill-mbstring` is now a direct dependency. The `Length` and `Number` maximum error messages state that the bound is inclusive.
 * The JavaScript package inserts error messages, alert messages and the collection add label as text rather than HTML.
 * Fixed a textarea with a value of `"0"` rendering empty.
 * Added `UploadedFile::isUploaded()` and `UploadedFile::isUploadedFileArray()`.
