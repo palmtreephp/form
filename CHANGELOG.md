@@ -32,8 +32,9 @@ This release fixes several security issues. All users should upgrade.
 * Fixed a required `CheckboxType` with a custom `value` never being valid when ticked.
 * Forms whose only named fields are file inputs are detected as submitted.
 * The `Extension` file constraint compares extensions case-insensitively, so `photo.JPG` matches `jpg`.
-* `JsonResponse::fromForm()` accepts an `errorStatus` for invalid forms (e.g. `422`, default `200`), and `toSymfonyResponse()` returns a Symfony
-  `JsonResponse` for use in frameworks. See the [Ajax docs](/docs/ajax.md).
+* `JsonResponse::fromForm()` accepts an `errorStatus` for invalid forms, and `toSymfonyResponse()` returns a Symfony `JsonResponse` for use in
+  frameworks. See the [Ajax docs](/docs/ajax.md). `errorStatus` defaults to `200`, and will default to `422` in the next major version, so passing
+  `errorStatus: 422` now is recommended.
 * The JavaScript package shows an error alert and re-enables the form when an Ajax request fails or the response isn't JSON, rather than leaving it
   stuck submitting. The message can be set with the `errorMessage` option.
 * Textareas no longer render an empty `type` attribute.
