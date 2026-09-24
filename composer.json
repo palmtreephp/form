@@ -26,7 +26,8 @@
         "palmtree/argparser": "^3.0",
         "palmtree/nameconverter": "^3.0",
         "palmtree/html": "^6.0",
-        "symfony/http-foundation": "^6.4||^7.4||^8.0"
+        "symfony/http-foundation": "^6.4||^7.4||^8.0",
+        "symfony/polyfill-mbstring": "^1.0"
     },
     "require-dev": {
         "palmtree/php-cs-fixer-config": "^2.0",
