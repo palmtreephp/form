@@ -30,6 +30,11 @@ class CaptchaType extends AbstractType
         $this->captcha = $captcha;
     }
 
+    protected function getExtraOptionKeys(): array
+    {
+        return [...parent::getExtraOptionKeys(), 'captcha'];
+    }
+
     public function isValid(): bool
     {
         if (!$this->form->isSubmitted()) {

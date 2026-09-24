@@ -11,6 +11,7 @@ use Palmtree\Form\Exception\InvalidTypeException;
 use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
 use Palmtree\Form\TypeLocator;
+use Palmtree\Form\UnknownOptions;
 use Palmtree\Html\Element;
 use Palmtree\NameConverter\NameConverterInterface;
 use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
@@ -72,11 +73,23 @@ abstract class AbstractType implements TypeInterface
      */
     protected function parseArgs(array $args): array
     {
+        UnknownOptions::deprecate($this, $args, [...array_keys(static::$defaultArgs), ...$this->getExtraOptionKeys()]);
+
         $parser = new ArgParser($args, '', new SnakeCaseToCamelCaseNameConverter());
 
         $parser->parseSetters($this);
 
         return $parser->resolveOptions(static::$defaultArgs);
+    }
+
+    /**
+     * Options read directly from $args rather than through a setter.
+     *
+     * @return list<string>
+     */
+    protected function getExtraOptionKeys(): array
+    {
+        return ['attr'];
     }
 
     public function build(): void

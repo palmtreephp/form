@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Palmtree\Form\Constraint;
 
 use Palmtree\ArgParser\ArgParser;
+use Palmtree\Form\UnknownOptions;
 
 abstract class AbstractConstraint implements ConstraintInterface
 {
@@ -15,6 +16,10 @@ abstract class AbstractConstraint implements ConstraintInterface
      */
     public function __construct(array|string $args = [])
     {
+        if (\is_array($args)) {
+            UnknownOptions::deprecate($this, $args);
+        }
+
         $parser = new ArgParser($args, 'error_message');
         $parser->parseSetters($this);
     }

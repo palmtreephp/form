@@ -58,7 +58,7 @@ class ChoiceType extends AbstractType
                 'parent' => $this,
             ];
 
-            if ($this->multiple) {
+            if ($this->multiple && $this->expanded) {
                 $args['siblings'] = true;
             }
 

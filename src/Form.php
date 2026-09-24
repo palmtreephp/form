@@ -393,6 +393,10 @@ class Form implements \Stringable
      */
     private function parseArgs(string|array $args): void
     {
+        if (\is_array($args)) {
+            UnknownOptions::deprecate($this, $args);
+        }
+
         $parser = new ArgParser($args, 'key', new SnakeCaseToCamelCaseNameConverter());
 
         $parser->parseSetters($this);
