@@ -16,7 +16,7 @@ $builder = new FormBuilder([
 $builder->add('file', 'file', [
     'constraints' => [
         new FileConstraint\Size([
-            'max' => 1024 * 100,
+            'max_bytes' => 1024 * 100,
         ]),
         new FileConstraint\Extension([
             'extensions' => ['jpg', 'gif', 'png'],
