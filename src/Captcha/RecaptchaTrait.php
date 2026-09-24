@@ -16,6 +16,8 @@ trait RecaptchaTrait
     /** @var array<string, array{success: bool, error-codes: list<key-of<self::ERROR_CODES>>}> */
     private array $verificationResult = [];
     private bool $autoload = true;
+    private int $connectTimeout = 3;
+    private int $timeout = 5;
 
     public function __construct(private readonly string $siteKey, private readonly string $secretKey, ?string $ip = null)
     {
@@ -34,6 +36,16 @@ trait RecaptchaTrait
     public function isAutoload(): bool
     {
         return $this->autoload;
+    }
+
+    /**
+     * Sets the maximum number of seconds to wait for the verification request: to connect, and in total.
+     * Verification fails if either is exceeded.
+     */
+    public function setTimeout(int $timeout, ?int $connectTimeout = null): void
+    {
+        $this->timeout = $timeout;
+        $this->connectTimeout = $connectTimeout ?? min($this->connectTimeout, $timeout);
     }
 
     public function verify(mixed $input): bool
@@ -139,9 +151,9 @@ trait RecaptchaTrait
     }
 
     /**
-     * @return array{success: bool, error-codes: list<key-of<self::ERROR_CODES>>}|null
+     * Returns the decoded verification response, or null if the request failed or the response was not valid.
      *
-     * @throws \JsonException
+     * @return array{success: bool, error-codes: list<key-of<self::ERROR_CODES>>}|null
      */
     private function getVerificationResult(string $response): ?array
     {
@@ -164,14 +176,29 @@ trait RecaptchaTrait
             curl_setopt($handle, \CURLOPT_POST, true);
             curl_setopt($handle, \CURLOPT_POSTFIELDS, http_build_query($postFields));
             curl_setopt($handle, \CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($handle, \CURLOPT_CONNECTTIMEOUT, $this->connectTimeout);
+            curl_setopt($handle, \CURLOPT_TIMEOUT, $this->timeout);
 
             $result = curl_exec($handle);
 
-            if (!$result || !\is_string($result)) {
+            if (!\is_string($result) || curl_getinfo($handle, \CURLINFO_RESPONSE_CODE) !== 200) {
                 return null;
             }
 
-            $this->verificationResult[$response] = json_decode($result, true, flags: \JSON_THROW_ON_ERROR);
+            try {
+                $decoded = json_decode($result, true, flags: \JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                return null;
+            }
+
+            if (!\is_array($decoded) || !\is_bool($decoded['success'] ?? null)) {
+                return null;
+            }
+
+            $decoded['error-codes'] = array_values(array_filter((array)($decoded['error-codes'] ?? []), 'is_string'));
+
+            /** @var array{success: bool, error-codes: list<key-of<self::ERROR_CODES>>} $decoded */
+            $this->verificationResult[$response] = $decoded;
         }
 
         return $this->verificationResult[$response];
