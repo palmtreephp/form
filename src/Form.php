@@ -145,12 +145,16 @@ class Form implements \Stringable
     public function handleRequest(): void
     {
         $requestData = $this->getRequestData();
+        $data = $requestData[$this->key] ?? null;
 
-        if (!isset($requestData[$this->key]) || !\is_array($requestData[$this->key])) {
-            return;
+        // A form whose only named fields are file inputs sends no request body data
+        if ($data === null && isset($_FILES[$this->key])) {
+            $data = [];
         }
 
-        $data = $requestData[$this->key];
+        if (!\is_array($data)) {
+            return;
+        }
 
         // File data must only ever come from $_FILES, otherwise a client could submit a forged
         // upload array with an arbitrary tmp_name
