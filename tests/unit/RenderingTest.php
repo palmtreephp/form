@@ -63,6 +63,19 @@ class RenderingTest extends TestCase
         $this->assertSame('0', self::getElementById($document, 'form_test-message')->textContent);
     }
 
+    public function testTextareaHasNoTypeOrValueAttribute(): void
+    {
+        $form = (new FormBuilder('test'))->add('message', 'textarea')->getForm();
+
+        $form->submit(['message' => 'Hello']);
+
+        $textarea = self::getElementById(self::loadHtml($form->render()), 'form_test-message');
+
+        $this->assertFalse($textarea->hasAttribute('type'));
+        $this->assertFalse($textarea->hasAttribute('value'));
+        $this->assertSame('Hello', $textarea->textContent);
+    }
+
     public function testInvalidElementDataAttributeIsHtml(): void
     {
         $form = (new FormBuilder('test'))->add('name', 'text')->getForm();
