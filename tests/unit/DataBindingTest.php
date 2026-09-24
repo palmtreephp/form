@@ -81,14 +81,14 @@ class DataBindingTest extends TestCase
             'emailAddress' => 'bob.smith@example.org',
             'age' => 45,
             'favouriteConsole' => 'Xbox',
-            'interests' => ['guitar'],
+            'interests' => ['music'],
         ]);
 
         $this->assertSame('Bob Smith', $person['name']);
         $this->assertSame('bob.smith@example.org', $person['emailAddress']);
         $this->assertSame(45, $person['age']);
         $this->assertSame('Xbox', $person['favouriteConsole']);
-        $this->assertSame(['guitar'], $person['interests']);
+        $this->assertSame(['music'], $person['interests']);
     }
 
     public function testStdClassTwoWayDataBinding(): void
@@ -115,14 +115,14 @@ class DataBindingTest extends TestCase
             'emailAddress' => 'bob.smith@example.org',
             'age' => 45,
             'favouriteConsole' => 'Xbox',
-            'interests' => ['guitar'],
+            'interests' => ['music'],
         ]);
 
         $this->assertSame('Bob Smith', $person->name);
         $this->assertSame('bob.smith@example.org', $person->emailAddress);
         $this->assertSame(45, $person->age);
         $this->assertSame('Xbox', $person->favouriteConsole);
-        $this->assertSame(['guitar'], $person->interests);
+        $this->assertSame(['music'], $person->interests);
     }
 
     public function testArrayDataMapperThrowsOutOfBoundsException(): void
@@ -166,7 +166,7 @@ class DataBindingTest extends TestCase
             'emailAddress' => 'bob.smith@example.org',
             'age' => 45,
             'favouriteConsole' => 'Xbox',
-            'interests' => ['guitar'],
+            'interests' => ['music'],
         ]);
     }
 
@@ -235,7 +235,7 @@ class DataBindingTest extends TestCase
                     'emailAddress' => 'bob.smith@example.org',
                     'age' => 45,
                     'favouriteConsole' => 'Xbox',
-                    'interests' => ['guitar'],
+                    'interests' => ['music'],
                 ],
             ],
         ]);
@@ -244,7 +244,7 @@ class DataBindingTest extends TestCase
         $this->assertSame('bob.smith@example.org', $data['people'][0]['emailAddress']);
         $this->assertSame(45, $data['people'][0]['age']);
         $this->assertSame('Xbox', $data['people'][0]['favouriteConsole']);
-        $this->assertSame(['guitar'], $data['people'][0]['interests']);
+        $this->assertSame(['music'], $data['people'][0]['interests']);
     }
 
     private function buildForm(\ArrayAccess|array|Person|\stdClass $person): Form
