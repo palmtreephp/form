@@ -24,6 +24,9 @@ This release fixes several security issues. All users should upgrade.
   your limit is now enforced. The options are `min_bytes`/`max_bytes`, with `min`/`max` accepted as aliases, and error messages state the inclusive bounds.
 * The `Length` constraint counts characters rather than bytes, so multibyte input such as `Zoë` no longer fails a maximum it is within.
   `symfony/polyfill-mbstring` is now a direct dependency. The `Length` and `Number` maximum error messages state that the bound is inclusive.
+* `IntegerType` and `NumberType` validate that the submitted value is a whole number or a finite number respectively. Non-numeric input such as `abc`
+  was previously valid and normalised to `0`. An empty optional value normalises to `null` rather than `0`.
+* Fixed `CaptchaType` being mapped to bound data, which made `getForm()` throw when a captcha was added to a form with bound data.
 * The JavaScript package inserts error messages, alert messages and the collection add label as text rather than HTML.
 * Fixed a textarea with a value of `"0"` rendering empty.
 * Added `UploadedFile::isUploaded()` and `UploadedFile::isUploadedFileArray()`.
