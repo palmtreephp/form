@@ -14,9 +14,7 @@ class TextareaType extends AbstractType
     {
         $element = parent::getElement();
 
-        if (isset($element->attributes['value'])) {
-            unset($element->attributes['value']);
-        }
+        unset($element->attributes['type'], $element->attributes['value']);
 
         if (\is_scalar($this->data)) {
             $element->setInnerText((string)$this->data);
