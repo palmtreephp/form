@@ -21,19 +21,23 @@ class HoneypotCaptcha implements CaptchaInterface
 
     public function getErrorMessage(): string
     {
-        return 'This is a honeypot field and should be left blank.';
+        return 'Your submission could not be processed. Please try again.';
     }
 
     public function getElements(Element $element, Form $form): array
     {
         $elements = [];
 
-        unset($element->attributes['placeholder']);
+        // The field must be submitted empty, so it can't be required, and it is hidden from users,
+        // keyboard navigation and assistive technology
+        unset($element->attributes['placeholder'], $element->attributes['required']);
 
         $element->attributes->add([
             'type' => 'text',
             'style' => 'display: none;',
             'autocomplete' => 'off',
+            'tabindex' => '-1',
+            'aria-hidden' => 'true',
         ]);
 
         $elements[] = $element;
