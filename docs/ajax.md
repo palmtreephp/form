@@ -49,3 +49,17 @@ if ($form->isSubmitted() && Form::isAjaxRequest()) {
     $response->send();
 }
 ```
+
+By default an invalid form responds with HTTP 200. Pass `errorStatus` to use a different status code, such as 422:
+
+```php
+$response = JsonResponse::fromForm($form, errorStatus: 422);
+```
+
+The JavaScript library handles any status code, and shows a generic error alert if the response isn't JSON (e.g. a server error page).
+
+If you're using a framework, return a Symfony response instead of calling `send()`, which exits:
+
+```php
+return JsonResponse::fromForm($form)->toSymfonyResponse();
+```
