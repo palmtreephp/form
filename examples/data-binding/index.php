@@ -1,11 +1,12 @@
 <?php declare(strict_types=1);
 
+use Palmtree\Form\Examples\Fixtures\Person;
 use Palmtree\Form\FormBuilder;
 
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
-$person               = new \Palmtree\Form\Test\Fixtures\Person();
+$person               = new Person();
 $person->name         = 'Person';
 $person->emailAddress = 'person@example.org';
 $person->setAge(42);
