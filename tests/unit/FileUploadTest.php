@@ -132,6 +132,37 @@ class FileUploadTest extends TestCase
         $this->assertTrue($form->isSubmitted());
     }
 
+    public function testFormWithOnlyFilesIsSubmitted(): void
+    {
+        $form = (new FormBuilder('test'))
+            ->add('file', FileType::class, ['required' => false])
+            ->getForm();
+
+        $_FILES = ['form_test' => [
+            'name' => ['file' => ''],
+            'type' => ['file' => ''],
+            'size' => ['file' => 0],
+            'tmp_name' => ['file' => ''],
+            'error' => ['file' => \UPLOAD_ERR_NO_FILE],
+        ]];
+
+        $form->handleRequest();
+
+        $this->assertTrue($form->isSubmitted());
+        $this->assertTrue($form->isValid());
+    }
+
+    public function testFormIsNotSubmittedWithoutRequestData(): void
+    {
+        $form = (new FormBuilder('test'))->add('file', FileType::class)->getForm();
+
+        $_FILES = ['other_form' => []];
+
+        $form->handleRequest();
+
+        $this->assertFalse($form->isSubmitted());
+    }
+
     public function testNonArrayFormKeyIsNotSubmitted(): void
     {
         $form = (new FormBuilder('test'))->add('name', 'text')->getForm();
