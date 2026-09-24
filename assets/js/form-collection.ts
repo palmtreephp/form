@@ -103,7 +103,8 @@ class FormCollection {
     }
 
     createAddButton(): HTMLButtonElement {
-        const addButton = elementFromHtml<HTMLButtonElement>(`<button type="button" class="btn btn-secondary btn-sm">${this.options.addLabel}</button>`);
+        const addButton = elementFromHtml<HTMLButtonElement>('<button type="button" class="btn btn-secondary btn-sm"></button>');
+        addButton.textContent = this.options.addLabel;
 
         addButton.addEventListener("click", () => {
             this.addEntry();

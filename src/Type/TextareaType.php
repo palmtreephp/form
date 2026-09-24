@@ -18,8 +18,8 @@ class TextareaType extends AbstractType
             unset($element->attributes['value']);
         }
 
-        if ($this->data) {
-            $element->setInnerText($this->data);
+        if (\is_scalar($this->data)) {
+            $element->setInnerText((string)$this->data);
         }
 
         return $element;
