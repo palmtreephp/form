@@ -89,7 +89,7 @@ $form = $builder->getForm();
 $form->handleRequest();
 
 if ($form->isSubmitted() && Form::isAjaxRequest()) {
-    $response = JsonResponse::fromForm($form, successMessage: 'Thanks for your enquiry. We will be in touch shortly');
+    $response = JsonResponse::fromForm($form, successMessage: 'Thanks for your enquiry. We will be in touch shortly', errorStatus: 422);
 
     $response->send();
 }
