@@ -92,7 +92,25 @@ class CheckboxType extends AbstractType
             return true;
         }
 
-        return $this->data && filter_var($this->data, \FILTER_VALIDATE_BOOLEAN);
+        return $this->isChecked();
+    }
+
+    /**
+     * Whether the submitted data ticks this checkbox: either its value, or a boolean-like true value such as "1" or "on".
+     */
+    private function isChecked(): bool
+    {
+        $data = $this->data;
+
+        if (\is_array($data)) {
+            return \in_array($this->value, array_map(strval(...), array_filter($data, is_scalar(...))), true);
+        }
+
+        if (!\is_scalar($data)) {
+            return false;
+        }
+
+        return (string)$data === $this->value || filter_var($data, \FILTER_VALIDATE_BOOLEAN);
     }
 
     public function setValue(string $value): self
