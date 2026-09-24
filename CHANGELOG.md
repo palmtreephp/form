@@ -17,6 +17,7 @@ This release fixes several security issues. All users should upgrade.
 * The JavaScript package inserts error messages, alert messages and the collection add label as text rather than HTML.
 * Fixed a textarea with a value of `"0"` rendering empty.
 * Added `UploadedFile::isUploaded()` and `UploadedFile::isUploadedFileArray()`.
+* The JavaScript bundles in `dist/` are built with rolldown and target ES2022, which requires Safari/iOS 14 or later.
 
 ## v6.4.0 - 2025-12-31
 
