@@ -10,6 +10,7 @@ class CaptchaType extends AbstractType
 {
     protected string $type = 'text';
     protected bool $userInput = false;
+    protected bool $mapped = false;
     protected ?string $errorMessage = 'Please confirm you\'re not a robot';
     private CaptchaInterface $captcha;
     /** @var bool Whether to display errors from the Captcha implementation */
