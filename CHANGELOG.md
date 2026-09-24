@@ -27,6 +27,18 @@ This release fixes several security issues. All users should upgrade.
 * `IntegerType` and `NumberType` validate that the submitted value is a whole number or a finite number respectively. Non-numeric input such as `abc`
   was previously valid and normalised to `0`. An empty optional value normalises to `null` rather than `0`.
 * Fixed `CaptchaType` being mapped to bound data, which made `getForm()` throw when a captcha was added to a form with bound data.
+* Fixed honeypot fields preventing form submission when HTML validation is enabled. The hidden input was rendered as `required` but must be
+  submitted empty. It also has `tabindex="-1"` and `aria-hidden="true"`, and its error message no longer reveals that it is a honeypot.
+* Fixed a required `CheckboxType` with a custom `value` never being valid when ticked.
+* Forms whose only named fields are file inputs are detected as submitted.
+* The `Extension` file constraint compares extensions case-insensitively, so `photo.JPG` matches `jpg`.
+* `JsonResponse::fromForm()` accepts an `errorStatus` for invalid forms (e.g. `422`, default `200`), and `toSymfonyResponse()` returns a Symfony
+  `JsonResponse` for use in frameworks. See the [Ajax docs](/docs/ajax.md).
+* The JavaScript package shows an error alert and re-enables the form when an Ajax request fails or the response isn't JSON, rather than leaving it
+  stuck submitting. The message can be set with the `errorMessage` option.
+* Textareas no longer render an empty `type` attribute.
+* **Deprecated:** Passing an unknown option to a form, field type or constraint triggers a deprecation notice. Unknown options are still ignored,
+  and will throw an exception in the next major version.
 * The JavaScript package inserts error messages, alert messages and the collection add label as text rather than HTML.
 * Fixed a textarea with a value of `"0"` rendering empty.
 * Added `UploadedFile::isUploaded()` and `UploadedFile::isUploadedFileArray()`.
