@@ -27,15 +27,15 @@ class FileType extends AbstractType
             return true;
         }
 
-        if (!$uploadedFile = $this->getData()) {
-            return true;
-        }
+        $uploadedFile = $this->getData();
 
-        if (!$this->isRequired() && $uploadedFile->getErrorCode() === UploadedFile::UPLOAD_ERR_NO_FILE) {
-            return true;
-        }
+        if ($uploadedFile === null || $uploadedFile->getErrorCode() === UploadedFile::UPLOAD_ERR_NO_FILE) {
+            if (!$this->isRequired()) {
+                return true;
+            }
 
-        if (!parent::isValid()) {
+            $this->setErrorMessage(UploadedFile::ERROR_MESSAGES[UploadedFile::UPLOAD_ERR_NO_FILE]);
+
             return false;
         }
 
@@ -45,15 +45,36 @@ class FileType extends AbstractType
             return false;
         }
 
-        return true;
+        // Checked before any constraints run, as they may read the file at its temp path
+        if (!$uploadedFile->isUploaded()) {
+            $this->setErrorMessage('The file could not be uploaded');
+
+            return false;
+        }
+
+        return parent::isValid();
     }
 
     public function getData(): ?UploadedFile
     {
-        if ($this->normData === null && $this->data !== null) {
+        if ($this->normData === null && UploadedFile::isUploadedFileArray($this->data)) {
             $this->normData = new UploadedFile($this->data);
         }
 
         return $this->normData;
+    }
+
+    public function setData(array|string|int|float|bool|null $data): TypeInterface
+    {
+        $this->normData = null;
+
+        return parent::setData($data);
+    }
+
+    public function clearData(): void
+    {
+        $this->normData = null;
+
+        parent::clearData();
     }
 }
