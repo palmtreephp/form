@@ -13,11 +13,38 @@ This release fixes several security issues. All users should upgrade.
 * **Security:** `ChoiceType` rejects submitted values that are not one of its choices.
 * **Security:** Fields that expect a single value are invalid when an array is submitted, and constraints and captchas fail validation for input of the wrong type
   instead of throwing a `TypeError`.
+* reCAPTCHA and hCaptcha verification requests time out after 3 seconds to connect and 5 seconds in total, configurable with `setTimeout()`. Verification fails
+  instead of throwing for a non-200 response, invalid JSON or an unexpected response.
+* A form that fails CSRF validation is submitted and invalid, so `isSubmitted()` returns `true`. The submitted values are kept for redisplay but not mapped
+  to bound data, and `JsonResponse::fromForm()` returns the CSRF error rather than throwing `NotSubmittedException`. The message is available as `Form::CSRF_ERROR_MESSAGE`.
+  See [handling failed validation](/docs/csrf-protection.md#handling-failed-validation).
+* `JsonResponse::fromForm()` uses the form's error message, when set, as the response message.
 * A required `FileType` field is invalid when no file data is submitted at all.
+* Fixed the `Size` file constraint ignoring the `'max'` option used in the examples, which meant no size limit was applied. If you copied an example,
+  your limit is now enforced. The options are `min_bytes`/`max_bytes`, with `min`/`max` accepted as aliases, and error messages state the inclusive bounds.
+* The `Length` constraint counts characters rather than bytes, so multibyte input such as `Zoë` no longer fails a maximum it is within.
+  `symfony/polyfill-mbstring` is now a direct dependency. The `Length` and `Number` maximum error messages state that the bound is inclusive.
+* `IntegerType` and `NumberType` validate that the submitted value is a whole number or a finite number respectively. Non-numeric input such as `abc`
+  was previously valid and normalised to `0`. An empty optional value normalises to `null` rather than `0`.
+* Fixed `CaptchaType` being mapped to bound data, which made `getForm()` throw when a captcha was added to a form with bound data.
+* Fixed honeypot fields preventing form submission when HTML validation is enabled. The hidden input was rendered as `required` but must be
+  submitted empty. It also has `tabindex="-1"` and `aria-hidden="true"`, and its error message no longer reveals that it is a honeypot.
+* Fixed a required `CheckboxType` with a custom `value` never being valid when ticked.
+* Forms whose only named fields are file inputs are detected as submitted.
+* The `Extension` file constraint compares extensions case-insensitively, so `photo.JPG` matches `jpg`.
+* `JsonResponse::fromForm()` accepts an `errorStatus` for invalid forms, and `toSymfonyResponse()` returns a Symfony `JsonResponse` for use in
+  frameworks. See the [Ajax docs](/docs/ajax.md). `errorStatus` defaults to `200`, and will default to `422` in the next major version, so passing
+  `errorStatus: 422` now is recommended.
+* The JavaScript package shows an error alert and re-enables the form when an Ajax request fails or the response isn't JSON, rather than leaving it
+  stuck submitting. The message can be set with the `errorMessage` option.
+* Textareas no longer render an empty `type` attribute.
+* **Deprecated:** Passing an unknown option to a form, field type or constraint triggers a deprecation notice. Unknown options are still ignored,
+  and will throw an exception in the next major version.
 * The JavaScript package inserts error messages, alert messages and the collection add label as text rather than HTML.
 * Fixed a textarea with a value of `"0"` rendering empty.
 * Added `UploadedFile::isUploaded()` and `UploadedFile::isUploadedFileArray()`.
 * The JavaScript bundles in `dist/` are built with rolldown and target ES2022, which requires Safari/iOS 14 or later.
+* Fixed the data-binding example referencing a missing test fixture.
 
 ## v6.4.0 - 2025-12-31
 
