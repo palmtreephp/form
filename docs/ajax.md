@@ -39,13 +39,25 @@ use Palmtree\Form\Form;
 $form->handleRequest();
 
 if ($form->isSubmitted() && Form::isAjaxRequest()) {
-    $response = JsonResponse::fromForm($form, successMessage: 'Thank you for your enquiry! We will be in touch soon.');
+    $response = JsonResponse::fromForm($form, successMessage: 'Thank you for your enquiry! We will be in touch soon.', errorStatus: 422);
 
     if ($form->isValid()) {
         // Process the form data (e.g. send an email, save to database etc)
     }
 
-    // Sends the JSON response with appropriate headers, and exit
+    // Sends the JSON response with its status code and headers, then exits
     $response->send();
 }
+```
+
+`errorStatus` sets the HTTP status code for an invalid form. 422 (Unprocessable Content) is recommended. The default is 200,
+which will change to 422 in the next major version, so passing it explicitly keeps your responses the same when you upgrade.
+If you have your own client-side code, bear in mind that jQuery, axios and `response.ok` checks treat a 422 as an error.
+
+The JavaScript library handles any status code, and shows a generic error alert if the response isn't JSON (e.g. a server error page).
+
+If you're using a framework, return a Symfony response instead of calling `send()`, which exits:
+
+```php
+return JsonResponse::fromForm($form, errorStatus: 422)->toSymfonyResponse();
 ```

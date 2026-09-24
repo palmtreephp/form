@@ -6,6 +6,7 @@ type PalmtreeFormOptions = {
     method: string;
     removeSubmitButton: boolean;
     controlStates: string[];
+    errorMessage: string;
 };
 
 type Response = {
@@ -21,6 +22,7 @@ const defaults: PalmtreeFormOptions = {
     method: "GET",
     removeSubmitButton: true,
     controlStates: ["valid", "invalid"],
+    errorMessage: "Sorry, something went wrong. Please try again.",
 };
 
 type FormControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
@@ -126,15 +128,34 @@ export const ajax = (form: HTMLFormElement, options: Partial<PalmtreeFormOptions
 
         const formData = new FormData(form);
 
-        const response = await fetch(form.action, {
-            method: form.method,
-            body: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-            },
-        });
+        let response: globalThis.Response;
+        let json: Response;
 
-        const json: Response = await response.json();
+        try {
+            response = await fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            });
+
+            json = await response.json();
+        } catch (error) {
+            // Network failure or a response that isn't JSON, e.g. a server error page
+            console.error(error);
+
+            createAlert(config.errorMessage, "danger");
+
+            form.dispatchEvent(new CustomEvent("palmtreeForm.error", { detail: { responseData: null } }));
+
+            form.classList.remove("is-submitting");
+            if (submitBtn) {
+                submitBtn.disabled = false;
+            }
+
+            return;
+        }
 
         const formControls = Array.from(form.querySelectorAll<FormControl>(".palmtree-form-control"));
 
@@ -182,7 +203,8 @@ export const ajax = (form: HTMLFormElement, options: Partial<PalmtreeFormOptions
             );
         }
 
-        if (!response.ok) {
+        // 422 is an expected response for an invalid form
+        if (!response.ok && response.status !== 422) {
             console.error(response.statusText);
         }
 
