@@ -38,6 +38,7 @@ This release fixes several security issues. All users should upgrade.
 * The JavaScript package shows an error alert and re-enables the form when an Ajax request fails or the response isn't JSON, rather than leaving it
   stuck submitting. The message can be set with the `errorMessage` option.
 * Textareas no longer render an empty `type` attribute.
+* An empty required field reports "Please fill in this field" (or its `error_message`) rather than the message of another constraint, such as `Length`.
 * **Deprecated:** Passing an unknown option to a form, field type or constraint triggers a deprecation notice. Unknown options are still ignored,
   and will throw an exception in the next major version.
 * The JavaScript package inserts error messages, alert messages and the collection add label as text rather than HTML.
