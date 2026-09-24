@@ -19,7 +19,10 @@ class RepeatedTypeBuilder
      */
     public function build(string $name, array $args): RepeatedType
     {
-        $repeatedType = new RepeatedType($args);
+        $repeatedType = new RepeatedType(array_intersect_key($args, ['repeatable_type' => true]));
+
+        // The remaining options configure the two repeated fields
+        unset($args['repeatable_type']);
 
         $firstOfType = $this->formBuilder->create($name, $repeatedType->getRepeatableType(), $args);
 
