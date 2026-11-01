@@ -8,7 +8,8 @@ require __DIR__ . '/../.bootstrap.php';
 
 \Symfony\Component\HttpFoundation\Request::setTrustedHosts(['localhost']);
 
-$builder = new FormBuilder();
+$builder = (new FormBuilder())
+    ->key('csrf_example');
 
 $builder->enableCsrf();
 

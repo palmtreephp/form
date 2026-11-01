@@ -50,7 +50,7 @@ Now we have our model set up, it's time to create the form:
 ```php
 $person = new Person();
 
-$builder = new \Palmtree\Form\FormBuilder('some_form_key', $person);
+$builder = (new \Palmtree\Form\FormBuilder($person))->key('some_form_key');
 
 $builder
     ->add('name', 'text')
@@ -92,7 +92,7 @@ $data = [
     'active'     => true,
 ];
 
-$builder = new \Palmtree\Form\FormBuilder('some_form_key', $data);
+$builder = (new \Palmtree\Form\FormBuilder($data))->key('some_form_key');
 ```
 
 When using an array to populate the form the array will not be updated when the form is submitted because it
@@ -107,7 +107,7 @@ $data = new \ArrayObject([
     'active'     => true,
 ]);
 
-$builder = new \Palmtree\Form\FormBuilder('some_form_key', $data);
+$builder = (new \Palmtree\Form\FormBuilder($data))->key('some_form_key');
 ```
 
 ## Unmapped Fields

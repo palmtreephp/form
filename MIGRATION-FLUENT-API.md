@@ -67,7 +67,26 @@ $builder = new FormBuilder(); // key will be 'form_1', 'form_2', etc.
 **When auto-generated keys are fine:**
 - Simple forms with no external dependencies
 - Most common use cases where the form key doesn't matter
-- Examples and demos
+
+### Form Keys Are Used As-Is
+
+`key()` uses the key exactly as given. The array configuration prefixed it with `form_`, so element IDs and submitted
+field names change:
+
+```php
+// Before: form ID "form_contact", fields named "form_contact[email]", IDs like "form_contact-email"
+$builder = new FormBuilder(['key' => 'contact']);
+
+// After: form ID "contact", fields named "contact[email]", IDs like "contact-email"
+$builder = (new FormBuilder())->key('contact');
+```
+
+Update any CSS, JavaScript or test selectors that reference the old IDs, or pass the prefixed key to keep them:
+`->key('form_contact')`.
+
+### HTML5 Validation Is Off By Default
+
+Forms render with the `novalidate` attribute unless you opt in to browser validation with `->htmlValidation()`.
 
 ## Available Fluent Methods
 
@@ -150,26 +169,6 @@ $builder->add('password', 'password', [
     ],
 ]);
 ```
-
-## Implementation Details
-
-### Internal Changes
-
-1. **Form.php** - Removed ArgParser dependency, auto-generates keys
-2. **FormBuilder.php** - New constructor signature, added fluent methods
-3. **AbstractType.php** - Manual snake_case to camelCase conversion for setters
-4. **AbstractConstraint.php** - Manual property setting instead of ArgParser
-
-### Composer Changes
-
-The `palmtree/argparser` dependency has been removed from `composer.json`.
-
-## Testing
-
-All existing tests pass with the new implementation:
-- ✅ 35 PHPUnit tests passing
-- ✅ PHPStan static analysis passing
-- ✅ All examples updated and working
 
 ## Questions?
 

@@ -10,6 +10,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
 $builder = (new FormBuilder())
+    ->key('recaptcha')
     ->ajax();
 
 $builder

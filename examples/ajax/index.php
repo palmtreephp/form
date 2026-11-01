@@ -11,6 +11,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
 $builder = (new FormBuilder())
+    ->key('ajax_example')
     ->action('index.php')
     ->ajax()
     ->encType('multipart/form-data');
