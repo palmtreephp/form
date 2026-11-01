@@ -34,7 +34,7 @@ class NumberTypeTest extends TestCase
     #[DataProvider('valueProvider')]
     public function testValidation(string $type, string $value, bool $expected): void
     {
-        $form = (new FormBuilder('test'))->add('field', $type)->getForm();
+        $form = (new FormBuilder())->key('test')->add('field', $type)->getForm();
 
         $form->submit(['field' => $value]);
 
@@ -43,7 +43,7 @@ class NumberTypeTest extends TestCase
 
     public function testErrorMessages(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('integer', IntegerType::class)
             ->add('number', NumberType::class)
             ->getForm();
@@ -56,7 +56,7 @@ class NumberTypeTest extends TestCase
 
     public function testOptionalEmptyValueNormalisesToNull(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('integer', IntegerType::class, ['required' => false])
             ->add('number', NumberType::class, ['required' => false])
             ->getForm();
@@ -70,7 +70,7 @@ class NumberTypeTest extends TestCase
 
     public function testValidValuesAreNormalised(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('integer', IntegerType::class)
             ->add('number', NumberType::class)
             ->getForm();

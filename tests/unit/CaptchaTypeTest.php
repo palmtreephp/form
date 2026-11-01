@@ -12,7 +12,7 @@ class CaptchaTypeTest extends TestCase
 {
     public function testCaptchaIsNotMapped(): void
     {
-        $form = (new FormBuilder('test'))->add('captcha', 'captcha', ['captcha' => new HoneypotCaptcha()])->getForm();
+        $form = (new FormBuilder())->key('test')->add('captcha', 'captcha', ['captcha' => new HoneypotCaptcha()])->getForm();
 
         $this->assertFalse($form->get('captcha')->isMapped());
     }
@@ -22,7 +22,7 @@ class CaptchaTypeTest extends TestCase
         $data = new \stdClass();
         $data->name = null;
 
-        $form = (new FormBuilder('test', $data))
+        $form = (new FormBuilder($data))->key('test')
             ->add('name', 'text')
             ->add('captcha', 'captcha', ['captcha' => new HoneypotCaptcha()])
             ->getForm();
@@ -38,7 +38,7 @@ class CaptchaTypeTest extends TestCase
     {
         $data = new \ArrayObject(['name' => null]);
 
-        $form = (new FormBuilder('test', $data))
+        $form = (new FormBuilder($data))->key('test')
             ->add('name', 'text')
             ->add('captcha', 'captcha', ['captcha' => new HoneypotCaptcha()])
             ->getForm();
@@ -53,7 +53,7 @@ class CaptchaTypeTest extends TestCase
         $data = new \stdClass();
         $data->name = 'Alice';
 
-        $form = (new FormBuilder('test', $data))
+        $form = (new FormBuilder($data))->key('test')
             ->add('name', 'text')
             ->add('captcha', 'captcha', ['captcha' => new HoneypotCaptcha()])
             ->getForm();

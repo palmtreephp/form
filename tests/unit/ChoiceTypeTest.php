@@ -36,7 +36,7 @@ class ChoiceTypeTest extends TestCase
     #[DataProvider('choiceProvider')]
     public function testChoiceValidation(array $options, mixed $value, bool $expected): void
     {
-        $form = (new FormBuilder('test'))->add('choice', 'choice', $options)->getForm();
+        $form = (new FormBuilder())->key('test')->add('choice', 'choice', $options)->getForm();
 
         $form->submit($value === null ? [] : ['choice' => $value]);
 
@@ -45,7 +45,7 @@ class ChoiceTypeTest extends TestCase
 
     public function testInvalidChoiceErrorMessage(): void
     {
-        $form = (new FormBuilder('test'))->add('choice', 'choice', ['choices' => ['a' => 'A']])->getForm();
+        $form = (new FormBuilder())->key('test')->add('choice', 'choice', ['choices' => ['a' => 'A']])->getForm();
 
         $form->submit(['choice' => 'z']);
 

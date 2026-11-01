@@ -67,7 +67,7 @@ class CsrfFailureTest extends TestCase
 
     public function testJsonResponseUsesDefaultErrorMessageWithoutFormError(): void
     {
-        $form = (new FormBuilder('test'))->add('name', 'text')->getForm();
+        $form = (new FormBuilder())->key('test')->add('name', 'text')->getForm();
 
         $form->submit(['name' => '']);
 
@@ -79,7 +79,7 @@ class CsrfFailureTest extends TestCase
      */
     private function createForm(?\ArrayObject $data = null): Form
     {
-        return (new FormBuilder('test', $data))
+        return (new FormBuilder($data))->key('test')
             ->setCsrfValidator(new class implements CsrfValidatorInterface {
                 public function validate(): void
                 {

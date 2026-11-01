@@ -15,7 +15,7 @@ class RenderingTest extends TestCase
 
     public function testSubmittedValuesAreEscaped(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('name', 'text')
             ->add('message', 'textarea')
             ->add('email', 'email')
@@ -33,13 +33,13 @@ class RenderingTest extends TestCase
 
         $this->assertSame(0, $document->getElementsByTagName('script')->length);
         $this->assertSame(0, $document->getElementsByTagName('img')->length);
-        $this->assertSame(self::PAYLOAD, self::getElementById($document, 'form_test-name')->getAttribute('value'));
-        $this->assertSame('</textarea><img src=x onerror=alert(2)>', self::getElementById($document, 'form_test-message')->textContent);
+        $this->assertSame(self::PAYLOAD, self::getElementById($document, 'test-name')->getAttribute('value'));
+        $this->assertSame('</textarea><img src=x onerror=alert(2)>', self::getElementById($document, 'test-message')->textContent);
     }
 
     public function testLabelsAndHelpAreEscaped(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('name', 'text', [
                 'label' => '<b>Name</b>',
                 'help' => '<i>Help</i>',
@@ -54,22 +54,22 @@ class RenderingTest extends TestCase
 
     public function testTextareaRendersFalsyScalarData(): void
     {
-        $form = (new FormBuilder('test'))->add('message', 'textarea')->getForm();
+        $form = (new FormBuilder())->key('test')->add('message', 'textarea')->getForm();
 
         $form->submit(['message' => '0']);
 
         $document = self::loadHtml($form->render());
 
-        $this->assertSame('0', self::getElementById($document, 'form_test-message')->textContent);
+        $this->assertSame('0', self::getElementById($document, 'test-message')->textContent);
     }
 
     public function testTextareaHasNoTypeOrValueAttribute(): void
     {
-        $form = (new FormBuilder('test'))->add('message', 'textarea')->getForm();
+        $form = (new FormBuilder())->key('test')->add('message', 'textarea')->getForm();
 
         $form->submit(['message' => 'Hello']);
 
-        $textarea = self::getElementById(self::loadHtml($form->render()), 'form_test-message');
+        $textarea = self::getElementById(self::loadHtml($form->render()), 'test-message');
 
         $this->assertFalse($textarea->hasAttribute('type'));
         $this->assertFalse($textarea->hasAttribute('value'));
@@ -78,19 +78,19 @@ class RenderingTest extends TestCase
 
     public function testInvalidElementDataAttributeIsHtml(): void
     {
-        $form = (new FormBuilder('test'))->add('name', 'text')->getForm();
+        $form = (new FormBuilder())->key('test')->add('name', 'text')->getForm();
 
         $document = self::loadHtml($form->render());
 
         $this->assertSame(
             $form->createInvalidElement()->render(),
-            self::getElementById($document, 'form_test')->getAttribute('data-invalid_element'),
+            self::getElementById($document, 'test')->getAttribute('data-invalid_element'),
         );
     }
 
     public function testCollectionDataAttributesAreDecodable(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('names', CollectionType::class, [
                 'entry_type' => 'text',
                 'add_label' => 'Add <name>',
@@ -98,7 +98,7 @@ class RenderingTest extends TestCase
             ->getForm();
 
         $document = self::loadHtml($form->render());
-        $collection = self::getElementById($document, 'form_test-names');
+        $collection = self::getElementById($document, 'test-names');
 
         $this->assertStringStartsWith('<div class="palmtree-form-collection-entry">', $collection->getAttribute('data-prototype'));
         $this->assertSame(['addLabel' => 'Add <name>'], json_decode($collection->getAttribute('data-palmtree-form-collection'), true, flags: \JSON_THROW_ON_ERROR));
@@ -109,12 +109,12 @@ class RenderingTest extends TestCase
      */
     public function testCaptchaConfigDataAttributeIsJson(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('captcha', 'captcha', ['captcha' => new GoogleRecaptcha('site"key', 'secret')])
             ->getForm();
 
         $document = self::loadHtml($form->render());
-        $placeholder = self::getElementById($document, 'form_test-captcha_placeholder');
+        $placeholder = self::getElementById($document, 'test-captcha_placeholder');
 
         $config = json_decode($placeholder->getAttribute('data-palmtree-form-captcha'), true, flags: \JSON_THROW_ON_ERROR);
 

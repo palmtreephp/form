@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Palmtree\Form;
 
-use Palmtree\NameConverter\SnakeCaseToCamelCaseNameConverter;
-
 /**
  * Reports options that nothing will read, which are usually typos such as 'requried'.
  *
@@ -15,19 +13,17 @@ final class UnknownOptions
 {
     /**
      * Triggers a deprecation for each key in $args that is neither in $knownKeys nor handled by a setter or adder
-     * on $target, following the same naming rules as ArgParser::parseSetters().
+     * on $target, following the same naming rules as OptionSetter::apply().
      *
      * @param array<array-key, mixed> $args
      * @param list<string>            $knownKeys
      */
     public static function deprecate(object $target, array $args, array $knownKeys = []): void
     {
-        $nameConverter = new SnakeCaseToCamelCaseNameConverter();
-
         foreach (array_keys($args) as $key) {
             $key = (string)$key;
 
-            if (\in_array($key, $knownKeys, true) || self::hasSetter($target, $nameConverter->normalize($key))) {
+            if (\in_array($key, $knownKeys, true) || OptionSetter::methodFor($target, $key) !== null) {
                 continue;
             }
 
@@ -37,14 +33,5 @@ final class UnknownOptions
                 $target::class,
             ), \E_USER_DEPRECATED);
         }
-    }
-
-    private static function hasSetter(object $target, string $property): bool
-    {
-        if (\is_callable([$target, 'set' . ucfirst($property)])) {
-            return true;
-        }
-
-        return str_ends_with($property, 's') && \is_callable([$target, 'add' . ucfirst(substr($property, 0, -1))]);
     }
 }

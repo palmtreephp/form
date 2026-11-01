@@ -9,6 +9,7 @@ use Palmtree\Form\Constraint\NotBlank;
 use Palmtree\Form\Exception\InvalidTypeException;
 use Palmtree\Form\Exception\OutOfBoundsException;
 use Palmtree\Form\Form;
+use Palmtree\Form\OptionSetter;
 use Palmtree\Form\TypeLocator;
 use Palmtree\Form\UnknownOptions;
 use Palmtree\Html\Element;
@@ -74,19 +75,7 @@ abstract class AbstractType implements TypeInterface
     {
         UnknownOptions::deprecate($this, $args, [...array_keys(static::$defaultArgs), ...$this->getExtraOptionKeys()]);
 
-        // Extract args that have corresponding setters and call them
-        foreach ($args as $key => $value) {
-            // Convert snake_case to camelCase for setter method names
-            $method = 'set' . str_replace('_', '', ucwords($key, '_'));
-
-            if (method_exists($this, $method)) {
-                $this->$method($value);
-                unset($args[$key]);
-            }
-        }
-
-        // Merge remaining args with default args
-        return array_merge(static::$defaultArgs, $args);
+        return array_replace_recursive(static::$defaultArgs, OptionSetter::apply($this, $args));
     }
 
     /**

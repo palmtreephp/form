@@ -44,7 +44,7 @@ class HoneypotCaptchaTest extends TestCase
 
     private function createForm(): Form
     {
-        return (new FormBuilder('test'))->add('website', 'captcha', ['captcha' => new HoneypotCaptcha()])->getForm();
+        return (new FormBuilder())->key('test')->add('website', 'captcha', ['captcha' => new HoneypotCaptcha()])->getForm();
     }
 
     private function renderHoneypot(Form $form): \DOMElement
@@ -52,7 +52,7 @@ class HoneypotCaptchaTest extends TestCase
         $document = new \DOMDocument();
         $document->loadHTML('<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>' . $form->render() . '</body></html>', \LIBXML_NOERROR);
 
-        $input = $document->getElementById('form_test-website');
+        $input = $document->getElementById('test-website');
         $this->assertInstanceOf(\DOMElement::class, $input);
 
         return $input;

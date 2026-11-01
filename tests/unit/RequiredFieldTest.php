@@ -14,7 +14,7 @@ class RequiredFieldTest extends TestCase
 {
     public function testEmptyRequiredFieldReportsRequiredBeforeOtherConstraints(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('password', 'password', ['constraints' => [new Length(['min' => 8])]])
             ->add('number', 'number', ['constraints' => [new Number(['min' => 5])]])
             ->add('custom', 'text', ['error_message' => 'Tell us something', 'constraints' => [new Length(['min' => 3])]])
@@ -32,7 +32,7 @@ class RequiredFieldTest extends TestCase
 
     public function testFilledFieldReportsOtherConstraints(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('password', 'password', ['constraints' => [new Length(['min' => 8])]])
             ->getForm();
 
@@ -44,7 +44,7 @@ class RequiredFieldTest extends TestCase
 
     public function testNotBlankIsTheFirstConstraint(): void
     {
-        $field = (new FormBuilder('test'))
+        $field = (new FormBuilder())->key('test')
             ->add('name', 'text', ['constraints' => [new Length(['min' => 2])]])
             ->get('name');
 

@@ -46,7 +46,7 @@ class InputTypeTest extends TestCase
     #[DataProvider('arrayInputProvider')]
     public function testArrayInputIsInvalidForScalarFields(string $type, array $options): void
     {
-        $form = (new FormBuilder('test'))->add('field', $type, $options)->getForm();
+        $form = (new FormBuilder())->key('test')->add('field', $type, $options)->getForm();
 
         $form->submit(['field' => ['a'], 'field_2' => ['a']]);
 
@@ -56,7 +56,7 @@ class InputTypeTest extends TestCase
 
     public function testArrayInputIsValidForMultipleChoice(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('field', 'choice', ['choices' => ['a' => 'A'], 'multiple' => true])
             ->getForm();
 
@@ -67,12 +67,12 @@ class InputTypeTest extends TestCase
 
     public function testFilePartSubmittedForTextFieldIsInvalid(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('name', 'text', ['required' => false])
             ->getForm();
 
-        $_POST = ['form_test' => ['name' => 'Bob']];
-        $_FILES = ['form_test' => [
+        $_POST = ['test' => ['name' => 'Bob']];
+        $_FILES = ['test' => [
             'name' => ['name' => 'a.txt'],
             'type' => ['name' => 'text/plain'],
             'size' => ['name' => 1],
@@ -97,7 +97,7 @@ class InputTypeTest extends TestCase
 
     public function testMatchingAllowsBothEmpty(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('password', 'repeated', ['repeatable_type' => 'password', 'required' => false])
             ->getForm();
 

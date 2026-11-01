@@ -28,12 +28,12 @@ class FileUploadTest extends TestCase
 
     public function testFileDataInRequestBodyIsIgnored(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('file', FileType::class)
             ->add('files', CollectionType::class, ['entry_type' => FileType::class])
             ->getForm();
 
-        $_POST = ['form_test' => [
+        $_POST = ['test' => [
             'file' => self::FORGED_UPLOAD,
             'files' => [self::FORGED_UPLOAD],
         ]];
@@ -65,7 +65,7 @@ class FileUploadTest extends TestCase
             }
         };
 
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('file', FileType::class, ['constraints' => [$constraint]])
             ->getForm();
 
@@ -78,7 +78,7 @@ class FileUploadTest extends TestCase
 
     public function testRequiredFileMissingIsInvalid(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('name', 'text')
             ->add('file', FileType::class)
             ->getForm();
@@ -91,7 +91,7 @@ class FileUploadTest extends TestCase
 
     public function testOptionalFileMissingIsValid(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('file', FileType::class, ['required' => false])
             ->getForm();
 
@@ -102,7 +102,7 @@ class FileUploadTest extends TestCase
 
     public function testMalformedFileDataIsTreatedAsMissing(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('file', FileType::class)
             ->getForm();
 
@@ -114,12 +114,12 @@ class FileUploadTest extends TestCase
 
     public function testFilePartSubmittedForTextFieldDoesNotError(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('name', 'text', ['required' => false])
             ->getForm();
 
-        $_POST = ['form_test' => ['name' => 'Bob']];
-        $_FILES = ['form_test' => [
+        $_POST = ['test' => ['name' => 'Bob']];
+        $_FILES = ['test' => [
             'name' => ['name' => 'a.txt'],
             'type' => ['name' => 'text/plain'],
             'size' => ['name' => 1],
@@ -134,11 +134,11 @@ class FileUploadTest extends TestCase
 
     public function testFormWithOnlyFilesIsSubmitted(): void
     {
-        $form = (new FormBuilder('test'))
+        $form = (new FormBuilder())->key('test')
             ->add('file', FileType::class, ['required' => false])
             ->getForm();
 
-        $_FILES = ['form_test' => [
+        $_FILES = ['test' => [
             'name' => ['file' => ''],
             'type' => ['file' => ''],
             'size' => ['file' => 0],
@@ -154,7 +154,7 @@ class FileUploadTest extends TestCase
 
     public function testFormIsNotSubmittedWithoutRequestData(): void
     {
-        $form = (new FormBuilder('test'))->add('file', FileType::class)->getForm();
+        $form = (new FormBuilder())->key('test')->add('file', FileType::class)->getForm();
 
         $_FILES = ['other_form' => []];
 
@@ -165,9 +165,9 @@ class FileUploadTest extends TestCase
 
     public function testNonArrayFormKeyIsNotSubmitted(): void
     {
-        $form = (new FormBuilder('test'))->add('name', 'text')->getForm();
+        $form = (new FormBuilder())->key('test')->add('name', 'text')->getForm();
 
-        $_POST = ['form_test' => 'foo'];
+        $_POST = ['test' => 'foo'];
 
         $form->handleRequest();
 

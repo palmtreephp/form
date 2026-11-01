@@ -41,7 +41,7 @@ class JsonResponseTest extends TestCase
 
     private function submitForm(string $name): \Palmtree\Form\Form
     {
-        $form = (new FormBuilder('test'))->add('name', 'text')->getForm();
+        $form = (new FormBuilder())->key('test')->add('name', 'text')->getForm();
         $form->submit(['name' => $name]);
 
         return $form;

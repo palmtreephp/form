@@ -387,7 +387,6 @@ class Form implements \Stringable
         return $this->fields;
     }
 
-
     public function bind(): void
     {
         if ($this->boundData !== null) {
