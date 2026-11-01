@@ -6,12 +6,10 @@ use Palmtree\Form\FormBuilder;
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
-$builder = new FormBuilder([
-    'key'             => 'fileupload_example',
-    'action'          => 'index.php',
-    'ajax'            => false,
-    'html_validation' => false,
-]);
+$builder = (new FormBuilder())
+    ->key('fileupload_example')
+    ->action('index.php')
+    ->ajax(false);
 
 $builder->add('file', 'file', [
     'constraints' => [

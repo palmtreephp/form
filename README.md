@@ -35,7 +35,7 @@ use Palmtree\Form\FormBuilder;
 use Palmtree\Form\Captcha\GoogleRecaptcha;
 use Palmtree\Form\Captcha\HCaptcha;
 
-$builder = (new FormBuilder('my_form'))
+$builder = (new FormBuilder())
     ->add('name', 'text', ['error_message' => 'Please enter your name'])
     ->add('email_address', 'email', [
         'help' => 'We will never share your email with anyone',

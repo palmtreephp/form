@@ -5,7 +5,7 @@ The `CollectionType` can be used to add/remove multiple entries of the same fiel
 ```php
 use Palmtree\Form\FormBuilder;
 
-$builder = (new FormBuilder('collection_example'))
+$builder = (new FormBuilder())
     ->add('names', 'collection', [
         'entry_type'    => 'text',
         'min_entries' => 1,

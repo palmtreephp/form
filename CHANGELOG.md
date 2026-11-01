@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## v7.0.0 - Unreleased
+
+This release replaces array configuration of forms with a fluent interface. See the [migration guide](/MIGRATION-FLUENT-API.md).
+
+* **BC break:** `FormBuilder` and `Form` take only the bound data. Configure the form with fluent methods such as `key()`, `method()`,
+  `action()`, `ajax()`, `htmlValidation()` and `encType()` instead of an options array or key string.
+* **BC break:** `key()` uses the key as given rather than prefixing it with `form_`, which changes the form's ID, its field names and its fields' IDs.
+  A form without a key is given one such as `form_1`.
+* **BC break:** HTML5 validation is disabled by default. Call `htmlValidation()` to enable it.
+* Removed the `palmtree/argparser` dependency. Field type and constraint options are still passed as arrays.
+
 ## v6.5.0 - 2026-09-24
 
 This release fixes several security issues. All users should upgrade.

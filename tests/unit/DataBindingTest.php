@@ -186,7 +186,7 @@ class DataBindingTest extends TestCase
             ],
         ];
 
-        $builder = new FormBuilder('test', $data);
+        $builder = (new FormBuilder($data))->key('test');
 
         $builder->add('people', CollectionType::class, [
             'entry_type' => PersonType::class,
@@ -218,7 +218,7 @@ class DataBindingTest extends TestCase
             ],
         ]);
 
-        $builder = new FormBuilder('test', $data);
+        $builder = (new FormBuilder($data))->key('test');
 
         $builder->add('people', CollectionType::class, [
             'entry_type' => PersonType::class,
@@ -249,7 +249,7 @@ class DataBindingTest extends TestCase
 
     private function buildForm(\ArrayAccess|array|Person|\stdClass $person): Form
     {
-        $builder = new FormBuilder([], $person);
+        $builder = new FormBuilder($person);
 
         $builder
             ->add('name', 'text')

@@ -11,7 +11,8 @@ use Palmtree\Form\Type\TextType;
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
-$builder = (new FormBuilder('grid_example'))
+$builder = (new FormBuilder())
+    ->key('grid_example')
     ->add('first_name', TextType::class, [
     ])
     ->add('last_name', TextType::class, [

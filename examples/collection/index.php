@@ -8,11 +8,8 @@ use Palmtree\Form\Type\SubmitType;
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
-$builder = new FormBuilder([
-    'key'             => 'collection_example',
-    'method'          => 'POST',
-    'html_validation' => false,
-]);
+$builder = (new FormBuilder())
+    ->key('collection_example');
 
 $builder
     ->add('people', CollectionType::class, [

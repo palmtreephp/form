@@ -31,7 +31,7 @@ class UnknownOptionsTest extends TestCase
 
     public function testUnknownFieldOptionIsDeprecated(): void
     {
-        (new FormBuilder('test'))->add('name', 'text', ['requried' => false]);
+        (new FormBuilder())->key('test')->add('name', 'text', ['requried' => false]);
 
         $this->assertSame([
             'Passing the unknown option "requried" to Palmtree\Form\Type\TextType is deprecated. It is ignored, and will throw an exception in the next major version.',
@@ -46,17 +46,12 @@ class UnknownOptionsTest extends TestCase
         $this->assertStringContainsString('"maximum"', $this->deprecations[0]);
     }
 
-    public function testUnknownFormOptionIsDeprecated(): void
-    {
-        new FormBuilder(['key' => 'test', 'ajaxx' => true]);
-
-        $this->assertCount(1, $this->deprecations);
-        $this->assertStringContainsString('"ajaxx"', $this->deprecations[0]);
-    }
-
     public function testKnownOptionsAreNotDeprecated(): void
     {
-        (new FormBuilder(['key' => 'test', 'ajax' => true, 'html_validation' => false]))
+        (new FormBuilder())
+            ->key('test')
+            ->ajax()
+            ->htmlValidation(false)
             ->add('name', 'text', [
                 'label' => 'Name',
                 'required' => false,

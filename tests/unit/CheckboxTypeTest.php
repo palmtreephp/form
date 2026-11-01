@@ -31,7 +31,7 @@ class CheckboxTypeTest extends TestCase
     #[DataProvider('requiredCheckboxProvider')]
     public function testRequiredCheckbox(array $options, mixed $value, bool $expected): void
     {
-        $form = (new FormBuilder('test'))->add('agree', 'checkbox', $options)->getForm();
+        $form = (new FormBuilder())->key('test')->add('agree', 'checkbox', $options)->getForm();
 
         $form->submit($value === null ? [] : ['agree' => $value]);
 
@@ -40,7 +40,7 @@ class CheckboxTypeTest extends TestCase
 
     public function testOptionalCheckboxNotTickedIsValid(): void
     {
-        $form = (new FormBuilder('test'))->add('agree', 'checkbox', ['required' => false])->getForm();
+        $form = (new FormBuilder())->key('test')->add('agree', 'checkbox', ['required' => false])->getForm();
 
         $form->submit([]);
 

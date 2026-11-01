@@ -14,11 +14,8 @@ $person->setSignup(true);
 $person->interests[] = 'football';
 $person->pets[]      = 'cat';
 
-$builder = new FormBuilder([
-    'key'             => 'data_binding_example',
-    'method'          => 'POST',
-    'html_validation' => false,
-], $person);
+$builder = (new FormBuilder($person))
+    ->key('data_binding_example');
 
 $builder
     ->add('name', 'text')

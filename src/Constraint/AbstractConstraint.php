@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Palmtree\Form\Constraint;
 
-use Palmtree\ArgParser\ArgParser;
+use Palmtree\Form\OptionSetter;
 use Palmtree\Form\UnknownOptions;
 
 abstract class AbstractConstraint implements ConstraintInterface
@@ -16,12 +16,14 @@ abstract class AbstractConstraint implements ConstraintInterface
      */
     public function __construct(array|string $args = [])
     {
-        if (\is_array($args)) {
-            UnknownOptions::deprecate($this, $args);
+        if (\is_string($args)) {
+            $this->errorMessage = $args;
+
+            return;
         }
 
-        $parser = new ArgParser($args, 'error_message');
-        $parser->parseSetters($this);
+        UnknownOptions::deprecate($this, $args);
+        OptionSetter::apply($this, $args);
     }
 
     public function getErrorMessage(): string

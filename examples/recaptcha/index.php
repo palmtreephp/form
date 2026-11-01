@@ -9,11 +9,9 @@ use Palmtree\Form\Type\TextType;
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../.bootstrap.php';
 
-$builder = new FormBuilder([
-    'key'             => 'recaptcha',
-    'html_validation' => false,
-    'ajax'            => true,
-]);
+$builder = (new FormBuilder())
+    ->key('recaptcha')
+    ->ajax();
 
 $builder
     ->add('name', TextType::class, [

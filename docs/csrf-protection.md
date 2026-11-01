@@ -25,10 +25,7 @@ use Palmtree\Form\Type\TextType;
 // See https://symfony.com/doc/current/reference/configuration/framework.html#trusted-hosts
 \Symfony\Component\HttpFoundation\Request::setTrustedHosts(['^example\.org$']);
 
-$builder = new FormBuilder([
-    'key'    => 'contact_form',
-    'method' => 'POST',
-]);
+$builder = new FormBuilder();
 
 // Enable CSRF protection with default settings (strict mode enabled)
 $builder->enableCsrf();
@@ -131,8 +128,8 @@ class CustomCsrfValidator implements CsrfValidatorInterface
 }
 
 // Use the custom validator
-$builder = new FormBuilder(['key' => 'my_form']);
-$builder->setCsrfValidator(new CustomCsrfValidator());
+$builder = (new FormBuilder())
+    ->setCsrfValidator(new CustomCsrfValidator());
 ```
 
 ## Important Security Notes
